@@ -60,7 +60,7 @@ Champs : titre, contact, date, heure de début, durée, lieu, notes internes.
 **lien public** de la forme :
 
 ```
-https://votre-domaine/invite/<token>
+https://cadencemada.vercel.app/invite/<token>
 ```
 
 Deux façons de le transmettre :

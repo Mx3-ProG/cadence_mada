@@ -43,30 +43,35 @@ L'application est servie sur `http://localhost:5173`.
 
 Copier `.env.example` vers `.env` et renseigner :
 
-| Variable                        | Description                                                |
-| -------------------------------- | ------------------------------------------------------------ |
-| `SUPABASE_URL` / `VITE_SUPABASE_URL`                       | URL du projet Supabase |
+| Variable                                                     | Description                         |
+| ------------------------------------------------------------ | ----------------------------------- |
+| `SUPABASE_URL` / `VITE_SUPABASE_URL`                         | URL du projet Supabase              |
 | `SUPABASE_PUBLISHABLE_KEY` / `VITE_SUPABASE_PUBLISHABLE_KEY` | Clé publique (publishable) Supabase |
-| `SUPABASE_PROJECT_ID` / `VITE_SUPABASE_PROJECT_ID`         | Identifiant du projet Supabase |
+| `SUPABASE_PROJECT_ID` / `VITE_SUPABASE_PROJECT_ID`           | Identifiant du projet Supabase      |
 
 Selon les fonctionnalités utilisées, le serveur lit aussi (non versionnées, à définir dans
-l'environnement d'exécution) : `SUPABASE_SERVICE_ROLE_KEY` (client admin, contourne les RLS),
-`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (facturation), `RESEND_API_KEY`
-(emails d'invitation).
+l'environnement d'exécution) :
+
+| Variable                                                        | Description                                                                                                                       |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `SUPABASE_SERVICE_ROLE_KEY`                                     | Client admin, contourne les RLS (facturation, notifications d'invitation)                                                         |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | Facturation Stripe                                                                                                                |
+| `RESEND_API_KEY`                                                | Clé API [Resend](https://resend.com/api-keys) pour l'envoi des emails                                                             |
+| `RESEND_FROM`                                                   | Adresse d'expédition, ex. `Cadence Mada <rdv@cadencemada.com>` — le domaine doit être vérifié (DKIM/SPF) dans le dashboard Resend |
 
 > Pour que le bouton de connexion Google fonctionne, activer le provider **Google** dans
 > Authentication → Providers du dashboard Supabase du projet.
 
 ## Scripts
 
-| Commande            | Description                                    |
-| -------------------- | ----------------------------------------------- |
-| `npm run dev`         | Démarre le serveur de développement (Vite)      |
-| `npm run build`       | Build de production                             |
-| `npm run build:dev`   | Build en mode développement                     |
-| `npm run preview`     | Prévisualise le build de production             |
-| `npm run lint`        | Vérifie le code avec ESLint                     |
-| `npm run format`      | Formate le code avec Prettier                   |
+| Commande            | Description                                |
+| ------------------- | ------------------------------------------ |
+| `npm run dev`       | Démarre le serveur de développement (Vite) |
+| `npm run build`     | Build de production                        |
+| `npm run build:dev` | Build en mode développement                |
+| `npm run preview`   | Prévisualise le build de production        |
+| `npm run lint`      | Vérifie le code avec ESLint                |
+| `npm run format`    | Formate le code avec Prettier              |
 
 ## Structure du projet
 
@@ -101,3 +106,24 @@ src/
 
 Le projet est lié au projet Supabase référencé dans `supabase/config.toml` (`project_id`). Les
 migrations SQL du schéma se trouvent dans `supabase/migrations/`.
+
+### Emails transactionnels (`supabase/emails/`)
+
+Les templates HTML des emails envoyés via Resend (`src/lib/resend.server.ts`) vivent dans
+`supabase/emails/` :
+
+- `invite-request.ts` — proposition de rendez-vous envoyée à l'invité.
+- `invite-accepted.ts` / `invite-declined.ts` — notification à l'organisateur quand l'invité
+  répond (déclenchée par `notifyInviteResponse` dans `src/lib/invites.functions.ts`).
+- `shared.ts` — palette de couleurs, layout commun, utilitaires (`escapeHtml`, formatage de dates).
+
+Ce ne sont pas les emails d'authentification Supabase (confirmation de compte, réinitialisation
+de mot de passe) — ceux-là se configurent dans Authentication → Email Templates du dashboard
+Supabase.
+
+## Déploiement
+
+Le build utilise [Nitro](https://nitro.build) (`nitro/vite` dans `vite.config.ts`), qui détecte
+automatiquement la plateforme cible. Sur Vercel, le déploiement fonctionne en zero-config (pas de
+`vercel.json` requis) : Nitro génère la sortie serveur adaptée dès que `process.env.VERCEL` est
+présent au moment du build.

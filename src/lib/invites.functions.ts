@@ -1,31 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { buildInviteRequestEmail } from "../../supabase/emails/invite-request";
+import { buildInviteAcceptedEmail } from "../../supabase/emails/invite-accepted";
+import { buildInviteDeclinedEmail } from "../../supabase/emails/invite-declined";
 
-const schema = z.object({
+const sendInviteSchema = z.object({
   appointmentId: z.string().uuid(),
   origin: z.string().url().max(300),
 });
-
-function formatRange(startsAt: string, endsAt: string) {
-  const fmt = new Intl.DateTimeFormat("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const end = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  return `${fmt.format(new Date(startsAt))} → ${end.format(new Date(endsAt))}`;
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 /**
  * Envoie l'invitation par email via Resend.
@@ -33,7 +16,7 @@ function escapeHtml(value: string) {
  */
 export const sendInviteEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => schema.parse(input))
+  .inputValidator((input: unknown) => sendInviteSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
@@ -72,83 +55,38 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
       return { sent: false as const, reason: "no_email" as const };
     }
 
-    const apiKey = process.env["RESEND_API_KEY"];
-    const from = process.env["RESEND_FROM"] ?? "Cadence <onboarding@resend.dev>";
     const link = `${data.origin.replace(/\/$/, "")}/invite/${appointment.invite_token}`;
 
-    if (!apiKey) {
-      return { sent: false as const, reason: "no_api_key" as const, link };
-    }
-
-    const brandBlock =
-      isPro && profile?.invite_message
-        ? `<p style="margin:0 0 16px;padding:12px 16px;border-left:3px solid #10B981;background:#F3FBF7">${escapeHtml(profile.invite_message)}</p>`
-        : "";
-
-    const reviewBlock =
-      isPro &&
-      profile?.review_prompt_enabled &&
-      (profile.google_review_url || profile.google_maps_url)
-        ? `<div style="margin-top:28px;padding:16px;border:1px solid #E3E8E6;border-radius:12px">
-            <p style="margin:0 0 8px;font-weight:600">${escapeHtml(profile.business_name ?? "Avis Google")}</p>
-            ${
-              profile.google_rating != null
-                ? `<p style="margin:0 0 12px;color:#5A6B65">${Number(profile.google_rating).toFixed(1)}/5 ★${
-                    profile.google_reviews_count != null
-                      ? ` · ${profile.google_reviews_count} avis`
-                      : ""
-                  }</p>`
-                : ""
-            }
-            ${
-              profile.google_review_url
-                ? `<p style="margin:0 0 8px"><a href="${escapeHtml(profile.google_review_url)}" style="color:#0B7A5A;font-weight:600">Laisser un avis Google</a></p>`
-                : ""
-            }
-            ${
-              profile.google_maps_url
-                ? `<p style="margin:0"><a href="${escapeHtml(profile.google_maps_url)}" style="color:#0B7A5A">Voir sur Google Maps</a></p>`
-                : ""
-            }
-          </div>`
-        : "";
-
-    const html = `
-      <div style="font-family:Helvetica,Arial,sans-serif;background:#ffffff;padding:24px;color:#0A0F0D">
-        <h2 style="margin:0 0 8px">Proposition de rendez-vous</h2>
-        <p style="margin:0 0 16px">Bonjour ${escapeHtml(guestName || "")},</p>
-        ${brandBlock}
-        <p style="margin:0 0 8px"><strong>${escapeHtml(appointment.title)}</strong></p>
-        <p style="margin:0 0 8px">${escapeHtml(formatRange(appointment.starts_at, appointment.ends_at))}</p>
-        ${appointment.location ? `<p style="margin:0 0 8px">Lieu : ${escapeHtml(appointment.location)}</p>` : ""}
-        ${appointment.description ? `<p style="margin:0 0 16px">${escapeHtml(appointment.description)}</p>` : ""}
-        <p style="margin:24px 0">
-          <a href="${link}" style="background:#10B981;color:#06231b;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">
-            Confirmer ou refuser
-          </a>
-        </p>
-        <p style="margin:0;font-size:12px;color:#667">${link}</p>
-        ${reviewBlock}
-      </div>`;
-
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+    const { subject, html } = buildInviteRequestEmail({
+      guestName,
+      appointment: {
+        title: appointment.title,
+        description: appointment.description,
+        location: appointment.location,
+        startsAt: appointment.starts_at,
+        endsAt: appointment.ends_at,
       },
-      body: JSON.stringify({
-        from,
-        to: [guestEmail],
-        subject: `Rendez-vous : ${appointment.title}`,
-        html,
-      }),
+      link,
+      ...(isPro && profile
+        ? {
+            branding: {
+              inviteMessage: profile.invite_message,
+              businessName: profile.business_name,
+              googleReviewUrl: profile.google_review_url,
+              googleMapsUrl: profile.google_maps_url,
+              googleRating: profile.google_rating,
+              googleReviewsCount: profile.google_reviews_count,
+              reviewPromptEnabled: profile.review_prompt_enabled,
+            },
+          }
+        : {}),
     });
 
-    if (!response.ok) {
-      const detail = await response.text();
-      console.error("[resend] send failed", response.status, detail);
-      return { sent: false as const, reason: "provider_error" as const };
+    const { sendEmail } = await import("@/lib/resend.server");
+    const result = await sendEmail({ to: guestEmail, subject, html });
+
+    if (!result.sent) {
+      return result;
     }
 
     await supabase
@@ -156,5 +94,78 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
       .update({ invite_sent_at: new Date().toISOString() })
       .eq("id", appointment.id);
 
-    return { sent: true as const, to: guestEmail };
+    return result;
+  });
+
+const notifyResponseSchema = z.object({
+  token: z.string().min(1).max(200),
+  origin: z.string().url().max(300),
+});
+
+/**
+ * Notifie l'organisateur par email quand l'invité accepte ou refuse le rendez-vous.
+ * Appel public (l'invité n'a pas de compte) : sécurisé par le token d'invitation, qui
+ * fait office de capability. Idempotent grâce à la colonne owner_notified_at.
+ */
+export const notifyInviteResponse = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => notifyResponseSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: appointment, error } = await supabaseAdmin
+      .from("appointments")
+      .select(
+        "id, owner_id, title, location, starts_at, ends_at, status, response_message, contact_id, owner_notified_at",
+      )
+      .eq("invite_token", data.token)
+      .maybeSingle();
+
+    if (error || !appointment) return { notified: false as const };
+    if (appointment.status !== "accepted" && appointment.status !== "declined") {
+      return { notified: false as const };
+    }
+    if (appointment.owner_notified_at) return { notified: false as const };
+
+    const { data: owner } = await supabaseAdmin
+      .from("profiles")
+      .select("email")
+      .eq("id", appointment.owner_id)
+      .maybeSingle();
+    if (!owner?.email) return { notified: false as const };
+
+    let guestName = "";
+    if (appointment.contact_id) {
+      const { data: contact } = await supabaseAdmin
+        .from("contacts")
+        .select("name")
+        .eq("id", appointment.contact_id)
+        .maybeSingle();
+      guestName = contact?.name ?? "";
+    }
+
+    const dashboardLink = `${data.origin.replace(/\/$/, "")}/dashboard`;
+    const build =
+      appointment.status === "accepted" ? buildInviteAcceptedEmail : buildInviteDeclinedEmail;
+    const { subject, html } = build({
+      guestName,
+      appointment: {
+        title: appointment.title,
+        location: appointment.location,
+        startsAt: appointment.starts_at,
+        endsAt: appointment.ends_at,
+      },
+      responseMessage: appointment.response_message,
+      dashboardLink,
+    });
+
+    const { sendEmail } = await import("@/lib/resend.server");
+    const result = await sendEmail({ to: owner.email, subject, html });
+    if (!result.sent) return { notified: false as const };
+
+    await supabaseAdmin
+      .from("appointments")
+      .update({ owner_notified_at: new Date().toISOString() })
+      .eq("id", appointment.id);
+
+    return { notified: true as const };
   });

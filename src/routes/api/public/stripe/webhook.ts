@@ -14,7 +14,7 @@ type StripeWebhookEventObject = StripeSubscription & {
  * customer.subscription.updated, customer.subscription.deleted.
  * Secrets requis : STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET.
  */
-export const Route = createFileRoute("/api : public : stripe/webhook")({
+export const Route = createFileRoute("/api/public/stripe/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {

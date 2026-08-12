@@ -6,6 +6,7 @@ import { fr } from "date-fns/locale";
 import { CalendarDays, Check, Clock, MapPin, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyInviteResponse } from "@/lib/invites.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -62,6 +63,9 @@ function InvitePage() {
     }
     toast.success(accept ? "Rendez-vous confirmé !" : "Réponse envoyée.");
     void inviteQuery.refetch();
+    notifyInviteResponse({ data: { token, origin: window.location.origin } }).catch(() => {
+      // L'organisateur verra quand même la réponse dans son tableau de bord.
+    });
   };
 
   const invite = inviteQuery.data;

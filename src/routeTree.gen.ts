@@ -21,8 +21,8 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as ApiChar58publicChar58stripeWebhookRouteImport } from './routes/api : public : stripe/webhook'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -83,15 +83,14 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiChar58publicChar58stripeWebhookRoute =
-  ApiChar58publicChar58stripeWebhookRouteImport.update({
-    id: '/api : public : stripe/webhook',
-    path: '/api : public : stripe/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const InviteTokenRoute = InviteTokenRouteImport.update({
   id: '/invite/$token',
   path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -107,8 +106,8 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/api : public : stripe/webhook': typeof ApiChar58publicChar58stripeWebhookRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -122,8 +121,8 @@ export interface FileRoutesByTo {
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/api : public : stripe/webhook': typeof ApiChar58publicChar58stripeWebhookRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,8 +138,8 @@ export interface FileRoutesById {
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/api : public : stripe/webhook': typeof ApiChar58publicChar58stripeWebhookRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,8 +155,8 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/dashboard'
     | '/settings'
-    | '/api : public : stripe/webhook'
     | '/invite/$token'
+    | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,8 +170,8 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/dashboard'
     | '/settings'
-    | '/api : public : stripe/webhook'
     | '/invite/$token'
+    | '/api/public/stripe/webhook'
   id:
     | '__root__'
     | '/'
@@ -187,8 +186,8 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
-    | '/api : public : stripe/webhook'
     | '/invite/$token'
+    | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,8 +199,8 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DocumentationRoute: typeof DocumentationRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
-  ApiChar58publicChar58stripeWebhookRoute: typeof ApiChar58publicChar58stripeWebhookRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -290,18 +289,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api : public : stripe/webhook': {
-      id: '/api : public : stripe/webhook'
-      path: '/api : public : stripe/webhook'
-      fullPath: '/api : public : stripe/webhook'
-      preLoaderRoute: typeof ApiChar58publicChar58stripeWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/invite/$token': {
       id: '/invite/$token'
       path: '/invite/$token'
       fullPath: '/invite/$token'
       preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -333,9 +332,8 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DocumentationRoute: DocumentationRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
-  ApiChar58publicChar58stripeWebhookRoute:
-    ApiChar58publicChar58stripeWebhookRoute,
   InviteTokenRoute: InviteTokenRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

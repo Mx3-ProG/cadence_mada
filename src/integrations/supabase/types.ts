@@ -19,6 +19,7 @@ export type Database = {
           invite_token: string;
           location: string | null;
           owner_id: string;
+          owner_notified_at: string | null;
           prep_notes: string | null;
           responded_at: string | null;
           response_message: string | null;
@@ -37,6 +38,7 @@ export type Database = {
           invite_token?: string;
           location?: string | null;
           owner_id: string;
+          owner_notified_at?: string | null;
           prep_notes?: string | null;
           responded_at?: string | null;
           response_message?: string | null;
@@ -55,6 +57,7 @@ export type Database = {
           invite_token?: string;
           location?: string | null;
           owner_id?: string;
+          owner_notified_at?: string | null;
           prep_notes?: string | null;
           responded_at?: string | null;
           response_message?: string | null;
