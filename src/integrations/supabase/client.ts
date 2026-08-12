@@ -31,10 +31,15 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
-  const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"];
+  // Fall back to process.env for SSR (server-side rendering) — process doesn't
+  // exist in the browser, so guard against it to avoid a raw ReferenceError.
+  const hasProcessEnv = typeof process !== "undefined" && process.env;
+  const SUPABASE_URL =
+    import.meta.env["VITE_SUPABASE_URL"] ||
+    (hasProcessEnv ? process.env["SUPABASE_URL"] : undefined);
   const SUPABASE_PUBLISHABLE_KEY =
-    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env["SUPABASE_PUBLISHABLE_KEY"];
+    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+    (hasProcessEnv ? process.env["SUPABASE_PUBLISHABLE_KEY"] : undefined);
 
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
