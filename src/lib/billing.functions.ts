@@ -8,6 +8,14 @@ const returnSchema = z.object({
   origin: z.string().url().max(300),
   sessionId: z.string().min(1).max(200),
 });
+const CANCEL_CONFIRMATION_PHRASE = "je me désabonne";
+const cancelSchema = z.object({
+  confirmText: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .refine((v) => v === CANCEL_CONFIRMATION_PHRASE, "Phrase de confirmation incorrecte."),
+});
 
 /** Crée (ou récupère) le client Stripe lié au compte et démarre l'abonnement Pro. */
 export const createCheckoutSession = createServerFn({ method: "POST" })
@@ -95,11 +103,69 @@ export const createBillingPortalSession = createServerFn({ method: "POST" })
     const session = await stripeRequest<{ url: string }>("/billing_portal/sessions", {
       params: {
         customer: profile.stripe_customer_id,
-        return_url: `${data.origin.replace(/\/$/, "")}/dashboard`,
+        return_url: `${data.origin.replace(/\/$/, "")}/settings#abonnement`,
       },
     });
 
     return { url: session.url };
+  });
+
+/**
+ * Programme l'annulation de l'abonnement Pro à la fin de la période déjà payée.
+ * Exige la phrase de confirmation exacte pour éviter les résiliations accidentelles.
+ */
+export const cancelSubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => cancelSchema.parse(input))
+  .handler(async ({ context }) => {
+    const { stripeRequest } = await import("@/lib/stripe.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { applySubscriptionState } = await import("@/lib/billing.server");
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("stripe_subscription_id")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    if (!profile?.stripe_subscription_id) {
+      throw new Error("Aucun abonnement actif pour ce compte.");
+    }
+
+    const subscription = await stripeRequest<StripeSubscription>(
+      `/subscriptions/${encodeURIComponent(profile.stripe_subscription_id)}`,
+      { params: { cancel_at_period_end: true } },
+    );
+    await applySubscriptionState(subscription);
+
+    return { cancelAt: subscription.current_period_end ?? null };
+  });
+
+/** Annule la résiliation programmée : l'abonnement continue normalement. */
+export const reactivateSubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { stripeRequest } = await import("@/lib/stripe.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { applySubscriptionState } = await import("@/lib/billing.server");
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("stripe_subscription_id")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    if (!profile?.stripe_subscription_id) {
+      throw new Error("Aucun abonnement actif pour ce compte.");
+    }
+
+    const subscription = await stripeRequest<StripeSubscription>(
+      `/subscriptions/${encodeURIComponent(profile.stripe_subscription_id)}`,
+      { params: { cancel_at_period_end: false } },
+    );
+    await applySubscriptionState(subscription);
+
+    return { reactivated: true as const };
   });
 
 /**

@@ -1,6 +1,7 @@
 import { Crown, Loader2, Zap } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { useBillingPortal, useUpgradeToPro } from "@/lib/billing";
+import { useUpgradeToPro } from "@/lib/billing";
 import {
   FREE_APPOINTMENT_LIMIT,
   FREE_CONTACT_LIMIT,
@@ -34,7 +35,6 @@ function Meter({ label, value, max }: { label: string; value: number; max: numbe
 export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
   const query = usePlanUsage();
   const upgrade = useUpgradeToPro();
-  const portal = useBillingPortal();
   const data = usage ?? query.data;
   if (!data) return null;
 
@@ -48,18 +48,10 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
           <span className="font-semibold">Plan Pro</span>{" "}
           <span className="text-muted-foreground">— contacts et rendez-vous illimités.</span>
         </p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="shrink-0"
-          disabled={portal.isPending}
-          onClick={() => portal.mutate()}
-        >
-          {portal.isPending ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            "Gérer l'abonnement"
-          )}
+        <Button variant="outline" size="sm" className="shrink-0" asChild>
+          <Link to="/settings" hash="abonnement">
+            Gérer l'abonnement
+          </Link>
         </Button>
       </div>
     );

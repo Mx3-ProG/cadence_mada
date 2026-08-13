@@ -14,6 +14,7 @@ export type PlanUsage = {
   appointmentsThisMonth: number;
   subscriptionStatus: string | null;
   isAdmin: boolean;
+  cancelAtPeriodEnd: boolean;
 };
 
 export const planUsageQueryKey = ["plan-usage"] as const;
@@ -29,6 +30,9 @@ export async function fetchPlanUsage(): Promise<PlanUsage> {
     appointmentsThisMonth: row?.appointments_this_month ?? 0,
     subscriptionStatus: row?.subscription_status ?? null,
     isAdmin: Boolean((row as { is_admin?: boolean } | undefined)?.is_admin),
+    cancelAtPeriodEnd: Boolean(
+      (row as { cancel_at_period_end?: boolean } | undefined)?.cancel_at_period_end,
+    ),
   };
 }
 

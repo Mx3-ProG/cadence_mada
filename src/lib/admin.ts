@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -88,4 +88,60 @@ export async function fetchAdminOverview(): Promise<AdminOverview> {
 
 export function useAdminOverview(enabled: boolean) {
   return useQuery({ queryKey: adminOverviewQueryKey, queryFn: fetchAdminOverview, enabled });
+}
+
+export type AdminPayoutRequest = Tables<"referral_payout_requests"> & {
+  requester: { fullName: string | null; email: string | null } | null;
+};
+
+export const adminPayoutRequestsQueryKey = ["admin-payout-requests"] as const;
+
+async function fetchAdminPayoutRequests(): Promise<AdminPayoutRequest[]> {
+  const [requestsRes, profilesRes] = await Promise.all([
+    supabase
+      .from("referral_payout_requests")
+      .select("*")
+      .order("requested_at", { ascending: false }),
+    supabase.from("profiles").select("id, full_name, email"),
+  ]);
+  if (requestsRes.error) throw requestsRes.error;
+  if (profilesRes.error) throw profilesRes.error;
+
+  const profiles = profilesRes.data ?? [];
+  return (requestsRes.data ?? []).map((request) => {
+    const profile = profiles.find((p) => p.id === request.user_id);
+    return {
+      ...request,
+      requester: profile ? { fullName: profile.full_name, email: profile.email } : null,
+    };
+  });
+}
+
+export function useAdminPayoutRequests(enabled: boolean) {
+  return useQuery({
+    queryKey: adminPayoutRequestsQueryKey,
+    queryFn: fetchAdminPayoutRequests,
+    enabled,
+  });
+}
+
+export function useSetPayoutStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "paid" | "rejected" }) => {
+      const { data: auth } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from("referral_payout_requests")
+        .update({
+          status,
+          processed_at: new Date().toISOString(),
+          processed_by: auth.user?.id ?? null,
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminPayoutRequestsQueryKey });
+    },
+  });
 }

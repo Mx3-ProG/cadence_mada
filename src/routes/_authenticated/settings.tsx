@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, ExternalLink, Loader2, Lock, Sparkles, Star } from "lucide-react";
 import { WeeklyHistory } from "@/components/agenda/weekly-history";
 import { AccountSettings } from "@/components/agenda/account-settings";
+import { ReferralSection } from "@/components/agenda/referral-section";
+import { SubscriptionSection } from "@/components/agenda/subscription-section";
 
 const DOC_LINKS = [
   {
@@ -188,6 +190,12 @@ function SettingsPage() {
           </p>
         </header>
 
+        <Reveal>
+          <div className="mt-6">
+            <SubscriptionSection />
+          </div>
+        </Reveal>
+
         {!isPro && (
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-start gap-2 text-sm">
@@ -359,6 +367,12 @@ function SettingsPage() {
         <Reveal delay={0.05}>
           <div className="mt-6">
             <WeeklyHistory />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <div className="mt-6">
+            <ReferralSection />
           </div>
         </Reveal>
 

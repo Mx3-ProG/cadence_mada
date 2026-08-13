@@ -212,6 +212,7 @@ export type Database = {
         Row: {
           avatar_url: string | null;
           business_name: string | null;
+          cancel_at_period_end: boolean;
           created_at: string;
           email: string | null;
           full_name: string | null;
@@ -223,6 +224,8 @@ export type Database = {
           invite_message: string | null;
           plan: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at: string | null;
+          referral_code: string;
+          referred_by: string | null;
           review_prompt_enabled: boolean;
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
@@ -232,6 +235,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null;
           business_name?: string | null;
+          cancel_at_period_end?: boolean;
           created_at?: string;
           email?: string | null;
           full_name?: string | null;
@@ -243,6 +247,8 @@ export type Database = {
           invite_message?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;
+          referral_code?: string;
+          referred_by?: string | null;
           review_prompt_enabled?: boolean;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
@@ -252,6 +258,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null;
           business_name?: string | null;
+          cancel_at_period_end?: boolean;
           created_at?: string;
           email?: string | null;
           full_name?: string | null;
@@ -263,11 +270,81 @@ export type Database = {
           invite_message?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;
+          referral_code?: string;
+          referred_by?: string | null;
           review_prompt_enabled?: boolean;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
           subscription_status?: string | null;
           updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey";
+            columns: ["referred_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      referral_commissions: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          id: string;
+          referred_id: string;
+          referrer_id: string;
+          stripe_invoice_id: string;
+        };
+        Insert: {
+          amount_cents?: number;
+          created_at?: string;
+          id?: string;
+          referred_id: string;
+          referrer_id: string;
+          stripe_invoice_id: string;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          id?: string;
+          referred_id?: string;
+          referrer_id?: string;
+          stripe_invoice_id?: string;
+        };
+        Relationships: [];
+      };
+      referral_payout_requests: {
+        Row: {
+          admin_note: string | null;
+          amount_cents: number;
+          id: string;
+          processed_at: string | null;
+          processed_by: string | null;
+          requested_at: string;
+          status: string;
+          user_id: string;
+        };
+        Insert: {
+          admin_note?: string | null;
+          amount_cents: number;
+          id?: string;
+          processed_at?: string | null;
+          processed_by?: string | null;
+          requested_at?: string;
+          status?: string;
+          user_id: string;
+        };
+        Update: {
+          admin_note?: string | null;
+          amount_cents?: number;
+          id?: string;
+          processed_at?: string | null;
+          processed_by?: string | null;
+          requested_at?: string;
+          status?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -349,6 +426,10 @@ export type Database = {
         Args: { _user_id: string };
         Returns: Database["public"]["Enums"]["plan_tier"];
       };
+      claim_referral: {
+        Args: { _code: string; _user_id: string };
+        Returns: boolean;
+      };
       consume_login_challenge: {
         Args: { _challenge_id: string; _code_hash: string };
         Returns: { email: string; user_id: string }[];
@@ -377,16 +458,42 @@ export type Database = {
           title: string;
         }[];
       };
+      get_my_referrals: {
+        Args: never;
+        Returns: {
+          appointments_this_month: number;
+          created_at: string;
+          display_name: string;
+          id: string;
+          plan: Database["public"]["Enums"]["plan_tier"];
+        }[];
+      };
       get_plan_usage: {
         Args: never;
         Returns: {
           appointments_this_month: number;
+          cancel_at_period_end: boolean;
           contacts_count: number;
           is_admin: boolean;
           plan: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at: string;
           subscription_status: string;
         }[];
+      };
+      get_referral_summary: {
+        Args: never;
+        Returns: {
+          balance_cents: number;
+          has_pending_payout: boolean;
+          lifetime_earned_cents: number;
+          pro_referrals: number;
+          referral_code: string;
+          total_referrals: number;
+        }[];
+      };
+      referral_balance_cents: {
+        Args: { _user_id: string };
+        Returns: number;
       };
       has_role: {
         Args: {

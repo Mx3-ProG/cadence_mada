@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
+import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,8 +17,13 @@ import {
   startPasswordLoginChallenge,
 } from "@/lib/two-factor.functions";
 
+const authSearchSchema = z.object({
+  ref: z.string().trim().min(1).max(20).optional(),
+});
+
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: authSearchSchema,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getSession();
     if (!data.session) return;
@@ -50,10 +56,15 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { ref } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+
+  useEffect(() => {
+    if (ref) sessionStorage.setItem("cadence:referral-code", ref);
+  }, [ref]);
 
   const signIn = async () => {
     setLoading(true);

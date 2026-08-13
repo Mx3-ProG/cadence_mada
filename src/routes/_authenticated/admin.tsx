@@ -2,11 +2,13 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarDays, Search, ShieldAlert, ShieldCheck, Users } from "lucide-react";
+import { CalendarDays, Gift, Search, ShieldAlert, ShieldCheck, Users } from "lucide-react";
+import { toast } from "sonner";
 import { AppHeader } from "@/components/agenda/app-header";
 import { Reveal } from "@/components/reveal";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -14,7 +16,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { statusLabel } from "@/lib/agenda";
-import { useAdminOverview, useIsAdmin, type AdminUserRow } from "@/lib/admin";
+import {
+  useAdminOverview,
+  useAdminPayoutRequests,
+  useIsAdmin,
+  useSetPayoutStatus,
+  type AdminUserRow,
+} from "@/lib/admin";
+import { formatCents } from "@/lib/referral";
 import { AdminSkeleton } from "@/components/loading/page-skeletons";
 import { CalendarLoader } from "@/components/loading/calendar-loader";
 
@@ -170,6 +179,115 @@ function UserPanel({ row }: { row: AdminUserRow }) {
   );
 }
 
+function PayoutRequests({ isAdmin }: { isAdmin: boolean }) {
+  const { data: requests, isPending } = useAdminPayoutRequests(isAdmin);
+  const setStatus = useSetPayoutStatus();
+
+  const pending = requests?.filter((r) => r.status === "pending") ?? [];
+  const paidTotal = (requests ?? [])
+    .filter((r) => r.status === "paid")
+    .reduce((sum, r) => sum + r.amount_cents, 0);
+
+  const act = (id: string, status: "paid" | "rejected") => {
+    setStatus.mutate(
+      { id, status },
+      {
+        onSuccess: () =>
+          toast.success(status === "paid" ? "Marqué comme payé." : "Demande rejetée."),
+        onError: () => toast.error("Action impossible."),
+      },
+    );
+  };
+
+  return (
+    <Reveal>
+      <div className="glass-panel rounded-2xl p-5">
+        <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+          <Gift className="h-4 w-4 text-primary" /> Demandes de retrait — parrainage
+        </h2>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <Stat label="En attente" value={pending.length} />
+          <Stat label="Total déjà versé" value={formatCents(paidTotal)} />
+        </div>
+
+        <div className="mt-4">
+          {isPending ? (
+            <p className="text-sm text-muted-foreground">Chargement…</p>
+          ) : !requests || requests.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Aucune demande de retrait.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-border/60">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2 text-left">Parrain</th>
+                    <th className="px-3 py-2 text-left">Montant</th>
+                    <th className="px-3 py-2 text-left">Demandé le</th>
+                    <th className="px-3 py-2 text-left">Statut</th>
+                    <th className="px-3 py-2 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {requests.map((r) => (
+                    <tr key={r.id} className="border-t border-border/50">
+                      <td className="px-3 py-2">
+                        <span className="block">{r.requester?.fullName || "—"}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {r.requester?.email ?? r.user_id}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 font-medium">{formatCents(r.amount_cents)}</td>
+                      <td className="px-3 py-2 text-muted-foreground">{fmt(r.requested_at)}</td>
+                      <td className="px-3 py-2">
+                        <Badge
+                          variant={
+                            r.status === "paid"
+                              ? "default"
+                              : r.status === "rejected"
+                                ? "destructive"
+                                : "outline"
+                          }
+                        >
+                          {r.status === "paid"
+                            ? "Payé"
+                            : r.status === "rejected"
+                              ? "Rejeté"
+                              : "En attente"}
+                        </Badge>
+                      </td>
+                      <td className="px-3 py-2">
+                        {r.status === "pending" ? (
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={() => act(r.id, "paid")}>
+                              Valider
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => act(r.id, "rejected")}
+                            >
+                              Rejeter
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            {fmt(r.processed_at)}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
 function AdminPage() {
   const { data: isAdmin, isPending: checking } = useIsAdmin();
   const { data, isPending, error } = useAdminOverview(Boolean(isAdmin));
@@ -290,6 +408,8 @@ function AdminPage() {
                 </Accordion>
               )}
             </Reveal>
+
+            <PayoutRequests isAdmin={Boolean(isAdmin)} />
           </>
         )}
       </main>

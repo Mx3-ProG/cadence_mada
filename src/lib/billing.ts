@@ -1,7 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { createBillingPortalSession, createCheckoutSession } from "@/lib/billing.functions";
+import {
+  cancelSubscription,
+  createBillingPortalSession,
+  createCheckoutSession,
+  reactivateSubscription,
+} from "@/lib/billing.functions";
 import { planUsageQueryKey } from "@/lib/plan";
 
 function stripeErrorMessage(error: unknown) {
@@ -41,5 +46,36 @@ export function useBillingPortal() {
       if (result.url) window.location.href = result.url;
     },
     onError: (error) => toast.error(stripeErrorMessage(error)),
+  });
+}
+
+/** Programme l'arrêt de l'abonnement Pro à la fin de la période déjà payée. */
+export function useCancelSubscription() {
+  const cancel = useServerFn(cancelSubscription);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (confirmText: string) => cancel({ data: { confirmText } }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
+    },
+    onError: (error) =>
+      toast.error(error instanceof Error ? error.message : "Résiliation impossible."),
+  });
+}
+
+/** Annule une résiliation programmée : l'abonnement Pro continue. */
+export function useReactivateSubscription() {
+  const reactivate = useServerFn(reactivateSubscription);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => reactivate(),
+    onSuccess: () => {
+      toast.success("Ton abonnement Pro continue normalement.");
+      void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
+    },
+    onError: (error) =>
+      toast.error(error instanceof Error ? error.message : "Réactivation impossible."),
   });
 }

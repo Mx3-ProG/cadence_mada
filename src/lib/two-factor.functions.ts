@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseUser } from "@/integrations/supabase/auth-middleware";
 import { buildLoginCodeEmail } from "../../supabase/emails/login-code";
 
-const CHALLENGE_DURATION_MS = 10 * 60 * 1000;
+const CHALLENGE_DURATION_MS = 30 * 60 * 1000;
 const INACTIVITY_DURATION_MS = 600 * 60 * 1000;
 
 const credentialsSchema = z.object({
@@ -13,7 +13,11 @@ const credentialsSchema = z.object({
 
 const challengeSchema = z.object({ challengeId: z.string().uuid() });
 const verifySchema = challengeSchema.extend({ code: z.string().regex(/^\d{6}$/) });
-const completeSchema = challengeSchema.extend({ completionToken: z.string().min(32).max(200) });
+const completeSchema = challengeSchema.extend({
+  completionToken: z.string().min(32).max(200),
+  accessToken: z.string().min(100).max(8192),
+  referralCode: z.string().trim().min(1).max(20).optional(),
+});
 
 async function hmac(value: string) {
   const { createHmac } = await import("node:crypto");
@@ -169,19 +173,25 @@ export const verifyLoginCode = createServerFn({ method: "POST" })
   });
 
 export const completeLoginChallenge = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseUser])
   .validator((input: unknown) => completeSchema.parse(input))
-  .handler(async ({ data, context }) => {
-    const sessionId =
-      typeof context.claims.session_id === "string" ? context.claims.session_id : null;
-    if (!sessionId) return { ok: false as const };
-
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // The OTP creates a brand-new Supabase session. Validate that exact token
+    // instead of relying on the global middleware to observe browser storage
+    // immediately after verifyOtp() returns.
+    const { data: tokenData, error: tokenError } = await supabaseAdmin.auth.getClaims(
+      data.accessToken,
+    );
+    const claims = tokenData?.claims;
+    const userId = typeof claims?.sub === "string" ? claims.sub : null;
+    const sessionId = typeof claims?.session_id === "string" ? claims.session_id : null;
+    if (tokenError || !userId || !sessionId) return { ok: false as const };
+
     const { data: challenge } = await supabaseAdmin
       .from("login_challenges")
       .select("id")
       .eq("id", data.challengeId)
-      .eq("user_id", context.userId)
+      .eq("user_id", userId)
       .eq("completion_hash", await hmac(data.completionToken))
       .not("consumed_at", "is", null)
       .is("completed_at", null)
@@ -191,7 +201,7 @@ export const completeLoginChallenge = createServerFn({ method: "POST" })
     const now = new Date().toISOString();
     const { error } = await supabaseAdmin.from("login_sessions").upsert({
       session_id: sessionId,
-      user_id: context.userId,
+      user_id: userId,
       verified_at: now,
       last_active_at: now,
     });
@@ -201,6 +211,16 @@ export const completeLoginChallenge = createServerFn({ method: "POST" })
       .from("login_challenges")
       .update({ completed_at: now, completion_hash: null })
       .eq("id", challenge.id);
+
+    if (data.referralCode) {
+      await supabaseAdmin
+        .rpc("claim_referral", { _user_id: userId, _code: data.referralCode })
+        .then(
+          () => undefined,
+          (error: unknown) => console.error("[referral] claim failed", error),
+        );
+    }
+
     return { ok: true as const };
   });
 

@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type { StripeSubscription } from "@/lib/billing.server";
+import type { StripeSubscription, StripeInvoice } from "@/lib/billing.server";
 
-type StripeWebhookEventObject = StripeSubscription & {
-  subscription?: string | null;
-  client_reference_id?: string | null;
-};
+type StripeWebhookEventObject = StripeSubscription &
+  StripeInvoice & {
+    subscription?: string | null;
+    client_reference_id?: string | null;
+  };
 
 /**
  * Webhook Stripe.
@@ -34,10 +35,15 @@ export const Route = createFileRoute("/api/public/stripe/webhook")({
           type: string;
           data: { object: StripeWebhookEventObject };
         };
-        const { applySubscriptionState } = await import("@/lib/billing.server");
+        const { applySubscriptionState, recordReferralCommission } =
+          await import("@/lib/billing.server");
 
         try {
           switch (event.type) {
+            case "invoice.payment_succeeded": {
+              await recordReferralCommission(event.data.object);
+              break;
+            }
             case "checkout.session.completed": {
               const session = event.data.object;
               if (session.subscription) {

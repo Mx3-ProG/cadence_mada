@@ -94,23 +94,27 @@ function VerificationPage() {
         return;
       }
 
-      const { error } = await supabase.auth.verifyOtp({
+      const { data: verifiedAuth, error } = await supabase.auth.verifyOtp({
         email: result.email,
         token_hash: result.tokenHash,
         type: "magiclink",
       });
-      if (error) throw error;
+      const accessToken = verifiedAuth.session?.access_token;
+      if (error || !accessToken) throw error ?? new Error("Session Supabase absente");
 
       const completion = await completeLoginChallenge({
         data: {
           challengeId: result.challengeId,
           completionToken: result.completionToken,
+          accessToken,
+          referralCode: sessionStorage.getItem("cadence:referral-code") ?? undefined,
         },
       });
       if (!completion.ok) throw new Error("Session non activée");
 
       sessionStorage.removeItem("cadence:login-challenge");
       sessionStorage.removeItem("cadence:login-email");
+      sessionStorage.removeItem("cadence:referral-code");
       toast.success("Connexion vérifiée.");
       navigate({ to: "/dashboard", replace: true });
     } catch {
@@ -211,7 +215,7 @@ function VerificationPage() {
             {resending ? "Envoi en cours…" : "Renvoyer le code"}
           </button>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
-            Le code expire après 10 minutes. Ne le communiquez à personne.
+            Le code expire après 30 minutes. Ne le communiquez à personne.
           </p>
         </div>
       </div>
