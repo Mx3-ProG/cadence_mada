@@ -5,22 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="x-apple-disable-message-reformatting" />
     <title>Invitation Cadence Mada</title>
-    <style>@media only screen and (max-width:620px){.email-shell{width:100%!important}.email-content{padding:32px 24px!important}.email-title{font-size:28px!important;line-height:34px!important}.email-button{display:block!important;text-align:center!important}}</style>
+    <style>
+      @media only screen and (max-width: 620px) {
+        .email-shell {
+          width: 100% !important;
+        }
+        .email-content {
+          padding: 32px 24px !important;
+        }
+        .email-title {
+          font-size: 28px !important;
+          line-height: 34px !important;
+        }
+        .email-button {
+          display: block !important;
+          text-align: center !important;
+        }
+      }
+    </style>
   </head>
-  <body style="margin:0;padding:0;background:#ffffff;color:#0a0f0d;font-family:Helvetica,Arial,sans-serif;">
-    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Votre invitation à rejoindre Cadence Mada vous attend.</div>
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td align="center">
-      <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" class="email-shell" style="width:600px;max-width:600px;"><tr><td class="email-content" style="padding:48px 32px 36px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 42px;"><tr><td style="padding-right:12px;"><img src="https://www.cadencemada.com/apple-touch-icon.png" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;border-radius:12px;" /></td><td style="font-size:22px;line-height:26px;font-weight:700;letter-spacing:-0.5px;">Cadence <span style="color:#0b7a5a;">Mada</span></td></tr></table>
-        <h1 class="email-title" style="margin:0 0 24px;font-size:36px;line-height:42px;letter-spacing:-1.2px;">Vous êtes invité(e)</h1>
-        <p style="margin:0 0 24px;font-size:18px;line-height:28px;">Bonjour,</p>
-        <div style="margin:0 0 30px;padding:20px 24px;border-left:4px solid #10b981;background:#f3fbf7;font-size:17px;line-height:26px;">Une invitation vous attend pour rejoindre Cadence Mada.</div>
-        <p style="margin:0 0 28px;font-size:16px;line-height:25px;color:#394943;">Acceptez-la pour créer votre compte et commencer à organiser vos rendez-vous.</p>
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 28px;"><tr><td style="border-radius:10px;background:#10b981;"><a class="email-button" href="{{ .ConfirmationURL }}" style="display:inline-block;padding:15px 24px;color:#06231b;text-decoration:none;font-size:16px;line-height:20px;font-weight:700;">Accepter l’invitation</a></td></tr></table>
-        <p style="margin:0 0 8px;font-size:13px;line-height:20px;color:#5a6b65;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :</p>
-        <p style="margin:0;font-size:13px;line-height:20px;word-break:break-all;"><a href="{{ .ConfirmationURL }}" style="color:#0b7a5a;">{{ .ConfirmationURL }}</a></p>
-        <div style="margin-top:40px;padding-top:20px;border-top:1px solid #e3e8e6;font-size:12px;line-height:18px;color:#5a6b65;">Si vous n’attendiez pas cette invitation, vous pouvez ignorer cet email.</div>
-      </td></tr></table>
-    </td></tr></table>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #0a0f0d;
+      font-family: Helvetica, Arial, sans-serif;
+    "
+  >
+    <div style="display: none; max-height: 0; overflow: hidden; opacity: 0">
+      Votre invitation à rejoindre Cadence Mada vous attend.
+    </div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            class="email-shell"
+            style="width: 600px; max-width: 600px"
+          >
+            <tr>
+              <td class="email-content" style="padding: 48px 32px 36px">
+                <table
+                  role="presentation"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                  style="margin: 0 0 42px"
+                >
+                  <tr>
+                    <td style="padding-right: 12px">
+                      <img
+                        src="https://www.cadencemada.com/apple-touch-icon.png"
+                        width="44"
+                        height="44"
+                        alt=""
+                        style="
+                          display: block;
+                          width: 44px;
+                          height: 44px;
+                          border: 0;
+                          border-radius: 12px;
+                        "
+                      />
+                    </td>
+                    <td
+                      style="
+                        font-size: 22px;
+                        line-height: 26px;
+                        font-weight: 700;
+                        letter-spacing: -0.5px;
+                      "
+                    >
+                      Cadence <span style="color: #0b7a5a">Mada</span>
+                    </td>
+                  </tr>
+                </table>
+                <h1
+                  class="email-title"
+                  style="
+                    margin: 0 0 24px;
+                    font-size: 36px;
+                    line-height: 42px;
+                    letter-spacing: -1.2px;
+                  "
+                >
+                  Vous êtes invité(e)
+                </h1>
+                <p style="margin: 0 0 24px; font-size: 18px; line-height: 28px">Bonjour,</p>
+                <div
+                  style="
+                    margin: 0 0 30px;
+                    padding: 20px 24px;
+                    border-left: 4px solid #10b981;
+                    background: #f3fbf7;
+                    font-size: 17px;
+                    line-height: 26px;
+                  "
+                >
+                  Une invitation vous attend pour rejoindre Cadence Mada.
+                </div>
+                <p style="margin: 0 0 28px; font-size: 16px; line-height: 25px; color: #394943">
+                  Acceptez-la pour créer votre compte et commencer à organiser vos rendez-vous.
+                </p>
+                <table
+                  role="presentation"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                  style="margin: 0 0 28px"
+                >
+                  <tr>
+                    <td style="border-radius: 10px; background: #10b981">
+                      <a
+                        class="email-button"
+                        href="{{ .ConfirmationURL }}"
+                        style="
+                          display: inline-block;
+                          padding: 15px 24px;
+                          color: #06231b;
+                          text-decoration: none;
+                          font-size: 16px;
+                          line-height: 20px;
+                          font-weight: 700;
+                        "
+                        >Accepter l’invitation</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin: 0 0 8px; font-size: 13px; line-height: 20px; color: #5a6b65">
+                  Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :
+                </p>
+                <p style="margin: 0; font-size: 13px; line-height: 20px; word-break: break-all">
+                  <a href="{{ .ConfirmationURL }}" style="color: #0b7a5a">{{ .ConfirmationURL }}</a>
+                </p>
+                <div
+                  style="
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e3e8e6;
+                    font-size: 12px;
+                    line-height: 18px;
+                    color: #5a6b65;
+                  "
+                >
+                  Si vous n’attendiez pas cette invitation, vous pouvez ignorer cet email.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

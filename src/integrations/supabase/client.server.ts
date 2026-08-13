@@ -58,6 +58,25 @@ function createSupabaseAdminClient() {
   });
 }
 
+/** Client Auth éphémère utilisé côté serveur pour valider un mot de passe. */
+export function createSupabasePasswordClient() {
+  const SUPABASE_URL = process.env["SUPABASE_URL"];
+  const SUPABASE_PUBLISHABLE_KEY = process.env["SUPABASE_PUBLISHABLE_KEY"];
+
+  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+    throw new Error("Configuration Supabase incomplète.");
+  }
+
+  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    global: { fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY) },
+    auth: {
+      storage: undefined,
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
+
 let _supabaseAdmin: ReturnType<typeof createSupabaseAdminClient> | undefined;
 
 // Server-side Supabase client with service role - bypasses RLS

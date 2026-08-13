@@ -18,6 +18,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DocumentationRouteImport } from './routes/documentation'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as TarifsRouteImport } from './routes/tarifs'
+import { Route as VerificationRouteImport } from './routes/verification'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -69,6 +70,11 @@ const TarifsRoute = TarifsRouteImport.update({
   path: '/tarifs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerificationRoute = VerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/tarifs': typeof TarifsRoute
+  '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/tarifs': typeof TarifsRoute
+  '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/tarifs': typeof TarifsRoute
+  '/verification': typeof VerificationRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/documentation'
     | '/mentions-legales'
     | '/tarifs'
+    | '/verification'
     | '/admin'
     | '/contacts'
     | '/dashboard'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/documentation'
     | '/mentions-legales'
     | '/tarifs'
+    | '/verification'
     | '/admin'
     | '/contacts'
     | '/dashboard'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/documentation'
     | '/mentions-legales'
     | '/tarifs'
+    | '/verification'
     | '/_authenticated/admin'
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
@@ -212,6 +224,7 @@ export interface RootRouteChildren {
   DocumentationRoute: typeof DocumentationRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   TarifsRoute: typeof TarifsRoute
+  VerificationRoute: typeof VerificationRoute
   InviteTokenRoute: typeof InviteTokenRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/tarifs'
       fullPath: '/tarifs'
       preLoaderRoute: typeof TarifsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verification': {
+      id: '/verification'
+      path: '/verification'
+      fullPath: '/verification'
+      preLoaderRoute: typeof VerificationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -353,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentationRoute: DocumentationRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   TarifsRoute: TarifsRoute,
+  VerificationRoute: VerificationRoute,
   InviteTokenRoute: InviteTokenRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }

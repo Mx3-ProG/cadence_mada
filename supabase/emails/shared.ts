@@ -33,15 +33,22 @@ export function formatDateRange(startsAt: string, endsAt: string) {
   return `${fmt.format(new Date(startsAt))} → ${end.format(new Date(endsAt))}`;
 }
 
-/** Enveloppe commune : logo texte "Cadence Mada", conteneur, footer. */
+/** Enveloppe commune compatible email : logo, conteneur, footer. */
 export function emailLayout(bodyHtml: string) {
   return `
-    <div style="font-family:Helvetica,Arial,sans-serif;background:#ffffff;padding:24px;color:${brand.ink}">
-      <p style="margin:0 0 20px;font-weight:700;font-size:18px;letter-spacing:-0.01em">
-        Cadence <span style="color:${brand.greenDark}">Mada</span>
-      </p>
+    <div style="font-family:Helvetica,Arial,sans-serif;background:#ffffff;padding:32px 24px;color:${brand.ink};max-width:600px;margin:0 auto">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 32px">
+        <tr>
+          <td style="padding-right:12px">
+            <img src="https://www.cadencemada.com/apple-touch-icon.png" width="44" height="44" alt="" style="display:block;width:44px;height:44px;border:0;border-radius:12px" />
+          </td>
+          <td style="font-weight:700;font-size:20px;letter-spacing:-0.01em">
+            Cadence <span style="color:${brand.greenDark}">Mada</span>
+          </td>
+        </tr>
+      </table>
       ${bodyHtml}
-      <p style="margin:32px 0 0;font-size:12px;color:${brand.muted}">
+      <p style="margin:40px 0 0;padding-top:20px;border-top:1px solid ${brand.border};font-size:12px;line-height:18px;color:${brand.muted}">
         Cet email a été envoyé automatiquement par Cadence Mada.
       </p>
     </div>`;

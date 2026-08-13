@@ -2,14 +2,14 @@
 
 Ces six fichiers correspondent aux modèles de la page **Authentication → Email Templates** de Supabase :
 
-| Modèle Supabase | Fichier |
-| --- | --- |
-| Confirm sign up | `confirmation.html` |
-| Invite user | `invite.html` |
-| Magic link or OTP | `magic-link.html` |
-| Change email address | `email-change.html` |
-| Reset password | `recovery.html` |
-| Reauthentication | `reauthentication.html` |
+| Modèle Supabase      | Fichier                 |
+| -------------------- | ----------------------- |
+| Confirm sign up      | `confirmation.html`     |
+| Invite user          | `invite.html`           |
+| Magic link or OTP    | `magic-link.html`       |
+| Change email address | `email-change.html`     |
+| Reset password       | `recovery.html`         |
+| Reauthentication     | `reauthentication.html` |
 
 `supabase/config.toml` charge automatiquement ces fichiers pour le développement local. Après modification, redémarrer la stack locale avec `supabase stop` puis `supabase start`.
 

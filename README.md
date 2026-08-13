@@ -55,8 +55,9 @@ l'environnement d'exécution) :
 | Variable                                                        | Description                                                                                                                       |
 | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `SUPABASE_SERVICE_ROLE_KEY`                                     | Client admin, contourne les RLS (facturation, notifications d'invitation)                                                         |
+| `TWO_FACTOR_PEPPER`                                             | Secret HMAC des codes de connexion, généré avec `openssl rand -hex 32`                                                            |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | Facturation Stripe                                                                                                                |
-| `RESEND_API_KEY`                                                | Clé API [Resend](https://resend.com/api-keys) pour l'envoi des emails                                                             |
+| `RESEND_API_KEY`                                                | Clé API [Resend](https://resend.com/api-keys) pour les codes de connexion et autres emails                                        |
 | `RESEND_FROM`                                                   | Adresse d'expédition, ex. `Cadence Mada <rdv@cadencemada.com>` — le domaine doit être vérifié (DKIM/SPF) dans le dashboard Resend |
 
 > Pour que le bouton de connexion Google fonctionne, activer le provider **Google** dans

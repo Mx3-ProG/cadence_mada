@@ -23,3 +23,6 @@ content_path = "./supabase/templates/recovery.html"
 [auth.email.template.reauthentication]
 subject = "{{ .Token }} est votre code de vérification Cadence Mada"
 content_path = "./supabase/templates/reauthentication.html"
+
+[auth.sessions]
+inactivity_timeout = "10h"

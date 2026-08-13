@@ -86,7 +86,7 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
     const result = await sendEmail({ to: guestEmail, subject, html });
 
     if (!result.sent) {
-      return result;
+      return { ...result, link };
     }
 
     await supabase

@@ -142,6 +142,72 @@ export type Database = {
         };
         Relationships: [];
       };
+      login_challenges: {
+        Row: {
+          attempts: number;
+          code_hash: string;
+          completed_at: string | null;
+          completion_hash: string | null;
+          consumed_at: string | null;
+          created_at: string;
+          email: string;
+          expires_at: string;
+          id: string;
+          last_sent_at: string;
+          user_id: string;
+        };
+        Insert: {
+          attempts?: number;
+          code_hash: string;
+          completed_at?: string | null;
+          completion_hash?: string | null;
+          consumed_at?: string | null;
+          created_at?: string;
+          email: string;
+          expires_at: string;
+          id?: string;
+          last_sent_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempts?: number;
+          code_hash?: string;
+          completed_at?: string | null;
+          completion_hash?: string | null;
+          consumed_at?: string | null;
+          created_at?: string;
+          email?: string;
+          expires_at?: string;
+          id?: string;
+          last_sent_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      login_sessions: {
+        Row: {
+          created_at: string;
+          last_active_at: string;
+          session_id: string;
+          user_id: string;
+          verified_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          last_active_at?: string;
+          session_id: string;
+          user_id: string;
+          verified_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          last_active_at?: string;
+          session_id?: string;
+          user_id?: string;
+          verified_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -283,6 +349,10 @@ export type Database = {
         Args: { _user_id: string };
         Returns: Database["public"]["Enums"]["plan_tier"];
       };
+      consume_login_challenge: {
+        Args: { _challenge_id: string; _code_hash: string };
+        Returns: { email: string; user_id: string }[];
+      };
       delete_my_account: { Args: never; Returns: boolean };
       get_invite: {
         Args: { _token: string };
@@ -325,6 +395,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      has_active_login_session: { Args: never; Returns: boolean };
       rebuild_weekly_stats: {
         Args: never;
         Returns: {

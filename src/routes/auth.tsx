@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,9 +10,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
 import { BrandMark } from "@/components/brand-logo";
+import {
+  getLoginSessionState,
+  startAuthenticatedLoginChallenge,
+  startPasswordLoginChallenge,
+} from "@/lib/two-factor.functions";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return;
+
+    const state = await getLoginSessionState().catch(() => ({ active: false as const }));
+    if (state.active) throw redirect({ to: "/dashboard" });
+
+    await supabase.auth.signOut({ scope: "local" });
+  },
   pendingComponent: SimpleSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,
@@ -43,13 +57,38 @@ function AuthPage() {
 
   const signIn = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    try {
+      const result = await startPasswordLoginChallenge({ data: { email: email.trim(), password } });
+      if (!result.ok) {
+        const message =
+          result.reason === "INVALID_CREDENTIALS"
+            ? "Email ou mot de passe incorrect."
+            : result.reason === "RATE_LIMITED"
+              ? "Trop de codes demandés. Réessaie dans quelques minutes."
+              : "L’email de vérification n’a pas pu être envoyé.";
+        toast.error(message);
+        return;
+      }
+      sessionStorage.setItem("cadence:login-challenge", result.challengeId);
+      sessionStorage.setItem("cadence:login-email", result.maskedEmail);
+      navigate({ to: "/verification" });
+    } catch {
+      toast.error("Connexion impossible pour le moment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startChallengeForCurrentSession = async () => {
+    const result = await startAuthenticatedLoginChallenge();
+    if (!result.ok) {
+      toast.error("L’email de vérification n’a pas pu être envoyé.");
       return;
     }
-    navigate({ to: "/dashboard" });
+    sessionStorage.setItem("cadence:login-challenge", result.challengeId);
+    sessionStorage.setItem("cadence:login-email", result.maskedEmail);
+    await supabase.auth.signOut({ scope: "local" });
+    navigate({ to: "/verification" });
   };
 
   const signUp = async () => {
@@ -71,13 +110,13 @@ function AuthPage() {
       toast.success("Compte créé — confirme ton adresse email pour te connecter.");
       return;
     }
-    navigate({ to: "/dashboard" });
+    await startChallengeForCurrentSession();
   };
 
   const google = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo: `${window.location.origin}/verification` },
     });
     if (error) {
       toast.error("Connexion Google impossible pour le moment.");
