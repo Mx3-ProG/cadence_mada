@@ -23,6 +23,7 @@ export type Database = {
           prep_notes: string | null;
           responded_at: string | null;
           response_message: string | null;
+          source: string;
           starts_at: string;
           status: Database["public"]["Enums"]["appointment_status"];
           title: string;
@@ -42,6 +43,7 @@ export type Database = {
           prep_notes?: string | null;
           responded_at?: string | null;
           response_message?: string | null;
+          source?: string;
           starts_at: string;
           status?: Database["public"]["Enums"]["appointment_status"];
           title: string;
@@ -61,6 +63,7 @@ export type Database = {
           prep_notes?: string | null;
           responded_at?: string | null;
           response_message?: string | null;
+          source?: string;
           starts_at?: string;
           status?: Database["public"]["Enums"]["appointment_status"];
           title?: string;
@@ -75,6 +78,69 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      booking_hours: {
+        Row: {
+          created_at: string;
+          end_time: string;
+          id: string;
+          owner_id: string;
+          start_time: string;
+          weekday: number;
+        };
+        Insert: {
+          created_at?: string;
+          end_time: string;
+          id?: string;
+          owner_id: string;
+          start_time: string;
+          weekday: number;
+        };
+        Update: {
+          created_at?: string;
+          end_time?: string;
+          id?: string;
+          owner_id?: string;
+          start_time?: string;
+          weekday?: number;
+        };
+        Relationships: [];
+      };
+      booking_settings: {
+        Row: {
+          booking_window_days: number;
+          created_at: string;
+          enabled: boolean;
+          min_notice_hours: number;
+          owner_id: string;
+          slot_duration_minutes: number;
+          slug: string | null;
+          timezone: string;
+          updated_at: string;
+        };
+        Insert: {
+          booking_window_days?: number;
+          created_at?: string;
+          enabled?: boolean;
+          min_notice_hours?: number;
+          owner_id: string;
+          slot_duration_minutes?: number;
+          slug?: string | null;
+          timezone?: string;
+          updated_at?: string;
+        };
+        Update: {
+          booking_window_days?: number;
+          created_at?: string;
+          enabled?: boolean;
+          min_notice_hours?: number;
+          owner_id?: string;
+          slot_duration_minutes?: number;
+          slug?: string | null;
+          timezone?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       contacts: {
         Row: {
@@ -435,6 +501,24 @@ export type Database = {
         Returns: { email: string; user_id: string }[];
       };
       delete_my_account: { Args: never; Returns: boolean };
+      get_booked_intervals: {
+        Args: { _from: string; _slug: string; _to: string };
+        Returns: { ends_at: string; starts_at: string }[];
+      };
+      get_booking_page: {
+        Args: { _slug: string };
+        Returns: {
+          booking_window_days: number;
+          business_name: string;
+          enabled: boolean;
+          host_name: string;
+          hours: Json;
+          min_notice_hours: number;
+          owner_id: string;
+          slot_duration_minutes: number;
+          timezone: string;
+        }[];
+      };
       get_invite: {
         Args: { _token: string };
         Returns: {

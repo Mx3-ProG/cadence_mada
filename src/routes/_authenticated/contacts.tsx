@@ -1,17 +1,21 @@
 import { ContactsSkeleton } from "@/components/loading/page-skeletons";
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
   CalendarPlus,
   Cake,
+  Check,
+  Copy,
   Globe,
   Heart,
+  Link2,
   Mail,
   MapPin,
   Pencil,
   Phone,
+  Settings,
   Trash2,
   UserPlus,
   Users,
@@ -23,7 +27,7 @@ import { AppHeader } from "@/components/agenda/app-header";
 import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { Reveal } from "@/components/reveal";
-import type { Contact } from "@/lib/agenda";
+import { bookingUrl, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
 import {
   FREE_CONTACT_LIMIT,
@@ -64,6 +68,111 @@ export const Route = createFileRoute("/_authenticated/contacts")({
   }),
   component: ContactsPage,
 });
+
+function BookingLinkCard() {
+  const queryClient = useQueryClient();
+  const [copied, setCopied] = useState(false);
+  const [activating, setActivating] = useState(false);
+
+  const settingsQuery = useQuery({
+    queryKey: ["booking-settings"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes.user?.id;
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from("booking_settings")
+        .select("slug, enabled")
+        .eq("owner_id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const activate = async () => {
+    setActivating(true);
+    const { data: userRes } = await supabase.auth.getUser();
+    const userId = userRes.user?.id;
+    if (!userId) {
+      setActivating(false);
+      return;
+    }
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", userId)
+      .maybeSingle();
+    const seed = profile?.full_name || profile?.email?.split("@")[0] || "agenda";
+    const slug = generateBookingSlug(seed);
+
+    const { error } = await supabase
+      .from("booking_settings")
+      .upsert({ owner_id: userId, slug, enabled: true }, { onConflict: "owner_id" });
+    setActivating(false);
+    if (error) {
+      toast.error("Impossible d'activer le lien, réessaie.");
+      return;
+    }
+    toast.success("Lien de réservation activé");
+    void queryClient.invalidateQueries({ queryKey: ["booking-settings"] });
+  };
+
+  const copyLink = async (slug: string) => {
+    await navigator.clipboard.writeText(bookingUrl(slug));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const settings = settingsQuery.data;
+
+  return (
+    <div className="glass-panel mt-6 rounded-2xl p-5">
+      <div className="flex items-center gap-2">
+        <Link2 className="h-4 w-4 text-primary" />
+        <h2 className="font-display text-base font-bold">Lien de réservation</h2>
+      </div>
+
+      {!settingsQuery.isLoading && !settings?.enabled && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Partage un lien public pour que tes contacts réservent eux-mêmes un créneau libre dans
+            ton agenda.
+          </p>
+          <Button size="sm" disabled={activating} onClick={activate} className="shrink-0 gap-2">
+            <Link2 className="h-4 w-4" />
+            Activer mon lien
+          </Button>
+        </div>
+      )}
+
+      {settings?.enabled && settings.slug && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <code className="truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
+            {bookingUrl(settings.slug)}
+          </code>
+          <div className="flex shrink-0 gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              className="gap-2"
+              onClick={() => copyLink(settings.slug!)}
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copié" : "Copier"}
+            </Button>
+            <Button asChild size="sm" variant="ghost" className="gap-2">
+              <Link to="/settings">
+                <Settings className="h-4 w-4" />
+                Horaires
+              </Link>
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ContactsPage() {
   const queryClient = useQueryClient();
@@ -135,6 +244,7 @@ function ContactsPage() {
         </div>
 
         <PlanBanner usage={planQuery.data} />
+        <BookingLinkCard />
 
         {contacts.length === 0 ? (
           <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">

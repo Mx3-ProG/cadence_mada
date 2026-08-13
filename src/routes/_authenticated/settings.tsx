@@ -6,6 +6,7 @@ import { WeeklyHistory } from "@/components/agenda/weekly-history";
 import { AccountSettings } from "@/components/agenda/account-settings";
 import { ReferralSection } from "@/components/agenda/referral-section";
 import { SubscriptionSection } from "@/components/agenda/subscription-section";
+import { BookingSettingsSection } from "@/components/agenda/booking-settings-section";
 
 const DOC_LINKS = [
   {
@@ -336,6 +337,12 @@ function SettingsPage() {
               )}
             </div>
           </section>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <div className="mt-6">
+            <BookingSettingsSection />
+          </div>
         </Reveal>
 
         <Reveal delay={0.05}>

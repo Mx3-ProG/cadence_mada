@@ -6,12 +6,6 @@ import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  // Keep TanStack's middleware primitives outside the SSR bundle. Bundling
-  // them creates a circular chunk on Vercel where createCsrfMiddleware can be
-  // read before it is initialized during a cold start.
-  ssr: {
-    external: ["@tanstack/start-client-core"],
-  },
   plugins: [
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),

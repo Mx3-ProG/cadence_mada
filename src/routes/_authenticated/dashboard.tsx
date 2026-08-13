@@ -7,18 +7,22 @@ import { addDays, format, isSameDay, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   CalendarPlus,
+  Check,
   ChevronLeft,
   ChevronRight,
   Copy,
+  Link2,
   Mail,
   MapPin,
   Pencil,
   StickyNote,
   Trash2,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { sendInviteEmail } from "@/lib/invites.functions";
+import { notifyBookingDecision } from "@/lib/booking.functions";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/agenda/app-header";
 import { StatusBadge } from "@/components/agenda/status-badge";
@@ -200,6 +204,29 @@ function Dashboard() {
     toast.error("L'envoi a échoué, réessaie.");
   };
 
+  const decide = async (appointment: Appointment, accept: boolean) => {
+    const { error } = await supabase
+      .from("appointments")
+      .update({
+        status: accept ? "accepted" : "declined",
+        responded_at: new Date().toISOString(),
+      })
+      .eq("id", appointment.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(accept ? "Rendez-vous accepté" : "Demande refusée");
+    refresh();
+    if (appointment.source === "public_booking") {
+      notifyBookingDecision({
+        data: { appointmentId: appointment.id, origin: window.location.origin },
+      }).catch(() => {
+        // Le visiteur peut ne pas être notifié tout de suite, ce n'est pas bloquant.
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <AppHeader />
@@ -314,7 +341,14 @@ function Dashboard() {
                                 </p>
                               )}
                             </div>
-                            <StatusBadge status={a.status} />
+                            <div className="flex shrink-0 flex-col items-end gap-1">
+                              <StatusBadge status={a.status} />
+                              {a.source === "public_booking" && (
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                                  <Link2 className="h-2.5 w-2.5" /> Demande reçue
+                                </span>
+                              )}
+                            </div>
                           </div>
 
                           {a.location && (
@@ -328,6 +362,26 @@ function Dashboard() {
                               <StickyNote className="mt-0.5 h-3 w-3 shrink-0" />
                               <span className="line-clamp-2">{a.prep_notes}</span>
                             </p>
+                          )}
+
+                          {a.status === "pending" && (
+                            <div className="mt-3 flex gap-2">
+                              <Button
+                                size="sm"
+                                className="h-7 flex-1 gap-1 px-2 text-xs"
+                                onClick={() => decide(a, true)}
+                              >
+                                <Check className="h-3 w-3" /> Accepter
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-7 flex-1 gap-1 px-2 text-xs"
+                                onClick={() => decide(a, false)}
+                              >
+                                <X className="h-3 w-3" /> Refuser
+                              </Button>
+                            </div>
                           )}
 
                           <div className="mt-3 flex flex-wrap items-center gap-1">

@@ -24,6 +24,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 
@@ -101,6 +102,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const BookSlugRoute = BookSlugRouteImport.update({
+  id: '/book/$slug',
+  path: '/book/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteTokenRoute = InviteTokenRouteImport.update({
   id: '/invite/$token',
   path: '/invite/$token',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/dashboard'
     | '/settings'
+    | '/book/$slug'
     | '/invite/$token'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/dashboard'
     | '/settings'
+    | '/book/$slug'
     | '/invite/$token'
     | '/api/public/stripe/webhook'
   id:
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
+    | '/book/$slug'
     | '/invite/$token'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   TarifsRoute: typeof TarifsRoute
   VerificationRoute: typeof VerificationRoute
+  BookSlugRoute: typeof BookSlugRoute
   InviteTokenRoute: typeof InviteTokenRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
@@ -349,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/book/$slug': {
+      id: '/book/$slug'
+      path: '/book/$slug'
+      fullPath: '/book/$slug'
+      preLoaderRoute: typeof BookSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/$token': {
       id: '/invite/$token'
       path: '/invite/$token'
@@ -395,6 +415,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   TarifsRoute: TarifsRoute,
   VerificationRoute: VerificationRoute,
+  BookSlugRoute: BookSlugRoute,
   InviteTokenRoute: InviteTokenRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
