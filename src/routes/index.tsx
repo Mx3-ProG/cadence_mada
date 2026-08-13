@@ -83,12 +83,12 @@ function Landing() {
         <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 sm:flex sm:justify-between sm:px-6">
           <BrandLogo />
           <div className="flex shrink-0 items-center gap-2">
-            <a
-              href="#pricing"
+            <Link
+              to="/tarifs"
               className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline"
             >
               Tarifs
-            </a>
+            </Link>
             <ThemeToggle />
             <Button asChild size="sm">
               <Link to="/auth">Commencer</Link>

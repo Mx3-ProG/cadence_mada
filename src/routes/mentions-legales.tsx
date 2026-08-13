@@ -31,15 +31,17 @@ function MentionsLegales() {
         <h2>Éditeur du site</h2>
         <p>
           Le service <strong>Cadence</strong> (ci-après « le Service ») est édité par l'exploitant
-          du site. Les coordonnées complètes de l'éditeur (dénomination sociale, forme juridique,
-          capital social, numéro RCS et numéro de TVA intracommunautaire) doivent être renseignées
-          ici avant toute mise en ligne publique.
+          du site Wayne-Web. Les coordonnées complètes de l'éditeur (dénomination sociale, forme
+          juridique, capital social, numéro RCS et numéro de TVA intracommunautaire) doivent être
+          renseignées ici avant toute mise en ligne publique.
         </p>
         <ul>
-          <li>Nom / raison sociale : à compléter</li>
-          <li>Adresse du siège : à compléter</li>
-          <li>Email de contact : à compléter</li>
-          <li>Directeur de la publication : à compléter</li>
+          <li>Nom / raison sociale : Wayne-Web</li>
+          <li>
+            Adresse du siège : 3 Allée du Docteur Lejzer Ludwik Zamenhof, 31100 Toulouse, France
+          </li>
+          <li>Email de contact : contact@wayne-web.com</li>
+          <li>Directeur de la publication : Wayne-Web</li>
         </ul>
       </section>
 

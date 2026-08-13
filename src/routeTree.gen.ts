@@ -17,6 +17,7 @@ import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DocumentationRouteImport } from './routes/documentation'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as TarifsRouteImport } from './routes/tarifs'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -63,6 +64,11 @@ const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   path: '/mentions-legales',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TarifsRoute = TarifsRouteImport.update({
+  id: '/tarifs',
+  path: '/tarifs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/tarifs': typeof TarifsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/tarifs': typeof TarifsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/tarifs': typeof TarifsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/tarifs'
     | '/admin'
     | '/contacts'
     | '/dashboard'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/tarifs'
     | '/admin'
     | '/contacts'
     | '/dashboard'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/tarifs'
     | '/_authenticated/admin'
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DocumentationRoute: typeof DocumentationRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  TarifsRoute: typeof TarifsRoute
   InviteTokenRoute: typeof InviteTokenRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/mentions-legales'
       fullPath: '/mentions-legales'
       preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tarifs': {
+      id: '/tarifs'
+      path: '/tarifs'
+      fullPath: '/tarifs'
+      preLoaderRoute: typeof TarifsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -332,6 +352,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DocumentationRoute: DocumentationRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  TarifsRoute: TarifsRoute,
   InviteTokenRoute: InviteTokenRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
