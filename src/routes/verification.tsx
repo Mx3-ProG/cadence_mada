@@ -95,7 +95,6 @@ function VerificationPage() {
       }
 
       const { data: verifiedAuth, error } = await supabase.auth.verifyOtp({
-        email: result.email,
         token_hash: result.tokenHash,
         type: "magiclink",
       });
