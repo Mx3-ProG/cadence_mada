@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { useIsAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand-logo";
 
 const nav = [
   { to: "/dashboard", label: "Semaine", icon: CalendarDays },
@@ -37,10 +38,7 @@ export function AppHeader() {
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link to="/dashboard" className="flex min-w-0 items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <CalendarDays className="h-4 w-4" />
-            </span>
-            <span className="truncate font-display text-lg font-bold tracking-tight">Cadence</span>
+            <BrandLogo />
           </Link>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">

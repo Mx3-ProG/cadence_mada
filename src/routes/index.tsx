@@ -18,6 +18,7 @@ import { Pricing } from "@/components/pricing";
 import { LandingSkeleton } from "@/components/loading/page-skeletons";
 import { legalLinks } from "@/components/legal/legal-page";
 import { openCookieSettings } from "@/components/legal/cookie-consent";
+import { BrandLogo } from "@/components/brand-logo";
 
 export const Route = createFileRoute("/")({
   pendingComponent: LandingSkeleton,
@@ -80,12 +81,7 @@ function Landing() {
     <div className="min-h-screen overflow-x-hidden">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 sm:flex sm:justify-between sm:px-6">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <CalendarDays className="h-4 w-4" />
-            </span>
-            <span className="truncate font-display text-lg font-bold tracking-tight">Cadence</span>
-          </div>
+          <BrandLogo />
           <div className="flex shrink-0 items-center gap-2">
             <a
               href="#pricing"

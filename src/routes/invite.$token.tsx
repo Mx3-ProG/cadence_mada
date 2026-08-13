@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarDays, Check, Clock, MapPin, X } from "lucide-react";
+import { Check, Clock, MapPin, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyInviteResponse } from "@/lib/invites.functions";
@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { StatusBadge } from "@/components/agenda/status-badge";
 import { GoogleReviewCard } from "@/components/agenda/google-review-card";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
+import { BrandMark } from "@/components/brand-logo";
 
 export const Route = createFileRoute("/invite/$token")({
   pendingComponent: SimpleSkeleton,
@@ -80,9 +81,7 @@ function InvitePage() {
 
       <div className="w-full max-w-lg">
         <div className="mb-8 flex items-center justify-center gap-2.5">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground">
-            <CalendarDays className="h-5 w-5" />
-          </span>
+          <BrandMark className="h-10 w-10" />
           <span className="font-display text-2xl font-bold tracking-tight">Cadence</span>
         </div>
 

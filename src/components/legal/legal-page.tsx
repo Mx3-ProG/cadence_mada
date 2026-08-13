@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BrandLogo } from "@/components/brand-logo";
 
 export const legalLinks = [
   { to: "/mentions-legales", label: "Mentions légales" },
@@ -25,10 +26,7 @@ export function LegalPage({
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <CalendarDays className="h-4 w-4" />
-            </span>
-            <span className="font-display text-lg font-bold tracking-tight">Cadence</span>
+            <BrandLogo />
           </Link>
           <ThemeToggle />
         </div>

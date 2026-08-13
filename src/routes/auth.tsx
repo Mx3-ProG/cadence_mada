@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { CalendarDays, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
+import { BrandMark } from "@/components/brand-logo";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -94,9 +95,7 @@ function AuthPage() {
 
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 flex items-center justify-center gap-2.5">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground">
-            <CalendarDays className="h-5 w-5" />
-          </span>
+          <BrandMark className="h-10 w-10" />
           <span className="font-display text-2xl font-bold tracking-tight">Cadence</span>
         </Link>
 
