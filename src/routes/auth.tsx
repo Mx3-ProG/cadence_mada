@@ -61,6 +61,9 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   useEffect(() => {
     if (ref) sessionStorage.setItem("cadence:referral-code", ref);
@@ -124,6 +127,28 @@ function AuthPage() {
     await startChallengeForCurrentSession();
   };
 
+  const sendResetLink = async () => {
+    const target = forgotEmail.trim();
+    if (!target) {
+      toast.error("Renseigne ton adresse email.");
+      return;
+    }
+    setForgotLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(target, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(
+      "Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé.",
+    );
+    setForgotOpen(false);
+    setForgotEmail("");
+  };
+
   const google = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -168,7 +193,19 @@ function AuthPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="in-pass">Mot de passe</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="in-pass">Mot de passe</Label>
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+                    onClick={() => {
+                      setForgotEmail(email);
+                      setForgotOpen((v) => !v);
+                    }}
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </div>
                 <Input
                   id="in-pass"
                   type="password"
@@ -176,6 +213,33 @@ function AuthPage() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+
+              {forgotOpen && (
+                <div className="grid gap-2 rounded-xl border border-border/70 p-3">
+                  <Label htmlFor="forgot-email" className="text-xs text-muted-foreground">
+                    Reçois un lien par email pour choisir un nouveau mot de passe.
+                  </Label>
+                  <Input
+                    id="forgot-email"
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="toi@exemple.com"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={forgotLoading}
+                    onClick={sendResetLink}
+                    className="gap-2"
+                  >
+                    {forgotLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    Envoyer le lien de réinitialisation
+                  </Button>
+                </div>
+              )}
+
               <Button onClick={signIn} disabled={loading} className="mt-2 w-full">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Se connecter"}
               </Button>

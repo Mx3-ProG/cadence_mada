@@ -17,6 +17,7 @@ import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DocumentationRouteImport } from './routes/documentation'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TarifsRouteImport } from './routes/tarifs'
 import { Route as VerificationRouteImport } from './routes/verification'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -63,6 +64,11 @@ const DocumentationRoute = DocumentationRouteImport.update({
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TarifsRoute = TarifsRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/reset-password'
     | '/tarifs'
     | '/verification'
     | '/admin'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/reset-password'
     | '/tarifs'
     | '/verification'
     | '/admin'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
+    | '/reset-password'
     | '/tarifs'
     | '/verification'
     | '/_authenticated/admin'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DocumentationRoute: typeof DocumentationRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TarifsRoute: typeof TarifsRoute
   VerificationRoute: typeof VerificationRoute
   InviteTokenRoute: typeof InviteTokenRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/mentions-legales'
       fullPath: '/mentions-legales'
       preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tarifs': {
@@ -372,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DocumentationRoute: DocumentationRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TarifsRoute: TarifsRoute,
   VerificationRoute: VerificationRoute,
   InviteTokenRoute: InviteTokenRoute,
