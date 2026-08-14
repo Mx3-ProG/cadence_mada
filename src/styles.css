@@ -238,6 +238,12 @@
 
 /* Espace pour la barre de navigation mobile fixée en bas */
 @media (max-width: 1023px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }

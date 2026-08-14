@@ -1,6 +1,7 @@
 "use client";
 import { motion, useInView } from "motion/react";
 import { useRef, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 export function Reveal({
   children,
@@ -28,7 +29,7 @@ export function Reveal({
       initial={hidden}
       animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : hidden}
       transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className ?? ""}
+      className={cn("min-w-0", className)}
     >
       {children}
     </motion.div>
