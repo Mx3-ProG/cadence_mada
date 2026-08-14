@@ -242,3 +242,15 @@
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Filet de sécurité d'hydratation : si React n'a pas hydraté dans le délai de
+   grâce (bundle JS en échec, erreur au boot), le watchdog de __root.tsx pose
+   data-hydration-failed. Les éléments animés à l'entrée sortent du SSR à
+   opacity 0 et attendent le client pour apparaître — sans ce filet, une seule
+   erreur JS rend toute la page blanche alors que le contenu est bien là.
+   !important est nécessaire : motion écrit ces propriétés en style inline. */
+:root[data-hydration-failed] [data-reveal] {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}

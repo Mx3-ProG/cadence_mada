@@ -17,6 +17,24 @@ import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/legal/cookie-consent";
 import { supabase } from "@/integrations/supabase/client";
 
+// Entrance animations server-render at opacity 0 and rely on the client to
+// reveal them, so any hydration failure leaves a blank page with the content
+// present but invisible. This watchdog runs before hydration: if React has not
+// marked the document hydrated within the grace period, it flags the failure so
+// styles.css can force every [data-reveal] element visible. Content stays
+// readable even when the JS bundle dies.
+const HYDRATION_GRACE_MS = 4000;
+
+export const hydrationWatchdogScript = `(function(){try{var d=document.documentElement;setTimeout(function(){if(!d.hasAttribute("data-hydrated"))d.setAttribute("data-hydration-failed","");},${HYDRATION_GRACE_MS});}catch(e){}})();`;
+
+function useHydrationSignal() {
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-hydrated", "");
+    root.removeAttribute("data-hydration-failed");
+  }, []);
+}
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -128,6 +146,12 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: hydrationWatchdogScript }} />
+        {/* The watchdog above is itself JS, so it cannot cover JS being off
+            entirely — this does. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;filter:none!important;transform:none!important}`}</style>
+        </noscript>
       </head>
       <body>
         {children}
@@ -140,6 +164,8 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const router = useRouter();
   const { queryClient } = router.options.context;
+
+  useHydrationSignal();
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {

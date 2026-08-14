@@ -104,6 +104,7 @@ function Landing() {
 
           <div className="mx-auto max-w-3xl text-center">
             <motion.p
+              data-reveal=""
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -114,6 +115,7 @@ function Landing() {
             </motion.p>
 
             <motion.h1
+              data-reveal=""
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
@@ -124,6 +126,7 @@ function Landing() {
             </motion.h1>
 
             <motion.p
+              data-reveal=""
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.12 }}
@@ -134,6 +137,7 @@ function Landing() {
             </motion.p>
 
             <motion.div
+              data-reveal=""
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -165,6 +169,7 @@ function Landing() {
                 ].map((item, i) => (
                   <motion.div
                     key={item.title}
+                    data-reveal=""
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
