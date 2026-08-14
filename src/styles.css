@@ -249,6 +249,31 @@
   }
 }
 
+/* Safari iOS zoome automatiquement au focus si un champ utilise moins de 16 px.
+   Cette règle couvre aussi les variantes text-sm/text-xs passées ponctuellement
+   aux composants partagés, sans bloquer le zoom manuel d'accessibilité. */
+@media (hover: none) and (pointer: coarse) {
+  :where(
+    input:not([type]),
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    input[type="month"],
+    input[type="week"],
+    textarea,
+    select
+  ) {
+    font-size: 16px;
+  }
+}
+
 /* Filet de sécurité d'hydratation : si React n'a pas hydraté dans le délai de
    grâce (bundle JS en échec, erreur au boot), le watchdog de __root.tsx pose
    data-hydration-failed. Les éléments animés à l'entrée sortent du SSR à
