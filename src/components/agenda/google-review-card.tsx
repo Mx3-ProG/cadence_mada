@@ -41,7 +41,7 @@ export function GoogleReviewCard({ branding }: { branding: ReviewBranding }) {
   if (!googleReviewUrl && !googleMapsUrl && !websiteUrl && googleRating == null) return null;
 
   return (
-    <section className="mt-6 rounded-2xl border border-border/70 bg-surface/70 p-4">
+    <section className="mt-6 min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-surface/70 p-4">
       <p className="text-xs uppercase tracking-wider text-muted-foreground">
         {businessName ? businessName : "Avis Google"}
       </p>
@@ -58,14 +58,14 @@ export function GoogleReviewCard({ branding }: { branding: ReviewBranding }) {
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
         {googleReviewUrl && (
-          <Button asChild className="gap-2">
+          <Button asChild className="min-w-0 gap-2 px-3">
             <a href={googleReviewUrl} target="_blank" rel="noopener noreferrer">
               <Star className="h-4 w-4" /> Laisser un avis Google
             </a>
           </Button>
         )}
         {googleMapsUrl && (
-          <Button asChild variant="outline" className="gap-2">
+          <Button asChild variant="outline" className="min-w-0 gap-2 px-3">
             <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
               <MapPin className="h-4 w-4" /> Voir sur Google Maps
               <ExternalLink className="h-3 w-3" />
@@ -73,7 +73,7 @@ export function GoogleReviewCard({ branding }: { branding: ReviewBranding }) {
           </Button>
         )}
         {websiteUrl && (
-          <Button asChild variant="outline" className="gap-2">
+          <Button asChild variant="outline" className="min-w-0 gap-2 px-3">
             <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
               <Globe className="h-4 w-4" /> Visiter le site
               <ExternalLink className="h-3 w-3" />

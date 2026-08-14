@@ -198,7 +198,7 @@ export function BookingSettingsSection() {
   const hours = hoursQuery.data ?? [];
 
   return (
-    <section className="glass-panel rounded-3xl p-6">
+    <section className="glass-panel min-w-0 overflow-hidden rounded-3xl p-4 sm:p-6">
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
         <CalendarClock className="h-4 w-4 text-primary" /> Lien de réservation
       </h2>
@@ -237,16 +237,20 @@ export function BookingSettingsSection() {
         </div>
       )}
 
-      <fieldset disabled={!hasBooking} className="disabled:opacity-60">
-        <div className="mt-5 grid gap-4">
-          <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface/40 px-4 py-3.5">
+      <fieldset disabled={!hasBooking} className="min-w-0 disabled:opacity-60">
+        <div className="mt-5 grid min-w-0 gap-4">
+          <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-border/70 bg-surface/40 px-4 py-3.5">
             <div className="min-w-0">
               <p className="text-sm font-medium">Lien actif</p>
               <p className="truncate text-xs text-muted-foreground">
                 {form.slug ? bookingUrl(form.slug) : "Sera généré à l'enregistrement"}
               </p>
             </div>
-            <Switch checked={form.enabled} onCheckedChange={(v) => set("enabled", v)} />
+            <Switch
+              className="shrink-0"
+              checked={form.enabled}
+              onCheckedChange={(v) => set("enabled", v)}
+            />
           </div>
 
           <div className="grid gap-2">
@@ -260,8 +264,8 @@ export function BookingSettingsSection() {
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="grid gap-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-3">
+            <div className="grid min-w-0 gap-2">
               <Label htmlFor="slot-duration">Durée des créneaux (min)</Label>
               <Input
                 id="slot-duration"
@@ -270,7 +274,7 @@ export function BookingSettingsSection() {
                 onChange={(e) => set("slot_duration_minutes", e.target.value)}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="grid min-w-0 gap-2">
               <Label htmlFor="min-notice">Préavis minimum (heures)</Label>
               <Input
                 id="min-notice"
@@ -279,7 +283,7 @@ export function BookingSettingsSection() {
                 onChange={(e) => set("min_notice_hours", e.target.value)}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="grid min-w-0 gap-2">
               <Label htmlFor="booking-window">Fenêtre de réservation (jours)</Label>
               <Input
                 id="booking-window"
@@ -311,7 +315,7 @@ export function BookingSettingsSection() {
               return (
                 <div
                   key={value}
-                  className="rounded-2xl border border-border/70 bg-surface/40 p-4 transition-colors hover:border-border"
+                  className="min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-surface/40 p-3 transition-colors hover:border-border sm:p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold">{label}</p>
@@ -321,11 +325,11 @@ export function BookingSettingsSection() {
                   </div>
 
                   {dayHours.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 flex min-w-0 flex-wrap gap-2">
                       {dayHours.map((h) => (
                         <span
                           key={h.id}
-                          className="flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-sm shadow-sm ring-1 ring-border/60"
+                          className="flex max-w-full min-w-0 items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-sm shadow-sm ring-1 ring-border/60"
                         >
                           {h.start_time.slice(0, 5)}–
                           {h.end_time.slice(0, 5) === "23:59" ? "24:00" : h.end_time.slice(0, 5)}

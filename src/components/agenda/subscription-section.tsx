@@ -114,7 +114,7 @@ export function SubscriptionSection() {
   return (
     <section
       id="abonnement"
-      className="scroll-mt-24 glass-panel rounded-2xl border border-primary/30 p-5"
+      className="scroll-mt-24 glass-panel min-w-0 overflow-hidden rounded-2xl border border-primary/30 p-4 sm:p-5"
     >
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
         <Crown className="h-4 w-4 text-primary" /> Abonnement
@@ -137,9 +137,13 @@ export function SubscriptionSection() {
         </p>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Button className="gap-2" disabled>
-          <ShieldCheck className="h-4 w-4" /> Tu es déjà en {planLabel} — merci de ta confiance
+      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-3">
+        <Button
+          className="h-auto w-full min-w-0 gap-2 whitespace-normal py-2.5 text-center leading-snug sm:w-auto"
+          disabled
+        >
+          <ShieldCheck className="h-4 w-4 shrink-0" />
+          <span>Tu es déjà en {planLabel} — merci de ta confiance</span>
         </Button>
         <Button
           variant="ghost"

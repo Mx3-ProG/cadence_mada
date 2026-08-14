@@ -184,7 +184,7 @@ function SettingsPage() {
     <div className="min-h-screen">
       <AppHeader />
 
-      <main className="relative mx-auto max-w-4xl px-4 pb-24 pt-8 sm:px-6">
+      <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pb-24 pt-8 sm:px-6">
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 opacity-60" />
 
         <header>
@@ -234,7 +234,7 @@ function SettingsPage() {
         )}
 
         <Reveal>
-          <section className="glass-panel mt-6 rounded-2xl p-5">
+          <section className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
             <fieldset disabled={!isBusiness} className="grid gap-4 disabled:opacity-60">
               <div className="grid gap-2">
                 <Label htmlFor="business_name">Nom affiché (entreprise)</Label>
@@ -307,8 +307,8 @@ function SettingsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border border-border/70 px-4 py-3">
-                <div>
+              <div className="flex min-w-0 items-center justify-between gap-3 rounded-xl border border-border/70 px-4 py-3">
+                <div className="min-w-0">
                   <p className="text-sm font-medium">Afficher le bloc avis sur l'invitation</p>
                   <p className="text-xs text-muted-foreground">
                     Visible aussi dans l'email d'invitation.
@@ -335,7 +335,7 @@ function SettingsPage() {
             <p className="flex items-center gap-2 text-sm font-medium">
               <Star className="h-4 w-4 text-primary" /> Aperçu côté invité
             </p>
-            <div className="glass-panel mt-2 rounded-2xl p-5">
+            <div className="glass-panel mt-2 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
               {form.invite_message && (
                 <p className="text-sm text-muted-foreground">{form.invite_message}</p>
               )}
@@ -367,7 +367,7 @@ function SettingsPage() {
         </Reveal>
 
         <Reveal delay={0.05}>
-          <section className="glass-panel mt-6 rounded-2xl p-5">
+          <section className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
             <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
               <BookOpen className="h-4 w-4 text-primary" /> Aide & documentation
             </h2>
