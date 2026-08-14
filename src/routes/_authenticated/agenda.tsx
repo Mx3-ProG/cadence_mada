@@ -25,7 +25,7 @@ import {
   usePlanUsage,
 } from "@/lib/plan";
 import { useChangePlan } from "@/lib/billing";
-import { weekDays, weekStart, type Appointment, type Contact } from "@/lib/agenda";
+import { shortMonthLabel, weekDays, weekStart, type Appointment, type Contact } from "@/lib/agenda";
 
 export const Route = createFileRoute("/_authenticated/agenda")({
   head: () => ({
@@ -207,7 +207,7 @@ function AgendaPage() {
                   {view === "week" ? (
                     <>
                       <span className="sm:hidden">
-                        S{weekOfMonth} · {format(weekRangeStart, "d MMM", { locale: fr })}
+                        S{weekOfMonth} · {shortMonthLabel(weekRangeStart)}
                       </span>
                       <span className="hidden sm:inline">
                         Semaine du {format(weekRangeStart, "d MMMM", { locale: fr })}

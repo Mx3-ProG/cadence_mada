@@ -6,6 +6,25 @@ export type Appointment = Tables<"appointments">;
 export type AppointmentWithContact = Appointment & { contact: Contact | null };
 export type AppointmentStatus = Appointment["status"];
 
+const SHORT_MONTH_LABELS = [
+  "JAN",
+  "FÉV",
+  "MAR",
+  "AVR",
+  "MAI",
+  "JUN",
+  "JUL",
+  "AOÛ",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DÉC",
+] as const;
+
+export function shortMonthLabel(date: Date) {
+  return SHORT_MONTH_LABELS[date.getMonth()] ?? "";
+}
+
 export function weekStart(date: Date) {
   return startOfWeek(date, { weekStartsOn: 1 });
 }

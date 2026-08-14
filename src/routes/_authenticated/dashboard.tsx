@@ -34,6 +34,7 @@ import {
 import {
   weekDays,
   weekStart,
+  shortMonthLabel,
   type Appointment,
   type Contact,
   type AppointmentStatus,
@@ -171,14 +172,14 @@ function Dashboard() {
       <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pb-24 pt-8 sm:px-6">
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 opacity-60" />
 
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:items-center sm:justify-between">
+        <div className="grid grid-cols-1 items-start gap-3 sm:flex sm:items-center sm:justify-between sm:gap-4">
           <div className="min-w-0">
             <h1
               className="truncate font-display text-2xl font-bold tracking-tight sm:text-3xl"
               aria-label={`Semaine ${weekOfMonth} du ${format(rangeStart, "d MMMM", { locale: fr })}`}
             >
               <span className="sm:hidden">
-                S{weekOfMonth} · {format(rangeStart, "d MMM", { locale: fr })}
+                S{weekOfMonth} · {shortMonthLabel(rangeStart)}
               </span>
               <span className="hidden sm:inline">
                 Semaine du {format(rangeStart, "d MMMM", { locale: fr })}
@@ -189,7 +190,7 @@ function Dashboard() {
               attente
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
             <Button
               variant="outline"
               size="icon"
