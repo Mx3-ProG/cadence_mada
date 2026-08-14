@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { addDays, addMonths, endOfMonth, format, getWeekOfMonth, startOfMonth } from "date-fns";
+import { addDays, addMonths, endOfMonth, format, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CalendarPlus, ChevronLeft, ChevronRight, Loader2, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -25,7 +25,14 @@ import {
   usePlanUsage,
 } from "@/lib/plan";
 import { useChangePlan } from "@/lib/billing";
-import { shortMonthLabel, weekDays, weekStart, type Appointment, type Contact } from "@/lib/agenda";
+import {
+  shortMonthLabel,
+  weekDays,
+  weekNumberInMonth,
+  weekStart,
+  type Appointment,
+  type Contact,
+} from "@/lib/agenda";
 
 export const Route = createFileRoute("/_authenticated/agenda")({
   head: () => ({
@@ -60,7 +67,7 @@ function AgendaPage() {
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const weekRangeStart = days[0]!;
   const weekRangeEnd = addDays(days[6]!, 1);
-  const weekOfMonth = getWeekOfMonth(weekRangeStart, { weekStartsOn: 1 });
+  const weekOfMonth = weekNumberInMonth(weekRangeStart);
   const monthGridStart = useMemo(() => weekStart(startOfMonth(anchor)), [anchor]);
   const monthGridEnd = useMemo(() => addDays(weekStart(endOfMonth(anchor)), 7), [anchor]);
 

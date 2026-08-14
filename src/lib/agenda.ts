@@ -7,22 +7,28 @@ export type AppointmentWithContact = Appointment & { contact: Contact | null };
 export type AppointmentStatus = Appointment["status"];
 
 const SHORT_MONTH_LABELS = [
-  "JAN",
-  "FÉV",
-  "MAR",
-  "AVR",
-  "MAI",
-  "JUN",
-  "JUL",
-  "AOÛ",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DÉC",
+  "Jan",
+  "Fév",
+  "Mar",
+  "Avr",
+  "Mai",
+  "Juin",
+  "Juil",
+  "Août",
+  "Sept",
+  "Oct",
+  "Nov",
+  "Déc",
 ] as const;
 
 export function shortMonthLabel(date: Date) {
   return SHORT_MONTH_LABELS[date.getMonth()] ?? "";
+}
+
+/** Numérote les semaines du mois à partir de son premier lundi. */
+export function weekNumberInMonth(date: Date) {
+  const monday = weekStart(date);
+  return Math.floor((monday.getDate() - 1) / 7) + 1;
 }
 
 export function weekStart(date: Date) {

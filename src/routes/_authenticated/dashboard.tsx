@@ -2,7 +2,7 @@ import { DashboardSkeleton } from "@/components/loading/page-skeletons";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { addDays, format, getWeekOfMonth, isSameDay, isToday } from "date-fns";
+import { addDays, format, isSameDay, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CalendarPlus, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ import {
 } from "@/lib/plan";
 import {
   weekDays,
+  weekNumberInMonth,
   weekStart,
   shortMonthLabel,
   type Appointment,
@@ -73,7 +74,7 @@ function Dashboard() {
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const rangeStart = days[0]!;
   const rangeEnd = addDays(days[6]!, 1);
-  const weekOfMonth = getWeekOfMonth(rangeStart, { weekStartsOn: 1 });
+  const weekOfMonth = weekNumberInMonth(rangeStart);
 
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
