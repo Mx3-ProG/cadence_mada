@@ -101,11 +101,11 @@ export function QuickAppointmentFlow({
                 <DialogDescription>Avec qui veux-tu fixer ce rendez-vous&nbsp;?</DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-3">
+              <div className="grid min-w-0 gap-3">
                 <button
                   type="button"
                   onClick={() => setStep("pick-contact")}
-                  className="flex items-start gap-3 rounded-2xl border border-border/70 bg-surface/60 p-4 text-left transition-colors hover:border-primary/60 hover:bg-primary/5"
+                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-surface/60 p-4 text-left transition-colors hover:border-primary/60 hover:bg-primary/5"
                 >
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary">
                     <Users className="h-5 w-5" />
@@ -121,7 +121,7 @@ export function QuickAppointmentFlow({
                 <button
                   type="button"
                   onClick={startWithNewContact}
-                  className="flex items-start gap-3 rounded-2xl border border-border/70 bg-surface/60 p-4 text-left transition-colors hover:border-primary/60 hover:bg-primary/5"
+                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-border/70 bg-surface/60 p-4 text-left transition-colors hover:border-primary/60 hover:bg-primary/5"
                 >
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary">
                     <UserPlus className="h-5 w-5" />

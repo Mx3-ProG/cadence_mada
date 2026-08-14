@@ -322,7 +322,7 @@ function AdminPage() {
     return (
       <div className="min-h-screen">
         <AppHeader />
-        <main className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
+        <main className="mx-auto w-full min-w-0 max-w-3xl px-4 py-20 sm:px-6">
           <div className="rounded-3xl border border-border/60 bg-surface/60 p-8 text-center">
             <ShieldAlert className="mx-auto h-8 w-8 text-muted-foreground" />
             <h1 className="mt-4 font-display text-2xl font-bold">Accès réservé</h1>
@@ -338,7 +338,7 @@ function AdminPage() {
   return (
     <div className="min-h-screen">
       <AppHeader />
-      <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full min-w-0 max-w-7xl space-y-8 px-4 py-8 sm:px-6">
         <Reveal>
           <div className="flex flex-wrap items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-primary-foreground">

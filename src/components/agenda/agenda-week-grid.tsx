@@ -107,14 +107,14 @@ export function AgendaWeekGrid({
   );
 
   return (
-    <div className="glass-panel overflow-hidden rounded-2xl">
+    <div className="glass-panel min-w-0 max-w-full overflow-hidden rounded-2xl">
       <div className="flex border-b border-border/70">
         <div className="w-14 shrink-0" />
         {days.map((day) => (
           <div
             key={day.toISOString()}
             className={cn(
-              "flex-1 border-l border-border/70 px-2 py-2 text-center",
+              "min-w-0 flex-1 border-l border-border/70 px-1 py-2 text-center sm:px-2",
               isToday(day) && "bg-primary/5",
             )}
           >
@@ -128,7 +128,7 @@ export function AgendaWeekGrid({
         ))}
       </div>
 
-      <div className="flex overflow-x-auto">
+      <div className="flex max-w-full overflow-x-auto overscroll-x-contain">
         <div className="w-14 shrink-0">
           {hours.map((h) => (
             <div
@@ -145,7 +145,7 @@ export function AgendaWeekGrid({
           <div
             key={day.toISOString()}
             className={cn(
-              "relative flex-1 border-l border-border/70",
+              "relative min-w-[4.5rem] flex-1 border-l border-border/70 sm:min-w-0",
               isToday(day) && "bg-primary/[0.03]",
             )}
             style={{ height: SLOTS_PER_DAY * ROW_HEIGHT }}

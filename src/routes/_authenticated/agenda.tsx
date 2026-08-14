@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { addDays, addMonths, endOfMonth, format, startOfMonth } from "date-fns";
+import { addDays, addMonths, endOfMonth, format, getWeekOfMonth, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CalendarPlus, ChevronLeft, ChevronRight, Loader2, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -60,6 +60,7 @@ function AgendaPage() {
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const weekRangeStart = days[0]!;
   const weekRangeEnd = addDays(days[6]!, 1);
+  const weekOfMonth = getWeekOfMonth(weekRangeStart, { weekStartsOn: 1 });
   const monthGridStart = useMemo(() => weekStart(startOfMonth(anchor)), [anchor]);
   const monthGridEnd = useMemo(() => addDays(weekStart(endOfMonth(anchor)), 7), [anchor]);
 
@@ -148,7 +149,7 @@ function AgendaPage() {
     <div className="min-h-screen">
       <AppHeader />
 
-      <main className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6">
+      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pb-24 pt-8 sm:px-6">
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 opacity-60" />
 
         <div>
@@ -191,8 +192,8 @@ function AgendaPage() {
 
         {isPro && (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
+            <div className="mt-6 flex min-w-0 flex-wrap items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <Button variant="outline" size="icon" aria-label="Précédent" onClick={goPrev}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -202,10 +203,19 @@ function AgendaPage() {
                 <Button variant="outline" size="icon" aria-label="Suivant" onClick={goNext}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
-                <p className="ml-2 font-display text-lg font-semibold capitalize">
-                  {view === "week"
-                    ? `Semaine du ${format(weekRangeStart, "d MMMM", { locale: fr })}`
-                    : format(anchor, "MMMM yyyy", { locale: fr })}
+                <p className="basis-full font-display text-lg font-semibold capitalize sm:ml-2 sm:basis-auto">
+                  {view === "week" ? (
+                    <>
+                      <span className="sm:hidden">
+                        S{weekOfMonth} · {format(weekRangeStart, "d MMM", { locale: fr })}
+                      </span>
+                      <span className="hidden sm:inline">
+                        Semaine du {format(weekRangeStart, "d MMMM", { locale: fr })}
+                      </span>
+                    </>
+                  ) : (
+                    format(anchor, "MMMM yyyy", { locale: fr })
+                  )}
                 </p>
               </div>
 
@@ -229,7 +239,7 @@ function AgendaPage() {
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 min-w-0">
               {view === "week" ? (
                 <AgendaWeekGrid
                   days={days}

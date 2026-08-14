@@ -54,7 +54,7 @@ export function AgendaMonthGrid({
   }, [appointments]);
 
   return (
-    <div className="glass-panel overflow-hidden rounded-2xl">
+    <div className="glass-panel min-w-0 max-w-full overflow-hidden rounded-2xl">
       <div className="grid grid-cols-7 border-b border-border/70">
         {WEEKDAY_LABELS.map((label) => (
           <div
@@ -80,7 +80,7 @@ export function AgendaMonthGrid({
                 onSlotClick(slot);
               }}
               className={cn(
-                "min-h-[6.5rem] cursor-pointer border-l border-t border-border/70 p-1.5 transition-colors first:border-l-0 hover:bg-primary/5",
+                "min-w-0 min-h-[5rem] cursor-pointer overflow-hidden border-l border-t border-border/70 p-1 transition-colors first:border-l-0 hover:bg-primary/5 sm:min-h-[6.5rem] sm:p-1.5",
                 !inMonth && "bg-surface/40",
               )}
             >
@@ -110,7 +110,7 @@ export function AgendaMonthGrid({
                         stop(e);
                         onAppointmentClick(a);
                       }}
-                      className="flex w-full items-center gap-1 truncate rounded-md bg-surface/70 px-1.5 py-0.5 text-left text-[10px] hover:bg-surface"
+                      className="flex w-full min-w-0 items-center gap-1 truncate rounded-md bg-surface/70 px-1 py-0.5 text-left text-[10px] hover:bg-surface sm:px-1.5"
                     >
                       <span
                         className={cn("h-1.5 w-1.5 shrink-0 rounded-full", STATUS_DOT[a.status])}
