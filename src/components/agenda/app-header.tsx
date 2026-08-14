@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, CalendarPlus, LogOut, Settings, ShieldCheck, Users } from "lucide-react";
@@ -17,12 +17,97 @@ const nav = [
   { to: "/settings", label: "Réglages", icon: Settings },
 ] as const;
 
+const MOBILE_KEYBOARD_MIN_HEIGHT = 120;
+
+function isTextEntryElement(element: Element | null) {
+  if (element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) return true;
+  if (element instanceof HTMLElement && element.isContentEditable) return true;
+  if (!(element instanceof HTMLInputElement)) return false;
+
+  return ![
+    "button",
+    "checkbox",
+    "color",
+    "file",
+    "hidden",
+    "radio",
+    "range",
+    "reset",
+    "submit",
+  ].includes(element.type);
+}
+
+function useMobileKeyboardOpen() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    let baselineHeight = viewport?.height ?? window.innerHeight;
+    let frame = 0;
+    let settleTimer = 0;
+
+    const update = () => {
+      const hasTextFocus = isTextEntryElement(document.activeElement);
+
+      if (!hasTextFocus) {
+        setOpen(false);
+        baselineHeight = Math.max(baselineHeight, viewport?.height ?? window.innerHeight);
+        return;
+      }
+
+      if (!viewport) {
+        setOpen(true);
+        return;
+      }
+
+      setOpen(baselineHeight - viewport.height >= MOBILE_KEYBOARD_MIN_HEIGHT);
+    };
+
+    const scheduleUpdate = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(update);
+    };
+
+    const handleFocusIn = () => {
+      if (!isTextEntryElement(document.activeElement)) return;
+      baselineHeight = Math.max(baselineHeight, viewport?.height ?? window.innerHeight);
+      scheduleUpdate();
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(update, 300);
+    };
+
+    const handleFocusOut = () => scheduleUpdate();
+
+    window.addEventListener("focusin", handleFocusIn);
+    window.addEventListener("focusout", handleFocusOut);
+    viewport?.addEventListener("resize", scheduleUpdate);
+    viewport?.addEventListener("scroll", scheduleUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("focusin", handleFocusIn);
+      window.removeEventListener("focusout", handleFocusOut);
+      viewport?.removeEventListener("resize", scheduleUpdate);
+      viewport?.removeEventListener("scroll", scheduleUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-mobile-keyboard-open", open);
+    return () => document.documentElement.removeAttribute("data-mobile-keyboard-open");
+  }, [open]);
+
+  return open;
+}
+
 export function AppHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: isAdmin } = useIsAdmin();
   const [quickOpen, setQuickOpen] = useState(false);
+  const mobileKeyboardOpen = useMobileKeyboardOpen();
   const items = isAdmin
     ? [...nav, { to: "/admin", label: "Admin", icon: ShieldCheck } as const]
     : nav;
@@ -85,7 +170,12 @@ export function AppHeader() {
 
       <nav
         aria-label="Navigation principale"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+        aria-hidden={mobileKeyboardOpen}
+        data-mobile-nav
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl transition-[opacity,transform] duration-200 lg:hidden",
+          mobileKeyboardOpen && "pointer-events-none translate-y-full opacity-0",
+        )}
       >
         <ul className="mx-auto flex max-w-lg items-stretch justify-around px-2 py-1.5">
           {items.map((item) => {

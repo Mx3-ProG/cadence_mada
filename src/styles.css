@@ -247,6 +247,10 @@
   body {
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
+
+  :root[data-mobile-keyboard-open] body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* Safari iOS zoome automatiquement au focus si un champ utilise moins de 16 px.
