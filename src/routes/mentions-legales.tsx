@@ -31,7 +31,9 @@ function MentionsLegales() {
         <h2>Éditeur du site</h2>
         <p>
           Le service <strong>Cadence</strong> (ci-après « le Service ») est édité par l'exploitant
-          du site Wayne-Web. Les coordonnées complètes de l'éditeur (dénomination sociale, forme
+          du site <a href="https://www.wayne-web.com" target="_blank" rel="noopener noreferrer">
+            Wayne-Web</a>. <br />
+          Les coordonnées complètes de l'éditeur (dénomination sociale, forme
           juridique, capital social, numéro RCS et numéro de TVA intracommunautaire) doivent être
           renseignées ici avant toute mise en ligne publique.
         </p>
