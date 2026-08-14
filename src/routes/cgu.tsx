@@ -50,23 +50,23 @@ function Cgu() {
         <h2>3. Offres et tarifs</h2>
         <ul>
           <li>
-            <strong>Gratuit</strong> : jusqu'à 10 contacts et 15 rendez-vous envoyés par mois
-            calendaire.
+            <strong>Free-mium — 0 € TTC</strong> : jusqu'à 10 contacts et 15 rendez-vous envoyés par
+            mois calendaire.
           </li>
           <li>
-            <strong>Basic — 3 € TTC par mois</strong> : jusqu'à 30 contacts et 50 rendez-vous par
-            mois.
+            <strong>Basique — 19,99 € TTC par mois</strong> : jusqu'à 30 contacts et 50 rendez-vous
+            par mois.
           </li>
           <li>
-            <strong>Standard — 10 € TTC par mois</strong> : jusqu'à 50 contacts et 100 rendez-vous
-            par mois, agenda complet (vue semaine/mois) et réservation en libre-service.
+            <strong>Standard — 69,99 € TTC par mois</strong> : jusqu'à 50 contacts et 100
+            rendez-vous par mois, agenda complet (vue semaine/mois) et réservation en libre-service.
           </li>
           <li>
-            <strong>Éco — 25 € TTC par mois</strong> : jusqu'à 250 contacts et 500 rendez-vous par
-            mois, avec en plus la tendance du mois.
+            <strong>Economic — 139,99 € TTC par mois</strong> : jusqu'à 250 contacts et 500
+            rendez-vous par mois, avec en plus la tendance du mois.
           </li>
           <li>
-            <strong>Business — 39 € TTC par mois</strong> : contacts et rendez-vous illimités,
+            <strong>Business — 199,99 € TTC par mois</strong> : contacts et rendez-vous illimités,
             personnalisation du lien d'invitation (marque, message, avis Google, site web), sans
             engagement de durée.
           </li>
@@ -77,7 +77,7 @@ function Cgu() {
           chaque échéance jusqu'à résiliation.
         </p>
         <p>
-          <strong>Programme de parrainage</strong> : accessible dès le plan Gratuit. Chaque
+          <strong>Programme de parrainage</strong> : accessible dès le plan Free-mium. Chaque
           utilisateur dispose d'un lien de parrainage unique. Si la personne parrainée souscrit à un
           plan payant, le parrain perçoit 30 % du montant payé chaque mois, tant que le filleul
           reste abonné. Retrait possible à partir de 25 € de solde disponible, traité manuellement.

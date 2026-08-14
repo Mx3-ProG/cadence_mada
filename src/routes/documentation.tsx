@@ -308,15 +308,15 @@ Organisateur
           </li>
           <li>
             <strong>Administrateur</strong> : accès à l'espace /admin (tous les comptes, contacts et
-            rendez-vous) et exemption des quotas du plan Gratuit.
+            rendez-vous) et exemption des quotas du plan Free-mium.
           </li>
           <li>
             <strong>Plan</strong> : le changement de palier ne peut pas être forcé depuis le client
             ; seul le processus de paiement Stripe ou un administrateur peut le modifier.
           </li>
           <li>
-            <strong>Quotas</strong> : appliqués en base avant chaque création — 10/15 (Gratuit),
-            30/50 (Basic), 50/100 (Standard), 250/500 (Éco) contacts/rendez-vous par mois
+            <strong>Quotas</strong> : appliqués en base avant chaque création — 10/15 (Free-mium),
+            30/50 (Basique), 50/100 (Standard), 250/500 (Economic) contacts/rendez-vous par mois
             calendaire, illimité en Business et pour les administrateurs.
           </li>
         </ul>

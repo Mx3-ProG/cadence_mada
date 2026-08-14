@@ -18,17 +18,17 @@ export const TIER_LIMITS: Record<
 
 export const TIER_PRICES: Record<PlanTier, string> = {
   free: "0 €",
-  basic: "3 €",
-  standard: "10 €",
-  economic: "25 €",
-  business: "39 €",
+  basic: "19,99 €",
+  standard: "69,99 €",
+  economic: "139,99 €",
+  business: "199,99 €",
 };
 
 export const TIER_LABELS: Record<PlanTier, string> = {
-  free: "Gratuit",
-  basic: "Basic",
+  free: "Free-mium",
+  basic: "Basique",
   standard: "Standard",
-  economic: "Éco",
+  economic: "Economic",
   business: "Business",
 };
 

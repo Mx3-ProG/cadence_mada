@@ -3,12 +3,12 @@ import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { PlanCta } from "@/components/billing/plan-cta";
-import { TIER_LIMITS, TIER_PRICES, type PaidPlanTier } from "@/lib/plan";
+import { TIER_LABELS, TIER_LIMITS, TIER_PRICES, type PaidPlanTier } from "@/lib/plan";
 
 const plans = [
   {
     tier: "free" as const,
-    name: "Gratuit",
+    name: TIER_LABELS.free,
     period: "pour toujours",
     tagline: "Parfait pour organiser ta semaine et tester les confirmations par lien.",
     features: [
@@ -24,7 +24,7 @@ const plans = [
   },
   {
     tier: "basic" as const,
-    name: "Basic",
+    name: TIER_LABELS.basic,
     period: "par mois",
     tagline: "Un peu plus de marge pour un agenda qui commence à se remplir.",
     features: [
@@ -35,12 +35,12 @@ const plans = [
       "Programme de parrainage (30% à vie)",
       "Mode jour / nuit",
     ],
-    cta: "Passer en Basic",
+    cta: `Passer en ${TIER_LABELS.basic}`,
     highlighted: false,
   },
   {
     tier: "standard" as const,
-    name: "Standard",
+    name: TIER_LABELS.standard,
     period: "par mois",
     tagline: "Pour celles et ceux qui enchaînent les rendez-vous chaque semaine.",
     features: [
@@ -56,7 +56,7 @@ const plans = [
   },
   {
     tier: "economic" as const,
-    name: "Éco",
+    name: TIER_LABELS.economic,
     period: "par mois",
     tagline: "Pour une activité qui tourne à plein régime toute l'année.",
     features: [
@@ -66,17 +66,17 @@ const plans = [
       "Tendance du mois",
       "Programme de parrainage (30% à vie)",
     ],
-    cta: "Passer en Éco",
+    cta: `Passer en ${TIER_LABELS.economic}`,
     highlighted: false,
   },
   {
     tier: "business" as const,
-    name: "Business",
+    name: TIER_LABELS.business,
     period: "par mois",
     tagline: "Pour les équipes et les marques qui veulent tout, sans limite.",
     features: [
       "Contacts et rendez-vous illimités",
-      "Tout Éco : agenda complet, réservation, tendance du mois",
+      `Tout ${TIER_LABELS.economic} : agenda complet, réservation, tendance du mois`,
       "Lien d'invitation personnalisé (branding + message)",
       "Avis Google : note, lien Google My Business et Maps",
       "Lien site internet sur tes invitations",
@@ -101,8 +101,8 @@ export function Pricing() {
               5 paliers, une seule règle : tu paies pour ce dont tu as besoin
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-              Aucune carte demandée pour le plan Gratuit. Change de palier à tout moment, sans
-              engagement.
+              Aucune carte demandée pour le plan {TIER_LABELS.free}. Change de palier à tout moment,
+              sans engagement.
             </p>
           </div>
         </Reveal>

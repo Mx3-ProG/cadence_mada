@@ -25,7 +25,7 @@ export function CheckoutReturn() {
     window.history.replaceState({}, "", window.location.pathname);
 
     if (status === "cancelled") {
-      toast.info("Paiement annulé — tu restes sur le plan Gratuit.");
+      toast.info(`Paiement annulé — tu restes sur le plan ${TIER_LABELS.free}.`);
       return;
     }
     if (status !== "success" || !sessionId) return;

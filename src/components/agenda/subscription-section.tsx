@@ -76,8 +76,8 @@ export function SubscriptionSection() {
         <p className="mt-2 text-sm text-muted-foreground">
           Tu profites encore de tous les avantages {planLabel} jusqu'au{" "}
           <strong className="text-foreground">{endLabel ?? "prochain renouvellement"}</strong>.
-          Passé ce délai, ton compte repasse automatiquement en plan Gratuit et un nouvel abonnement
-          coûtera de nouveau {planPrice}/mois.
+          Passé ce délai, ton compte repasse automatiquement en plan {TIER_LABELS.free} et un nouvel
+          abonnement coûtera de nouveau {planPrice}/mois.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button

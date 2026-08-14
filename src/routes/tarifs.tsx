@@ -11,7 +11,7 @@ export const Route = createFileRoute("/tarifs")({
       {
         name: "description",
         content:
-          "5 paliers, de Gratuit à Business (39 €/mois) : contacts et rendez-vous, agenda complet, réservation en libre-service, branding personnalisé. Programme de parrainage inclus dès le plan Gratuit.",
+          "5 paliers, de Free-mium (0 €) à Business (199,99 €/mois) : contacts et rendez-vous, agenda complet, réservation en libre-service, branding personnalisé. Programme de parrainage inclus dès le plan Free-mium.",
       },
       { property: "og:title", content: "Tarifs — Cadence" },
       {
@@ -47,7 +47,7 @@ function TarifsPage() {
         <section className="px-4 pb-4 pt-16 text-center sm:px-6 sm:pt-24">
           <h1 className="font-display text-3xl font-black tracking-tight sm:text-5xl">Tarifs</h1>
           <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground sm:text-base">
-            Gratuit pour démarrer. Change de palier quand ça s'accélère, sans engagement.
+            Free-mium pour démarrer. Change de palier quand ça s'accélère, sans engagement.
           </p>
         </section>
 
