@@ -2,9 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseUser } from "@/integrations/supabase/auth-middleware";
 import { buildLoginCodeEmail } from "../../supabase/emails/login-code";
+import { buildWelcomeCodeEmail } from "../../supabase/emails/welcome-code";
 
 const CHALLENGE_DURATION_MS = 30 * 60 * 1000;
 const INACTIVITY_DURATION_MS = 600 * 60 * 1000;
+/** En dessous de ce délai depuis la création du profil, on considère l'envoi comme un
+ * premier accueil (inscription) plutôt qu'une connexion classique. */
+const SIGNUP_WELCOME_WINDOW_MS = 5 * 60 * 1000;
 
 const credentialsSchema = z.object({
   email: z.string().trim().email().max(320),
@@ -42,6 +46,35 @@ function maskEmail(email: string) {
   return `${visible}${"•".repeat(Math.max(3, local.length - visible.length))}@${domain}`;
 }
 
+/**
+ * Choisit l'email d'accueil (inscription) ou de code de connexion classique selon
+ * l'ancienneté du profil, et l'envoie. Utilisé au premier envoi comme au renvoi, pour que
+ * les deux emails d'un même parcours d'inscription restent cohérents.
+ */
+async function sendChallengeEmail(
+  supabaseAdmin: typeof import("@/integrations/supabase/client.server").supabaseAdmin,
+  userId: string,
+  email: string,
+  code: string,
+) {
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("full_name, created_at")
+    .eq("id", userId)
+    .maybeSingle();
+
+  const isFreshSignup =
+    !!profile?.created_at &&
+    Date.now() - new Date(profile.created_at).getTime() < SIGNUP_WELCOME_WINDOW_MS;
+
+  const { subject, html } = isFreshSignup
+    ? buildWelcomeCodeEmail(code, profile?.full_name)
+    : buildLoginCodeEmail(code);
+
+  const { sendEmail } = await import("@/lib/resend.server");
+  return sendEmail({ to: email, subject, html });
+}
+
 async function createAndSendChallenge(userId: string, email: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
@@ -67,9 +100,7 @@ async function createAndSendChallenge(userId: string, email: string) {
 
   if (error || !challenge) throw new Error("Impossible de créer le code de connexion.");
 
-  const { subject, html } = buildLoginCodeEmail(code);
-  const { sendEmail } = await import("@/lib/resend.server");
-  const result = await sendEmail({ to: email, subject, html });
+  const result = await sendChallengeEmail(supabaseAdmin, userId, email, code);
   if (!result.sent) {
     await supabaseAdmin.from("login_challenges").delete().eq("id", challenge.id);
     return { ok: false as const, reason: "EMAIL_UNAVAILABLE" as const };
@@ -108,7 +139,7 @@ export const resendLoginChallenge = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: challenge } = await supabaseAdmin
       .from("login_challenges")
-      .select("id, email, last_sent_at, consumed_at, completed_at")
+      .select("id, user_id, email, last_sent_at, consumed_at, completed_at")
       .eq("id", data.challengeId)
       .maybeSingle();
 
@@ -131,9 +162,7 @@ export const resendLoginChallenge = createServerFn({ method: "POST" })
       .eq("id", challenge.id);
     if (error) throw new Error("Impossible de renouveler le code.");
 
-    const { subject, html } = buildLoginCodeEmail(code);
-    const { sendEmail } = await import("@/lib/resend.server");
-    const sent = await sendEmail({ to: challenge.email, subject, html });
+    const sent = await sendChallengeEmail(supabaseAdmin, challenge.user_id, challenge.email, code);
     return sent.sent
       ? { ok: true as const }
       : { ok: false as const, reason: "EMAIL_UNAVAILABLE" as const };
