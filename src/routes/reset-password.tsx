@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrandMark } from "@/components/brand-logo";
@@ -98,18 +98,19 @@ function ResetPasswordPage() {
             <div className="mt-6 grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="new-pass">Nouveau mot de passe</Label>
-                <Input
+                <PasswordInput
                   id="new-pass"
-                  type="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirm-pass">Confirmation</Label>
-                <Input
+                <PasswordInput
                   id="confirm-pass"
-                  type="password"
+                  autoComplete="new-password"
+                  visibilityLabel="la confirmation du mot de passe"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                 />

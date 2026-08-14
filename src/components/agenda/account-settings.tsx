@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
@@ -163,18 +164,19 @@ export function AccountSettings() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="new_password">Nouveau mot de passe</Label>
-            <Input
+            <PasswordInput
               id="new_password"
-              type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="confirm_password">Confirmation</Label>
-            <Input
+            <PasswordInput
               id="confirm_password"
-              type="password"
+              autoComplete="new-password"
+              visibilityLabel="la confirmation du mot de passe"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />

@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -206,9 +207,9 @@ function AuthPage() {
                     Mot de passe oublié ?
                   </button>
                 </div>
-                <Input
+                <PasswordInput
                   id="in-pass"
-                  type="password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -266,9 +267,9 @@ function AuthPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="up-pass">Mot de passe</Label>
-                <Input
+                <PasswordInput
                   id="up-pass"
-                  type="password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
