@@ -149,7 +149,7 @@ function BookingLinkCard() {
   const settings = settingsQuery.data;
 
   return (
-    <div className="glass-panel mt-6 rounded-2xl p-5">
+    <div className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2">
         <Link2 className="h-4 w-4 text-primary" />
         <h2 className="font-display text-base font-bold">Lien de réservation</h2>
@@ -192,8 +192,8 @@ function BookingLinkCard() {
       )}
 
       {isPro && settings?.enabled && settings.slug && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <code className="truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
+        <div className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <code className="min-w-0 max-w-full truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
             {bookingUrl(settings.slug)}
           </code>
           <div className="flex shrink-0 gap-2">
@@ -258,7 +258,7 @@ function ContactsPage() {
   return (
     <div className="min-h-screen">
       <AppHeader />
-      <main className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6">
+      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pb-24 pt-8 sm:px-6">
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 opacity-60" />
 
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
@@ -303,10 +303,10 @@ function ContactsPage() {
             </p>
           </div>
         ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {contacts.map((c, i) => (
               <Reveal key={c.id} delay={i * 0.04}>
-                <article className="glass-panel h-full rounded-2xl p-5 transition-shadow hover:shadow-glow">
+                <article className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow sm:p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -349,25 +349,25 @@ function ContactsPage() {
 
                   <div className="mt-4 space-y-1.5 text-sm text-muted-foreground">
                     {c.company && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex min-w-0 items-center gap-2">
                         <Building2 className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{c.company}</span>
                       </p>
                     )}
                     {c.email && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex min-w-0 items-center gap-2">
                         <Mail className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{c.email}</span>
                       </p>
                     )}
                     {c.phone && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex min-w-0 items-center gap-2">
                         <Phone className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{c.phone}</span>
                       </p>
                     )}
                     {(c.city || c.country || c.address) && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex min-w-0 items-center gap-2">
                         <MapPin className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">
                           {[c.address, c.city, c.country].filter(Boolean).join(", ")}
@@ -375,7 +375,7 @@ function ContactsPage() {
                       </p>
                     )}
                     {c.birthday && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex min-w-0 items-center gap-2">
                         <Cake className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">
                           {formatBirthday(c.birthday)}
