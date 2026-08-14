@@ -1,15 +1,7 @@
 import { Crown, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import {
-  nextTier,
-  tierPricingHash,
-  TIER_LABELS,
-  TIER_LIMITS,
-  TIER_PRICES,
-  usePlanUsage,
-  type PlanUsage,
-} from "@/lib/plan";
+import { nextTier, TIER_LIMITS, usePlanUsage, type PlanUsage } from "@/lib/plan";
 
 function Meter({ label, value, max }: { label: string; value: number; max: number }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
@@ -74,9 +66,9 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
         </div>
         {upsell && (
           <Button asChild size="sm" className="shrink-0 gap-2">
-            <Link to="/tarifs" hash={tierPricingHash(upsell)}>
+            <Link to="/tarifs">
               <Zap className="h-3.5 w-3.5" />
-              Voir {TIER_LABELS[upsell]} — {TIER_PRICES[upsell]}/mois
+              Passer en version supérieure
             </Link>
           </Button>
         )}

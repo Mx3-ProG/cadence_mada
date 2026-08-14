@@ -229,7 +229,7 @@ export function AppointmentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-xl">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-[1.75rem] border-border/70 p-4 shadow-[0_24px_80px_-28px_rgba(0,0,0,0.65)] sm:max-h-[92dvh] sm:max-w-xl sm:p-6">
         <DialogHeader>
           <DialogTitle>
             {appointment ? "Modifier le rendez-vous" : "Nouveau rendez-vous"}
@@ -359,7 +359,7 @@ export function AppointmentDialog({
             )}
           </div>
 
-          <div className="grid min-w-0 gap-3 rounded-2xl border border-border/70 bg-surface/40 p-3">
+          <div className="grid min-w-0 gap-4 rounded-[1.5rem] border border-border/70 bg-surface/40 p-3.5 sm:p-4">
             <div className="grid gap-2">
               <Label>Date</Label>
               <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
@@ -396,30 +396,34 @@ export function AppointmentDialog({
               </Popover>
             </div>
 
-            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:gap-3">
-              <div className="grid min-w-0 gap-2">
-                <Label htmlFor="a-start">Début</Label>
+            <div className="grid min-w-0 grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
+              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
+                <Label htmlFor="a-start" className="text-muted-foreground sm:text-foreground">
+                  Début
+                </Label>
                 <Input
                   id="a-start"
                   type="time"
-                  className="h-11 min-w-0 rounded-xl px-2 text-center text-base"
+                  className="h-12 min-w-0 max-w-full rounded-xl border-0 bg-muted/55 px-3 text-center text-base font-semibold tabular-nums shadow-none focus-visible:ring-2 sm:border sm:border-input sm:bg-background/70"
                   value={form.startTime}
                   onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                 />
               </div>
-              <div className="grid min-w-0 gap-2">
-                <Label htmlFor="a-end">Fin</Label>
+              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
+                <Label htmlFor="a-end" className="text-muted-foreground sm:text-foreground">
+                  Fin
+                </Label>
                 <Input
                   id="a-end"
                   type="time"
-                  className="h-11 min-w-0 rounded-xl px-2 text-center text-base"
+                  className="h-12 min-w-0 max-w-full rounded-xl border-0 bg-muted/55 px-3 text-center text-base font-semibold tabular-nums shadow-none focus-visible:ring-2 sm:border sm:border-input sm:bg-background/70"
                   value={form.endTime}
                   onChange={(e) => setForm({ ...form, endTime: e.target.value })}
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-1.5">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
               {DURATIONS.map((d) => (
                 <button
                   key={d.minutes}
@@ -427,7 +431,7 @@ export function AppointmentDialog({
                   onClick={() =>
                     setForm((f) => ({ ...f, endTime: addMinutesToTime(f.startTime, d.minutes) }))
                   }
-                  className="rounded-full border border-border/70 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
+                  className="min-h-11 rounded-xl border border-border/70 bg-background/55 px-2 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/60 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
                 >
                   {d.label}
                 </button>
@@ -467,11 +471,11 @@ export function AppointmentDialog({
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="sticky -bottom-4 -mx-4 -mb-4 grid grid-cols-2 gap-2 border-t border-border/70 bg-background/90 p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] backdrop-blur-xl sm:static sm:mx-0 sm:mb-0 sm:flex sm:border-0 sm:bg-transparent sm:p-0 sm:pb-0">
+          <Button className="h-11 rounded-xl" variant="outline" onClick={() => onOpenChange(false)}>
             Annuler
           </Button>
-          <Button onClick={submit} disabled={saving}>
+          <Button className="h-11 rounded-xl" onClick={submit} disabled={saving}>
             {saving ? "Enregistrement…" : "Enregistrer"}
           </Button>
         </DialogFooter>
