@@ -130,7 +130,7 @@ function InvitePage() {
                 <p className="mt-4 text-sm text-muted-foreground">{invite.description}</p>
               )}
 
-              {invite.host_is_pro && invite.invite_message && (
+              {invite.host_has_branding && invite.invite_message && (
                 <p className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm">
                   {invite.invite_message}
                 </p>
@@ -168,7 +168,7 @@ function InvitePage() {
                 </p>
               )}
 
-              {invite.host_is_pro && invite.review_prompt_enabled && (
+              {invite.host_has_branding && invite.review_prompt_enabled && (
                 <GoogleReviewCard
                   branding={{
                     businessName: invite.business_name,
@@ -176,6 +176,7 @@ function InvitePage() {
                     googleMapsUrl: invite.google_maps_url,
                     googleRating: invite.google_rating,
                     googleReviewsCount: invite.google_reviews_count,
+                    websiteUrl: invite.website_url,
                   }}
                 />
               )}

@@ -21,6 +21,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TarifsRouteImport } from './routes/tarifs'
 import { Route as VerificationRouteImport } from './routes/verification'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAgendaRouteImport } from './routes/_authenticated/agenda'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -87,6 +88,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAgendaRoute = AuthenticatedAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/agenda': typeof AuthenticatedAgendaRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/agenda': typeof AuthenticatedAgendaRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/tarifs': typeof TarifsRoute
   '/verification': typeof VerificationRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/agenda': typeof AuthenticatedAgendaRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/tarifs'
     | '/verification'
     | '/admin'
+    | '/agenda'
     | '/contacts'
     | '/dashboard'
     | '/settings'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/tarifs'
     | '/verification'
     | '/admin'
+    | '/agenda'
     | '/contacts'
     | '/dashboard'
     | '/settings'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/tarifs'
     | '/verification'
     | '/_authenticated/admin'
+    | '/_authenticated/agenda'
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
@@ -341,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/agenda': {
+      id: '/_authenticated/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AuthenticatedAgendaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/contacts': {
       id: '/_authenticated/contacts'
       path: '/contacts'
@@ -388,6 +407,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAgendaRoute: typeof AuthenticatedAgendaRoute
   AuthenticatedContactsRoute: typeof AuthenticatedContactsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -395,6 +415,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAgendaRoute: AuthenticatedAgendaRoute,
   AuthenticatedContactsRoute: AuthenticatedContactsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,

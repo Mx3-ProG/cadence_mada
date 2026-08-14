@@ -3,8 +3,10 @@
  * Server-only : utilise la clé service role pour contourner le garde-fou du plan.
  */
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import type { PlanTier } from "@/lib/plan";
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
+const VALID_PAID_TIERS = new Set(["basic", "standard", "economic", "business"]);
 
 export type StripeSubscription = {
   id: string;
@@ -18,7 +20,9 @@ export type StripeSubscription = {
 /** Met à jour le plan du profil correspondant au client Stripe. */
 export async function applySubscriptionState(subscription: StripeSubscription) {
   const isActive = ACTIVE_STATUSES.has(subscription.status);
-  const plan = isActive ? "pro" : "free";
+  const metaTier = subscription.metadata?.["plan_tier"];
+  const plan: PlanTier =
+    isActive && metaTier && VALID_PAID_TIERS.has(metaTier) ? (metaTier as PlanTier) : "free";
   const renewsAt = subscription.current_period_end
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
@@ -46,7 +50,7 @@ export async function applySubscriptionState(subscription: StripeSubscription) {
   return { plan };
 }
 
-const REFERRAL_COMMISSION_CENTS = 100;
+const REFERRAL_COMMISSION_RATE = 0.3;
 
 export type StripeInvoice = {
   id: string;
@@ -56,7 +60,7 @@ export type StripeInvoice = {
 };
 
 /**
- * Crédite 1€ au parrain du filleul quand une facture d'abonnement est payée.
+ * Crédite 30% du montant payé au parrain du filleul, à chaque facture d'abonnement réglée.
  * Idempotent via la contrainte UNIQUE sur stripe_invoice_id (retries webhook Stripe sans risque).
  */
 export async function recordReferralCommission(invoice: StripeInvoice) {
@@ -77,11 +81,14 @@ export async function recordReferralCommission(invoice: StripeInvoice) {
     .maybeSingle();
   if (!referred?.referred_by) return;
 
+  const amountCents = Math.round(invoice.amount_paid * REFERRAL_COMMISSION_RATE);
+  if (amountCents <= 0) return;
+
   const { error } = await supabaseAdmin.from("referral_commissions").insert({
     referrer_id: referred.referred_by,
     referred_id: referredId,
     stripe_invoice_id: invoice.id,
-    amount_cents: REFERRAL_COMMISSION_CENTS,
+    amount_cents: amountCents,
   });
   if (error && error.code !== "23505") {
     // 23505 = violation de contrainte UNIQUE (commission déjà enregistrée pour cette facture)

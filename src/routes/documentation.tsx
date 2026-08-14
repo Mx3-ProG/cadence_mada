@@ -59,12 +59,12 @@ const variables = [
   },
   {
     name: "{{inviteMessage}}",
-    source: "profiles.invite_message (Pro)",
-    usage: "Encart vert de message personnalisé, affiché uniquement pour un organisateur Pro.",
+    source: "profiles.invite_message (Business)",
+    usage: "Encart vert de message personnalisé, affiché uniquement pour un organisateur Business.",
   },
   {
     name: "{{businessName}} / {{googleRating}} / {{googleReviewUrl}} / {{googleMapsUrl}}",
-    source: "profiles.* (Pro)",
+    source: "profiles.* (Business)",
     usage:
       "Bloc « Avis Google » en pied d'email et sur la page d'invitation, si l'option est activée.",
   },
@@ -137,12 +137,14 @@ Organisateur
         <ul>
           <li>Titre « Proposition de rendez-vous ».</li>
           <li>Salutation « Bonjour {"{{guestName}}"}, ».</li>
-          <li>Encart message personnalisé (organisateurs Pro uniquement).</li>
+          <li>Encart message personnalisé (organisateurs Business uniquement).</li>
           <li>Titre du rendez-vous en gras, puis date et créneau formatés en français.</li>
           <li>Lieu et description, chacun affiché seulement s'il est renseigné.</li>
           <li>Bouton d'action vert « Confirmer ou refuser » pointant vers le lien d'invitation.</li>
           <li>Rappel du lien en texte brut, pour les clients mail qui bloquent les boutons.</li>
-          <li>Bloc « Avis Google » (Pro) : nom de l'entreprise, note, lien avis, lien Maps.</li>
+          <li>
+            Bloc « Avis Google » (Business) : nom de l'entreprise, note, lien avis, lien Maps.
+          </li>
         </ul>
         <p>
           Toutes les valeurs dynamiques sont échappées en HTML avant insertion : aucun contenu saisi
@@ -209,12 +211,12 @@ Organisateur
           </li>
           <li>
             <strong>État « en attente »</strong> : objet, date et créneau, durée, lieu, nom de
-            l'organisateur, message personnalisé (Pro), champ libre facultatif (500 caractères max),
-            puis deux boutons « J'accepte » et « Je refuse ».
+            l'organisateur, message personnalisé (Business), champ libre facultatif (500 caractères
+            max), puis deux boutons « J'accepte » et « Je refuse ».
           </li>
           <li>
             <strong>Après acceptation</strong> : badge vert « Accepté », confirmation à l'écran,
-            rappel des informations pratiques et bloc avis Google si l'organisateur est Pro.
+            rappel des informations pratiques et bloc avis Google si l'organisateur est Business.
           </li>
           <li>
             <strong>Après refus</strong> : badge rouge « Refusé », message indiquant que
@@ -273,7 +275,7 @@ Organisateur
           <li>
             <strong>get_invite(_token)</strong> : fonction en base à privilèges élevés, seule voie
             de lecture publique. Elle renvoie uniquement les champs d'affichage, et masque les
-            informations de marque pour un organisateur non Pro.
+            informations de marque pour un organisateur non Business.
           </li>
           <li>
             <strong>respond_to_invite(_token, _accept, _message)</strong> : met à jour le statut, le
@@ -309,12 +311,13 @@ Organisateur
             rendez-vous) et exemption des quotas du plan Gratuit.
           </li>
           <li>
-            <strong>Plan</strong> : le passage Gratuit → Pro ne peut pas être forcé depuis le client
-            ; seul le processus de paiement ou un administrateur peut le modifier.
+            <strong>Plan</strong> : le changement de palier ne peut pas être forcé depuis le client
+            ; seul le processus de paiement Stripe ou un administrateur peut le modifier.
           </li>
           <li>
-            <strong>Quotas</strong> : appliqués en base avant chaque création — 30 contacts et 30
-            rendez-vous par mois calendaire en Gratuit, illimité en Pro et pour les administrateurs.
+            <strong>Quotas</strong> : appliqués en base avant chaque création — 10/15 (Gratuit),
+            30/50 (Basic), 50/100 (Standard), 250/500 (Éco) contacts/rendez-vous par mois
+            calendaire, illimité en Business et pour les administrateurs.
           </li>
         </ul>
       </section>

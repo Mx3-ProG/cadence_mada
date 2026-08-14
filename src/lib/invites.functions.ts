@@ -33,11 +33,11 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "plan, business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, review_prompt_enabled",
+        "plan, business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, website_url, review_prompt_enabled",
       )
       .eq("id", userId)
       .maybeSingle();
-    const isPro = profile?.plan === "pro";
+    const hasBranding = profile?.plan === "business";
 
     let guestEmail: string | null = null;
     let guestName = "";
@@ -67,7 +67,7 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
         endsAt: appointment.ends_at,
       },
       link,
-      ...(isPro && profile
+      ...(hasBranding && profile
         ? {
             branding: {
               inviteMessage: profile.invite_message,
@@ -76,6 +76,7 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
               googleMapsUrl: profile.google_maps_url,
               googleRating: profile.google_rating,
               googleReviewsCount: profile.google_reviews_count,
+              websiteUrl: profile.website_url,
               reviewPromptEnabled: profile.review_prompt_enabled,
             },
           }

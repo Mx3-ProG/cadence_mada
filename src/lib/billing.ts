@@ -3,34 +3,53 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   cancelSubscription,
+  changeSubscriptionTier,
   createBillingPortalSession,
   createCheckoutSession,
   reactivateSubscription,
 } from "@/lib/billing.functions";
-import { planUsageQueryKey } from "@/lib/plan";
+import { planUsageQueryKey, TIER_LABELS, type PaidPlanTier } from "@/lib/plan";
 
 function stripeErrorMessage(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
-  if (message.includes("STRIPE_SECRET_KEY")) {
-    return "Stripe n'est pas encore configuré : ajoute ta clé STRIPE_SECRET_KEY.";
+  if (message.includes("STRIPE_SECRET_KEY") || message.includes("STRIPE_PRICE_ID")) {
+    return "Stripe n'est pas encore configuré pour ce palier.";
   }
   return "Le paiement n'a pas pu démarrer. Réessaie dans un instant.";
 }
 
-/** Lance le checkout Stripe pour l'abonnement Pro. */
-export function useUpgradeToPro() {
+/**
+ * Change le palier d'abonnement : lance le checkout Stripe si l'utilisateur est
+ * actuellement Gratuit, ou modifie l'abonnement existant s'il est déjà sur un palier payant.
+ */
+export function useChangePlan() {
   const checkout = useServerFn(createCheckoutSession);
+  const change = useServerFn(changeSubscriptionTier);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => checkout({ data: { origin: window.location.origin } }),
-    onSuccess: (result) => {
-      if ("alreadyPro" in result && result.alreadyPro) {
-        toast.success("Tu es déjà en plan Pro.");
+    mutationFn: async ({
+      tier,
+      hasActivePaidPlan,
+    }: {
+      tier: PaidPlanTier;
+      hasActivePaidPlan: boolean;
+    }) =>
+      hasActivePaidPlan
+        ? change({ data: { tier } })
+        : checkout({ data: { tier, origin: window.location.origin } }),
+    onSuccess: (result, variables) => {
+      if ("alreadyPaid" in result && result.alreadyPaid) {
+        toast.success("Ton plan est déjà actif.");
         void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
         return;
       }
-      if ("url" in result && result.url) window.location.href = result.url;
+      if ("url" in result && result.url) {
+        window.location.href = result.url;
+        return;
+      }
+      toast.success(`Tu es maintenant sur le plan ${TIER_LABELS[variables.tier]}.`);
+      void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
     },
     onError: (error) => toast.error(stripeErrorMessage(error)),
   });

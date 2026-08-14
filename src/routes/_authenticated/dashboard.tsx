@@ -1,43 +1,34 @@
 import { DashboardSkeleton } from "@/components/loading/page-skeletons";
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "motion/react";
 import { addDays, format, isSameDay, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
-import {
-  CalendarPlus,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Copy,
-  Link2,
-  Mail,
-  MapPin,
-  Pencil,
-  StickyNote,
-  Trash2,
-  X,
-} from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { sendInviteEmail } from "@/lib/invites.functions";
-import { notifyBookingDecision } from "@/lib/booking.functions";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AppHeader } from "@/components/agenda/app-header";
-import { StatusBadge } from "@/components/agenda/status-badge";
+import { AppointmentCard } from "@/components/agenda/appointment-card";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
+import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { WeekStats } from "@/components/agenda/week-stats";
 import { TodayPanel } from "@/components/agenda/today-panel";
 import { MonthTrend } from "@/components/agenda/month-trend";
 import { CheckoutReturn } from "@/components/billing/checkout-return";
 import { PlanBanner } from "@/components/agenda/plan-banner";
+import { LockedFeatureCard } from "@/components/agenda/locked-feature-card";
 import { Reveal } from "@/components/reveal";
+import { useAppointmentActions } from "@/lib/use-appointment-actions";
 
 import {
-  FREE_APPOINTMENT_LIMIT,
+  hasFeatureAccess,
   isAppointmentLimitReached,
+  nextTier,
   planUsageQueryKey,
+  TIER_LABELS,
+  TIER_LIMITS,
   usePlanUsage,
 } from "@/lib/plan";
 import {
@@ -75,7 +66,8 @@ function Dashboard() {
   const [anchor, setAnchor] = useState(() => new Date());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Appointment | null>(null);
-  const [defaultDate, setDefaultDate] = useState<Date | null>(null);
+  const [quickOpen, setQuickOpen] = useState(false);
+  const [quickDefaultDate, setQuickDefaultDate] = useState<Date | null>(null);
 
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const rangeStart = days[0]!;
@@ -142,89 +134,32 @@ function Dashboard() {
 
   const planQuery = usePlanUsage();
 
-  if (initialLoading) return <DashboardSkeleton />;
-
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: ["appointments"] });
     void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
   };
+  const { copyLink, email, decide, remove } = useAppointmentActions(refresh);
+
+  if (initialLoading) return <DashboardSkeleton />;
 
   const openNew = (day: Date | null) => {
     if (isAppointmentLimitReached(planQuery.data)) {
+      const plan = planQuery.data?.plan ?? "free";
+      const limit = TIER_LIMITS[plan].appointments;
+      const upsell = nextTier(plan);
       toast.error(
-        `Plan Gratuit : ${FREE_APPOINTMENT_LIMIT} rendez-vous par mois maximum. Passe en Pro pour l'illimité.`,
+        `Plan ${TIER_LABELS[plan]} : ${limit} rendez-vous par mois maximum.` +
+          (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
       );
       return;
     }
-    setEditing(null);
-    setDefaultDate(day);
-    setDialogOpen(true);
+    setQuickDefaultDate(day);
+    setQuickOpen(true);
   };
 
   const openEdit = (appointment: Appointment) => {
     setEditing(appointment);
-    setDefaultDate(null);
     setDialogOpen(true);
-  };
-
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("appointments").delete().eq("id", id);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Rendez-vous supprimé");
-    refresh();
-  };
-
-  const copyLink = async (token: string) => {
-    const url = `${window.location.origin}/invite/${token}`;
-    await navigator.clipboard.writeText(url);
-    toast.success("Lien de confirmation copié");
-  };
-
-  const email = async (appointment: Appointment) => {
-    const result = await sendInviteEmail({
-      data: { appointmentId: appointment.id, origin: window.location.origin },
-    });
-    if (result.sent) {
-      toast.success(`Invitation envoyée à ${result.to}`);
-      refresh();
-      return;
-    }
-    if (result.reason === "no_email") {
-      toast.error("Ce contact n'a pas d'adresse email.");
-      return;
-    }
-    if (result.reason === "no_api_key") {
-      await navigator.clipboard.writeText(result.link);
-      toast.info("Clé Resend absente — lien copié, envoie-le manuellement.");
-      return;
-    }
-    toast.error("L'envoi a échoué, réessaie.");
-  };
-
-  const decide = async (appointment: Appointment, accept: boolean) => {
-    const { error } = await supabase
-      .from("appointments")
-      .update({
-        status: accept ? "accepted" : "declined",
-        responded_at: new Date().toISOString(),
-      })
-      .eq("id", appointment.id);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success(accept ? "Rendez-vous accepté" : "Demande refusée");
-    refresh();
-    if (appointment.source === "public_booking") {
-      notifyBookingDecision({
-        data: { appointmentId: appointment.id, origin: window.location.origin },
-      }).catch(() => {
-        // Le visiteur peut ne pas être notifié tout de suite, ce n'est pas bloquant.
-      });
-    }
   };
 
   return (
@@ -274,6 +209,20 @@ function Dashboard() {
 
         <PlanBanner usage={planQuery.data} />
 
+        <Link
+          to="/agenda"
+          className="mt-6 flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-surface/60 px-4 py-3 transition-colors hover:border-primary/50 hover:bg-primary/5"
+        >
+          <span className="flex items-center gap-2 text-sm font-medium">
+            <LayoutGrid className="h-4 w-4 text-primary" />
+            Snip rapide — voir l'agenda complet
+            {planQuery.data && !hasFeatureAccess(planQuery.data, "standard") && (
+              <Badge variant="secondary">Standard</Badge>
+            )}
+          </span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+
         <TodayPanel
           appointments={todayQuery.data ?? []}
           contacts={contacts}
@@ -320,107 +269,16 @@ function Dashboard() {
                     {dayAppointments.map((a) => {
                       const contact = a.contact_id ? contactById.get(a.contact_id) : null;
                       return (
-                        <motion.article
+                        <AppointmentCard
                           key={a.id}
-                          layout
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="rounded-xl border border-border/70 bg-surface/70 p-3"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <p className="text-xs font-semibold text-primary">
-                                {format(new Date(a.starts_at), "HH:mm")} —{" "}
-                                {format(new Date(a.ends_at), "HH:mm")}
-                              </p>
-                              <h3 className="truncate font-semibold">{a.title}</h3>
-                              {contact && (
-                                <p className="truncate text-xs text-muted-foreground">
-                                  {contact.name}
-                                  {contact.company ? ` · ${contact.company}` : ""}
-                                </p>
-                              )}
-                            </div>
-                            <div className="flex shrink-0 flex-col items-end gap-1">
-                              <StatusBadge status={a.status} />
-                              {a.source === "public_booking" && (
-                                <span className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
-                                  <Link2 className="h-2.5 w-2.5" /> Demande reçue
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {a.location && (
-                            <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <MapPin className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{a.location}</span>
-                            </p>
-                          )}
-                          {a.prep_notes && (
-                            <p className="mt-2 flex gap-1.5 text-xs text-muted-foreground">
-                              <StickyNote className="mt-0.5 h-3 w-3 shrink-0" />
-                              <span className="line-clamp-2">{a.prep_notes}</span>
-                            </p>
-                          )}
-
-                          {a.status === "pending" && (
-                            <div className="mt-3 flex gap-2">
-                              <Button
-                                size="sm"
-                                className="h-7 flex-1 gap-1 px-2 text-xs"
-                                onClick={() => decide(a, true)}
-                              >
-                                <Check className="h-3 w-3" /> Accepter
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-7 flex-1 gap-1 px-2 text-xs"
-                                onClick={() => decide(a, false)}
-                              >
-                                <X className="h-3 w-3" /> Refuser
-                              </Button>
-                            </div>
-                          )}
-
-                          <div className="mt-3 flex flex-wrap items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 gap-1 px-2 text-xs"
-                              onClick={() => copyLink(a.invite_token)}
-                            >
-                              <Copy className="h-3 w-3" /> Lien
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 gap-1 px-2 text-xs"
-                              onClick={() => email(a)}
-                            >
-                              <Mail className="h-3 w-3" /> Email
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="ml-auto h-7 w-7"
-                              aria-label="Modifier"
-                              onClick={() => openEdit(a)}
-                            >
-                              <Pencil className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-destructive"
-                              aria-label="Supprimer"
-                              onClick={() => remove(a.id)}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </motion.article>
+                          appointment={a}
+                          contact={contact ?? null}
+                          onCopyLink={copyLink}
+                          onEmail={email}
+                          onEdit={openEdit}
+                          onDelete={remove}
+                          onDecide={decide}
+                        />
                       );
                     })}
                   </div>
@@ -430,9 +288,25 @@ function Dashboard() {
           })}
         </div>
 
-        <WeekStats appointments={appointments} contacts={contacts} days={days} />
+        {hasFeatureAccess(planQuery.data, "standard") ? (
+          <WeekStats appointments={appointments} contacts={contacts} days={days} />
+        ) : (
+          <LockedFeatureCard
+            title="Statistiques de la semaine"
+            minTier="standard"
+            currentPlan={planQuery.data?.plan}
+          />
+        )}
 
-        <MonthTrend anchor={anchor} />
+        {hasFeatureAccess(planQuery.data, "economic") ? (
+          <MonthTrend anchor={anchor} />
+        ) : (
+          <LockedFeatureCard
+            title="Tendance du mois"
+            minTier="economic"
+            currentPlan={planQuery.data?.plan}
+          />
+        )}
       </main>
 
       <AppointmentDialog
@@ -440,8 +314,14 @@ function Dashboard() {
         onOpenChange={setDialogOpen}
         appointment={editing}
         contacts={contacts}
-        defaultDate={defaultDate}
+        defaultDate={null}
         onSaved={refresh}
+      />
+
+      <QuickAppointmentFlow
+        open={quickOpen}
+        onOpenChange={setQuickOpen}
+        defaultDate={quickDefaultDate}
       />
     </div>
   );

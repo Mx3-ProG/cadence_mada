@@ -24,6 +24,7 @@ import {
   type AdminUserRow,
 } from "@/lib/admin";
 import { formatCents } from "@/lib/referral";
+import { hasTierAtLeast, TIER_LABELS } from "@/lib/plan";
 import { AdminSkeleton } from "@/components/loading/page-skeletons";
 import { CalendarLoader } from "@/components/loading/calendar-loader";
 
@@ -74,7 +75,9 @@ function UserPanel({ row }: { row: AdminUserRow }) {
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-left">
           <span className="truncate font-medium">{p.full_name || p.email || p.id}</span>
           <span className="truncate text-xs text-muted-foreground">{p.email}</span>
-          <Badge variant={p.plan === "pro" ? "default" : "secondary"}>{p.plan}</Badge>
+          <Badge variant={hasTierAtLeast(p.plan, "basic") ? "default" : "secondary"}>
+            {TIER_LABELS[p.plan]}
+          </Badge>
           {row.roles.map((r) => (
             <Badge key={r} variant="outline">
               {r}
@@ -369,7 +372,7 @@ function AdminPage() {
                 <Stat
                   label="Utilisateurs"
                   value={data.totals.users}
-                  hint={`${data.totals.pro} en Pro`}
+                  hint={`${data.totals.paying} sur un plan payant`}
                 />
                 <Stat label="Contacts" value={data.totals.contacts} />
                 <Stat

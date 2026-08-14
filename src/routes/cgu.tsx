@@ -8,7 +8,7 @@ export const Route = createFileRoute("/cgu")({
       {
         name: "description",
         content:
-          "Règles d'accès et d'usage de Cadence : compte, offre gratuite et abonnement Pro à 10 €/mois, obligations et résiliation.",
+          "Règles d'accès et d'usage de Cadence : compte, offre gratuite et abonnements payants, obligations et résiliation.",
       },
       { property: "og:title", content: "Conditions générales d'utilisation — Cadence" },
       {
@@ -50,30 +50,48 @@ function Cgu() {
         <h2>3. Offres et tarifs</h2>
         <ul>
           <li>
-            <strong>Gratuit</strong> : jusqu'à 30 contacts et 30 rendez-vous envoyés par mois
+            <strong>Gratuit</strong> : jusqu'à 10 contacts et 15 rendez-vous envoyés par mois
             calendaire.
           </li>
           <li>
-            <strong>Pro — 10 € TTC par mois</strong> : contacts et rendez-vous illimités,
-            personnalisation du lien d'invitation (marque, message, avis Google), sans engagement de
-            durée.
+            <strong>Basic — 3 € TTC par mois</strong> : jusqu'à 30 contacts et 50 rendez-vous par
+            mois.
+          </li>
+          <li>
+            <strong>Standard — 10 € TTC par mois</strong> : jusqu'à 50 contacts et 100 rendez-vous
+            par mois, agenda complet (vue semaine/mois) et réservation en libre-service.
+          </li>
+          <li>
+            <strong>Éco — 25 € TTC par mois</strong> : jusqu'à 250 contacts et 500 rendez-vous par
+            mois, avec en plus la tendance du mois.
+          </li>
+          <li>
+            <strong>Business — 39 € TTC par mois</strong> : contacts et rendez-vous illimités,
+            personnalisation du lien d'invitation (marque, message, avis Google, site web), sans
+            engagement de durée.
           </li>
         </ul>
         <p>
-          Le paiement est mensuel, par carte bancaire, via notre prestataire de paiement. L'accès
-          Pro est activé dès confirmation du paiement et renouvelé automatiquement à chaque échéance
-          jusqu'à résiliation.
+          Le paiement est mensuel, par carte bancaire, via notre prestataire de paiement. L'accès au
+          palier choisi est activé dès confirmation du paiement et renouvelé automatiquement à
+          chaque échéance jusqu'à résiliation.
+        </p>
+        <p>
+          <strong>Programme de parrainage</strong> : accessible dès le plan Gratuit. Chaque
+          utilisateur dispose d'un lien de parrainage unique. Si la personne parrainée souscrit à un
+          plan payant, le parrain perçoit 30 % du montant payé chaque mois, tant que le filleul
+          reste abonné. Retrait possible à partir de 25 € de solde disponible, traité manuellement.
         </p>
       </section>
 
       <section>
         <h2>4. Résiliation et remboursement</h2>
         <p>
-          L'abonnement peut être résilié à tout moment depuis l'espace de facturation. L'accès Pro
-          reste actif jusqu'à la fin de la période déjà réglée, puis le compte repasse en offre
-          gratuite. Conformément à l'article L221-28 du Code de la consommation, l'exécution
-          immédiate du service numérique avec accord exprès entraîne la renonciation au droit de
-          rétractation de 14 jours pour la période en cours.
+          L'abonnement peut être résilié à tout moment depuis l'espace de facturation. L'accès au
+          palier payant reste actif jusqu'à la fin de la période déjà réglée, puis le compte repasse
+          en offre gratuite. Conformément à l'article L221-28 du Code de la consommation,
+          l'exécution immédiate du service numérique avec accord exprès entraîne la renonciation au
+          droit de rétractation de 14 jours pour la période en cours.
         </p>
       </section>
 

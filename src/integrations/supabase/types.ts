@@ -157,10 +157,12 @@ export type Database = {
           hobbies: string[];
           id: string;
           languages: string[];
+          linked_user_id: string | null;
           name: string;
           notes: string | null;
           owner_id: string;
           phone: string | null;
+          relationship: string | null;
           role_title: string | null;
           updated_at: string;
         };
@@ -178,10 +180,12 @@ export type Database = {
           hobbies?: string[];
           id?: string;
           languages?: string[];
+          linked_user_id?: string | null;
           name: string;
           notes?: string | null;
           owner_id: string;
           phone?: string | null;
+          relationship?: string | null;
           role_title?: string | null;
           updated_at?: string;
         };
@@ -199,10 +203,12 @@ export type Database = {
           hobbies?: string[];
           id?: string;
           languages?: string[];
+          linked_user_id?: string | null;
           name?: string;
           notes?: string | null;
           owner_id?: string;
           phone?: string | null;
+          relationship?: string | null;
           role_title?: string | null;
           updated_at?: string;
         };
@@ -297,6 +303,7 @@ export type Database = {
           stripe_subscription_id: string | null;
           subscription_status: string | null;
           updated_at: string;
+          website_url: string | null;
         };
         Insert: {
           avatar_url?: string | null;
@@ -320,6 +327,7 @@ export type Database = {
           stripe_subscription_id?: string | null;
           subscription_status?: string | null;
           updated_at?: string;
+          website_url?: string | null;
         };
         Update: {
           avatar_url?: string | null;
@@ -343,6 +351,7 @@ export type Database = {
           stripe_subscription_id?: string | null;
           subscription_status?: string | null;
           updated_at?: string;
+          website_url?: string | null;
         };
         Relationships: [
           {
@@ -530,7 +539,7 @@ export type Database = {
           google_review_url: string;
           google_reviews_count: number;
           guest_name: string;
-          host_is_pro: boolean;
+          host_has_branding: boolean;
           host_name: string;
           invite_message: string;
           location: string;
@@ -540,6 +549,7 @@ export type Database = {
           starts_at: string;
           status: Database["public"]["Enums"]["appointment_status"];
           title: string;
+          website_url: string;
         }[];
       };
       get_my_referrals: {
@@ -609,7 +619,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user";
       appointment_status: "pending" | "accepted" | "declined" | "cancelled";
-      plan_tier: "free" | "pro";
+      plan_tier: "free" | "basic" | "standard" | "economic" | "business";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -733,7 +743,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       appointment_status: ["pending", "accepted", "declined", "cancelled"],
-      plan_tier: ["free", "pro"],
+      plan_tier: ["free", "basic", "standard", "economic", "business"],
     },
   },
 } as const;

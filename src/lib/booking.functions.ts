@@ -39,6 +39,17 @@ export const proposeBooking = createServerFn({ method: "POST" })
       return { success: false as const, reason: "disabled" as const };
     }
 
+    const { data: ownerProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("plan")
+      .eq("id", settings.owner_id)
+      .maybeSingle();
+
+    const BOOKING_TIERS = new Set(["standard", "economic", "business"]);
+    if (!ownerProfile?.plan || !BOOKING_TIERS.has(ownerProfile.plan)) {
+      return { success: false as const, reason: "disabled" as const };
+    }
+
     const startsAt = new Date(data.startsAt);
     const endsAt = new Date(data.endsAt);
     const now = new Date();

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
+import { BookingLinkQuickAccess } from "@/components/agenda/booking-link-quick-access";
 import { useIsAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/brand-logo";
@@ -13,7 +14,7 @@ import { BrandLogo } from "@/components/brand-logo";
 const nav = [
   { to: "/dashboard", label: "Semaine", icon: CalendarDays },
   { to: "/contacts", label: "Contacts", icon: Users },
-  { to: "/settings", label: "Lien Pro", icon: Settings },
+  { to: "/settings", label: "Réglages", icon: Settings },
 ] as const;
 
 export function AppHeader() {
@@ -66,6 +67,7 @@ export function AppHeader() {
               <CalendarPlus className="h-4 w-4" />
               Ajouter un rendez-vous
             </Button>
+            <BookingLinkQuickAccess />
             <ThemeToggle />
 
             <Button

@@ -1,11 +1,57 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const FREE_CONTACT_LIMIT = 30;
-export const FREE_APPOINTMENT_LIMIT = 30;
-export const PRO_PRICE_LABEL = "10 €";
+export const TIER_ORDER = ["free", "basic", "standard", "economic", "business"] as const;
+export type PlanTier = (typeof TIER_ORDER)[number];
+export type PaidPlanTier = Exclude<PlanTier, "free">;
 
-export type PlanTier = "free" | "pro";
+export const TIER_LIMITS: Record<
+  PlanTier,
+  { contacts: number | null; appointments: number | null }
+> = {
+  free: { contacts: 10, appointments: 15 },
+  basic: { contacts: 30, appointments: 50 },
+  standard: { contacts: 50, appointments: 100 },
+  economic: { contacts: 250, appointments: 500 },
+  business: { contacts: null, appointments: null },
+};
+
+export const TIER_PRICES: Record<PlanTier, string> = {
+  free: "0 €",
+  basic: "3 €",
+  standard: "10 €",
+  economic: "25 €",
+  business: "39 €",
+};
+
+export const TIER_LABELS: Record<PlanTier, string> = {
+  free: "Gratuit",
+  basic: "Basic",
+  standard: "Standard",
+  economic: "Éco",
+  business: "Business",
+};
+
+/** true si `plan` est au moins au niveau `min` dans l'ordre des paliers. */
+export function hasTierAtLeast(plan: PlanTier | undefined, min: PlanTier): boolean {
+  if (!plan) return false;
+  return TIER_ORDER.indexOf(plan) >= TIER_ORDER.indexOf(min);
+}
+
+/**
+ * true si l'utilisateur a accès à une fonctionnalité réservée au palier `min` — soit
+ * parce que son plan le couvre, soit parce que c'est un administrateur (même bypass
+ * que les triggers de quota côté base).
+ */
+export function hasFeatureAccess(usage: PlanUsage | undefined, min: PlanTier): boolean {
+  return !!usage?.isAdmin || hasTierAtLeast(usage?.plan, min);
+}
+
+/** Le palier juste au-dessus de `plan`, ou null si déjà au sommet. */
+export function nextTier(plan: PlanTier): PlanTier | null {
+  const i = TIER_ORDER.indexOf(plan);
+  return i >= 0 && i < TIER_ORDER.length - 1 ? TIER_ORDER[i + 1]! : null;
+}
 
 export type PlanUsage = {
   plan: PlanTier;
@@ -41,25 +87,26 @@ export function usePlanUsage() {
 }
 
 export function isContactLimitReached(usage: PlanUsage | undefined) {
-  return !!usage && usage.plan === "free" && !usage.isAdmin && usage.contacts >= FREE_CONTACT_LIMIT;
+  if (!usage || usage.isAdmin) return false;
+  const limit = TIER_LIMITS[usage.plan].contacts;
+  return limit !== null && usage.contacts >= limit;
 }
 
 export function isAppointmentLimitReached(usage: PlanUsage | undefined) {
-  return (
-    !!usage &&
-    usage.plan === "free" &&
-    !usage.isAdmin &&
-    usage.appointmentsThisMonth >= FREE_APPOINTMENT_LIMIT
-  );
+  if (!usage || usage.isAdmin) return false;
+  const limit = TIER_LIMITS[usage.plan].appointments;
+  return limit !== null && usage.appointmentsThisMonth >= limit;
 }
 
 /** Traduit les erreurs de limite renvoyées par la base en message lisible. */
-export function planErrorMessage(message: string): string | null {
+export function planErrorMessage(message: string, usage?: PlanUsage): string | null {
+  const upsell = usage ? nextTier(usage.plan) : null;
+  const upsellText = upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : "";
   if (message.includes("FREE_PLAN_CONTACT_LIMIT")) {
-    return `Plan Gratuit : limite de ${FREE_CONTACT_LIMIT} contacts atteinte. Passe en Pro pour l'illimité.`;
+    return `Limite de contacts atteinte pour ton plan.${upsellText}`;
   }
   if (message.includes("FREE_PLAN_APPOINTMENT_LIMIT")) {
-    return `Plan Gratuit : limite de ${FREE_APPOINTMENT_LIMIT} rendez-vous ce mois-ci. Passe en Pro pour l'illimité.`;
+    return `Limite de rendez-vous atteinte pour ton plan ce mois-ci.${upsellText}`;
   }
   return null;
 }

@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,6 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
   SelectContent,
@@ -20,10 +25,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toLocalInputValue, type Appointment, type Contact } from "@/lib/agenda";
+import {
+  addMinutesToTime,
+  toDateInputValue,
+  toTimeInputValue,
+  type Appointment,
+  type Contact,
+} from "@/lib/agenda";
 import { planErrorMessage } from "@/lib/plan";
+import { cn } from "@/lib/utils";
 
 const NO_CONTACT = "none";
+
+const DURATIONS = [
+  { label: "15 min", minutes: 15 },
+  { label: "30 min", minutes: 30 },
+  { label: "45 min", minutes: 45 },
+  { label: "1 h", minutes: 60 },
+  { label: "1 h 30", minutes: 90 },
+  { label: "2 h", minutes: 120 },
+];
 
 export function AppointmentDialog({
   open,
@@ -45,12 +66,14 @@ export function AppointmentDialog({
   const [form, setForm] = useState({
     title: "",
     contact_id: NO_CONTACT,
-    starts_at: "",
-    ends_at: "",
+    date: "",
+    startTime: "",
+    endTime: "",
     location: "",
     description: "",
     prep_notes: "",
   });
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -59,8 +82,9 @@ export function AppointmentDialog({
       setForm({
         title: appointment.title,
         contact_id: appointment.contact_id ?? NO_CONTACT,
-        starts_at: toLocalInputValue(appointment.starts_at),
-        ends_at: toLocalInputValue(appointment.ends_at),
+        date: toDateInputValue(appointment.starts_at),
+        startTime: toTimeInputValue(appointment.starts_at),
+        endTime: toTimeInputValue(appointment.ends_at),
         location: appointment.location ?? "",
         description: appointment.description ?? "",
         prep_notes: appointment.prep_notes ?? "",
@@ -69,13 +93,14 @@ export function AppointmentDialog({
     }
     const base = defaultDate ? new Date(defaultDate) : new Date();
     if (!defaultDate) base.setMinutes(0, 0, 0);
-    else base.setHours(15, 0, 0, 0);
+    else if (base.getHours() === 0 && base.getMinutes() === 0) base.setHours(15, 0, 0, 0);
     const end = new Date(base.getTime() + 60 * 60 * 1000);
     setForm({
       title: "",
       contact_id: presetContactId ?? NO_CONTACT,
-      starts_at: toLocalInputValue(base.toISOString()),
-      ends_at: toLocalInputValue(end.toISOString()),
+      date: toDateInputValue(base.toISOString()),
+      startTime: toTimeInputValue(base.toISOString()),
+      endTime: toTimeInputValue(end.toISOString()),
       location: "",
       description: "",
       prep_notes: "",
@@ -87,8 +112,12 @@ export function AppointmentDialog({
       toast.error("Donne un titre au rendez-vous.");
       return;
     }
-    const start = new Date(form.starts_at);
-    const end = new Date(form.ends_at);
+    if (!form.date) {
+      toast.error("Choisis une date.");
+      return;
+    }
+    const start = new Date(`${form.date}T${form.startTime}:00`);
+    const end = new Date(`${form.date}T${form.endTime}:00`);
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
       toast.error("Vérifie les horaires : la fin doit suivre le début.");
       return;
@@ -180,24 +209,77 @@ export function AppointmentDialog({
             </Select>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 rounded-2xl border border-border/70 bg-surface/40 p-3">
             <div className="grid gap-2">
-              <Label htmlFor="a-start">Début</Label>
-              <Input
-                id="a-start"
-                type="datetime-local"
-                value={form.starts_at}
-                onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-              />
+              <Label>Date</Label>
+              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "h-11 w-full justify-start gap-2 rounded-xl text-left font-normal capitalize",
+                      !form.date && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="h-4 w-4 shrink-0 text-primary" />
+                    {form.date
+                      ? format(new Date(`${form.date}T00:00:00`), "EEEE d MMMM yyyy", {
+                          locale: fr,
+                        })
+                      : "Choisir une date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={form.date ? new Date(`${form.date}T00:00:00`) : undefined}
+                    onSelect={(d) => {
+                      if (!d) return;
+                      setForm((f) => ({ ...f, date: toDateInputValue(d.toISOString()) }));
+                      setDatePopoverOpen(false);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="a-end">Fin</Label>
-              <Input
-                id="a-end"
-                type="datetime-local"
-                value={form.ends_at}
-                onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
-              />
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-2">
+                <Label htmlFor="a-start">Début</Label>
+                <Input
+                  id="a-start"
+                  type="time"
+                  className="h-11 rounded-xl text-center text-base"
+                  value={form.startTime}
+                  onChange={(e) => setForm({ ...form, startTime: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="a-end">Fin</Label>
+                <Input
+                  id="a-end"
+                  type="time"
+                  className="h-11 rounded-xl text-center text-base"
+                  value={form.endTime}
+                  onChange={(e) => setForm({ ...form, endTime: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {DURATIONS.map((d) => (
+                <button
+                  key={d.minutes}
+                  type="button"
+                  onClick={() =>
+                    setForm((f) => ({ ...f, endTime: addMinutesToTime(f.startTime, d.minutes) }))
+                  }
+                  className="rounded-full border border-border/70 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
+                >
+                  {d.label}
+                </button>
+              ))}
             </div>
           </div>
 

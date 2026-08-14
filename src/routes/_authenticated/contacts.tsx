@@ -8,6 +8,7 @@ import {
   Cake,
   Check,
   Copy,
+  Gift,
   Globe,
   Heart,
   Link2,
@@ -23,16 +24,21 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AppHeader } from "@/components/agenda/app-header";
 import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { Reveal } from "@/components/reveal";
-import { bookingUrl, generateBookingSlug, type Contact } from "@/lib/agenda";
+import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
+import { useChangePlan } from "@/lib/billing";
 import {
-  FREE_CONTACT_LIMIT,
+  hasFeatureAccess,
   isContactLimitReached,
+  nextTier,
   planUsageQueryKey,
+  TIER_LABELS,
+  TIER_LIMITS,
   usePlanUsage,
 } from "@/lib/plan";
 
@@ -71,6 +77,9 @@ export const Route = createFileRoute("/_authenticated/contacts")({
 
 function BookingLinkCard() {
   const queryClient = useQueryClient();
+  const changePlan = useChangePlan();
+  const planQuery = usePlanUsage();
+  const isPro = hasFeatureAccess(planQuery.data, "standard");
   const [copied, setCopied] = useState(false);
   const [activating, setActivating] = useState(false);
 
@@ -109,11 +118,24 @@ function BookingLinkCard() {
     const { error } = await supabase
       .from("booking_settings")
       .upsert({ owner_id: userId, slug, enabled: true }, { onConflict: "owner_id" });
-    setActivating(false);
     if (error) {
+      setActivating(false);
       toast.error("Impossible d'activer le lien, réessaie.");
       return;
     }
+
+    const { count } = await supabase
+      .from("booking_hours")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", userId);
+    if (!count) {
+      await supabase
+        .from("booking_hours")
+        .insert(defaultBookingHours().map((h) => ({ ...h, owner_id: userId })));
+      void queryClient.invalidateQueries({ queryKey: ["booking-hours"] });
+    }
+
+    setActivating(false);
     toast.success("Lien de réservation activé");
     void queryClient.invalidateQueries({ queryKey: ["booking-settings"] });
   };
@@ -133,7 +155,30 @@ function BookingLinkCard() {
         <h2 className="font-display text-base font-bold">Lien de réservation</h2>
       </div>
 
-      {!settingsQuery.isLoading && !settings?.enabled && (
+      {!isPro && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Réservé au plan <strong>Standard</strong> et plus : partage un lien public pour que tes
+            contacts réservent eux-mêmes un créneau libre dans ton agenda.
+          </p>
+          <Button
+            size="sm"
+            disabled={changePlan.isPending}
+            onClick={() =>
+              changePlan.mutate({
+                tier: "standard",
+                hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
+              })
+            }
+            className="shrink-0 gap-2"
+          >
+            <Link2 className="h-4 w-4" />
+            Passer en Standard
+          </Button>
+        </div>
+      )}
+
+      {isPro && !settingsQuery.isLoading && !settings?.enabled && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">
             Partage un lien public pour que tes contacts réservent eux-mêmes un créneau libre dans
@@ -146,7 +191,7 @@ function BookingLinkCard() {
         </div>
       )}
 
-      {settings?.enabled && settings.slug && (
+      {isPro && settings?.enabled && settings.slug && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <code className="truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
             {bookingUrl(settings.slug)}
@@ -229,8 +274,12 @@ function ContactsPage() {
             className="shrink-0 gap-2"
             onClick={() => {
               if (isContactLimitReached(planQuery.data)) {
+                const plan = planQuery.data?.plan ?? "free";
+                const limit = TIER_LIMITS[plan].contacts;
+                const upsell = nextTier(plan);
                 toast.error(
-                  `Plan Gratuit : ${FREE_CONTACT_LIMIT} contacts maximum. Passe en Pro pour l'illimité.`,
+                  `Plan ${TIER_LABELS[plan]} : ${limit} contacts maximum.` +
+                    (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
                 );
                 return;
               }
@@ -260,7 +309,15 @@ function ContactsPage() {
                 <article className="glass-panel h-full rounded-2xl p-5 transition-shadow hover:shadow-glow">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h2 className="truncate font-display text-lg font-bold">{c.name}</h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="truncate font-display text-lg font-bold">{c.name}</h2>
+                        {c.relationship && (
+                          <Badge variant="secondary" className="shrink-0 gap-1">
+                            <Gift className="h-3 w-3" />
+                            {c.relationship === "parrain" ? "Parrain" : "Filleul"}
+                          </Badge>
+                        )}
+                      </div>
                       {c.role_title && (
                         <p className="truncate text-xs text-muted-foreground">{c.role_title}</p>
                       )}

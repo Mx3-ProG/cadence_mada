@@ -38,7 +38,7 @@ export type AdminOverview = {
     users: number;
     contacts: number;
     appointments: number;
-    pro: number;
+    paying: number;
     pending: number;
     accepted: number;
     declined: number;
@@ -76,7 +76,7 @@ export async function fetchAdminOverview(): Promise<AdminOverview> {
       users: profiles.length,
       contacts: contacts.length,
       appointments: appointments.length,
-      pro: profiles.filter((p) => p.plan === "pro").length,
+      paying: profiles.filter((p) => p.plan !== "free").length,
       pending: appointments.filter((a) => a.status === "pending").length,
       accepted: appointments.filter((a) => a.status === "accepted").length,
       declined: appointments.filter((a) => a.status === "declined").length,

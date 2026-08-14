@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { sendReferralInviteEmail } from "@/lib/referral.functions";
+import type { PlanTier } from "@/lib/plan";
 
 export type ReferralSummary = {
   referralCode: string;
@@ -13,7 +15,7 @@ export type ReferralSummary = {
 export type ReferralRow = {
   id: string;
   displayName: string;
-  plan: "free" | "pro";
+  plan: PlanTier;
   appointmentsThisMonth: number;
   createdAt: string;
 };
@@ -75,6 +77,16 @@ export function useRequestPayout() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: referralSummaryQueryKey });
     },
+  });
+}
+
+/** Envoie une invitation de parrainage par email à l'adresse saisie. */
+export function useSendReferralInvite() {
+  return useMutation({
+    mutationFn: async (email: string) =>
+      sendReferralInviteEmail({
+        data: { email, origin: window.location.origin },
+      }),
   });
 }
 

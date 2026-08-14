@@ -10,7 +10,7 @@ export type InviteRequestEmailProps = {
     endsAt: string;
   };
   link: string;
-  /** Personnalisation réservée au plan pro. */
+  /** Personnalisation réservée au plan Business. */
   branding?: {
     inviteMessage?: string | null;
     businessName?: string | null;
@@ -18,6 +18,7 @@ export type InviteRequestEmailProps = {
     googleMapsUrl?: string | null;
     googleRating?: number | null;
     googleReviewsCount?: number | null;
+    websiteUrl?: string | null;
     reviewPromptEnabled?: boolean;
   };
 };
@@ -34,7 +35,8 @@ export function buildInviteRequestEmail({
     : "";
 
   const reviewBlock =
-    branding?.reviewPromptEnabled && (branding.googleReviewUrl || branding.googleMapsUrl)
+    branding?.reviewPromptEnabled &&
+    (branding.googleReviewUrl || branding.googleMapsUrl || branding.websiteUrl)
       ? `<div style="margin-top:28px;padding:16px;border:1px solid ${brand.border};border-radius:12px">
           <p style="margin:0 0 8px;font-weight:600">${escapeHtml(branding.businessName ?? "Avis Google")}</p>
           ${
@@ -53,7 +55,12 @@ export function buildInviteRequestEmail({
           }
           ${
             branding.googleMapsUrl
-              ? `<p style="margin:0"><a href="${escapeHtml(branding.googleMapsUrl)}" style="color:${brand.greenDark}">Voir sur Google Maps</a></p>`
+              ? `<p style="margin:0 0 8px"><a href="${escapeHtml(branding.googleMapsUrl)}" style="color:${brand.greenDark}">Voir sur Google Maps</a></p>`
+              : ""
+          }
+          ${
+            branding.websiteUrl
+              ? `<p style="margin:0"><a href="${escapeHtml(branding.websiteUrl)}" style="color:${brand.greenDark}">Visiter le site</a></p>`
               : ""
           }
         </div>`

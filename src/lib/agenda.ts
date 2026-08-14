@@ -32,30 +32,61 @@ export function bookingUrl(slug: string) {
   return `${origin}/book/${slug}`;
 }
 
-/** Génère un slug lisible et probablement unique pour le lien de réservation public. */
-export function generateBookingSlug(seed: string) {
-  const base =
+/** Normalise n'importe quelle chaîne (saisie libre ou nom) en slug URL-safe. */
+export function slugify(seed: string) {
+  return (
     seed
       .toLowerCase()
       .normalize("NFD")
       .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
-      .slice(0, 40) || "agenda";
-  const suffix = Math.random().toString(36).slice(2, 7);
-  return `${base}-${suffix}`;
+      .slice(0, 40) || "agenda"
+  );
 }
 
-export function toLocalInputValue(iso: string) {
+/** Génère un slug lisible et probablement unique pour le lien de réservation public. */
+export function generateBookingSlug(seed: string) {
+  const suffix = Math.random().toString(36).slice(2, 7);
+  return `${slugify(seed)}-${suffix}`;
+}
+
+/** Formate une date locale en valeur `yyyy-MM-dd` pour un `<input type="date">` ou un `Calendar`. */
+export function toDateInputValue(iso: string) {
   const d = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
-    d.getMinutes(),
-  )}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Formate une date locale en valeur `HH:mm` pour un `<input type="time">`. */
+export function toTimeInputValue(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** Ajoute des minutes à une heure `HH:mm`, en restant dans la même journée (borne à 23:59). */
+export function addMinutesToTime(time: string, minutes: number) {
+  const [h, m] = time.split(":").map(Number);
+  const total = Math.min(23 * 60 + 59, (h ?? 0) * 60 + (m ?? 0) + minutes);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(Math.floor(total / 60))}:${pad(total % 60)}`;
 }
 
 /** Une plage horaire hebdomadaire récurrente (booking_hours). weekday : 0 = dimanche … 6 = samedi. */
 export type BookingHourRange = { weekday: number; start_time: string; end_time: string };
+
+/**
+ * Horaires appliqués par défaut à l'activation du lien de réservation (7h30-12h / 13h-20h30,
+ * tous les jours). L'utilisateur peut ensuite les modifier librement comme n'importe quelle plage.
+ */
+export function defaultBookingHours(): BookingHourRange[] {
+  const weekdays = [0, 1, 2, 3, 4, 5, 6];
+  return weekdays.flatMap((weekday) => [
+    { weekday, start_time: "07:30", end_time: "12:00" },
+    { weekday, start_time: "13:00", end_time: "20:30" },
+  ]);
+}
 
 /** Un intervalle déjà réservé (issu de get_booked_intervals), à exclure du calcul des créneaux libres. */
 export type BookedInterval = { starts_at: string; ends_at: string };
@@ -65,6 +96,21 @@ function timeOnDate(date: Date, time: string) {
   const d = new Date(date);
   d.setHours(hours ?? 0, minutes ?? 0, 0, 0);
   return d;
+}
+
+/**
+ * Comme timeOnDate, mais pour la borne de fin d'un créneau : "23:59" (la valeur maximale
+ * stockable en base, le type `time` de Postgres ne va pas jusqu'à 24:00) est traité comme
+ * minuit le lendemain, pour ne pas perdre la dernière minute d'un créneau "journée complète".
+ */
+function rangeEndOnDate(date: Date, endTime: string) {
+  const [hours, minutes] = endTime.split(":").map(Number);
+  if ((hours ?? 0) >= 23 && (minutes ?? 0) >= 59) {
+    const midnight = new Date(date);
+    midnight.setHours(24, 0, 0, 0);
+    return midnight;
+  }
+  return timeOnDate(date, endTime);
 }
 
 /**
@@ -102,7 +148,7 @@ export function computeAvailableSlots({
     const weekday = day.getDay();
 
     for (const range of hours.filter((h) => h.weekday === weekday)) {
-      const rangeEnd = timeOnDate(day, range.end_time);
+      const rangeEnd = rangeEndOnDate(day, range.end_time);
       let slotStart = timeOnDate(day, range.start_time);
 
       while (slotStart.getTime() + slotMs <= rangeEnd.getTime()) {

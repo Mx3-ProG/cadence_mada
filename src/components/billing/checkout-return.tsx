@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { syncCheckoutSession } from "@/lib/billing.functions";
-import { planUsageQueryKey } from "@/lib/plan";
+import { planUsageQueryKey, TIER_LABELS, type PlanTier } from "@/lib/plan";
 
 /**
  * Au retour de Stripe (?checkout=success&session_id=...), synchronise le plan
@@ -32,9 +32,10 @@ export function CheckoutReturn() {
 
     void (async () => {
       try {
-        await sync({ data: { origin: window.location.origin, sessionId } });
+        const result = await sync({ data: { origin: window.location.origin, sessionId } });
         await queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
-        toast.success("Bienvenue en Pro : contacts et rendez-vous illimités.");
+        const label = TIER_LABELS[(result.plan as PlanTier) ?? "free"];
+        toast.success(`Bienvenue en ${label} !`);
       } catch {
         toast.info("Paiement reçu, activation en cours. Recharge la page dans un instant.");
       }

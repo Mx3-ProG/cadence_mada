@@ -41,8 +41,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Reveal } from "@/components/reveal";
 import { GoogleReviewCard } from "@/components/agenda/google-review-card";
-import { usePlanUsage, PRO_PRICE_LABEL } from "@/lib/plan";
-import { useUpgradeToPro } from "@/lib/billing";
+import { hasFeatureAccess, TIER_LABELS, TIER_PRICES, usePlanUsage } from "@/lib/plan";
+import { useChangePlan } from "@/lib/billing";
 import { SettingsSkeleton } from "@/components/loading/page-skeletons";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
       {
         property: "og:description",
         content:
-          "Réservé au plan Pro : avis Google, Maps et branding sur tes liens de rendez-vous.",
+          "Réservé au plan Business : avis Google, Maps, site web et branding sur tes liens de rendez-vous.",
       },
     ],
   }),
@@ -75,6 +75,7 @@ type Branding = {
   google_maps_url: string;
   google_rating: string;
   google_reviews_count: string;
+  website_url: string;
   review_prompt_enabled: boolean;
 };
 
@@ -85,14 +86,17 @@ const empty: Branding = {
   google_maps_url: "",
   google_rating: "",
   google_reviews_count: "",
+  website_url: "",
   review_prompt_enabled: true,
 };
+
+const BRANDING_MIN_TIER = "business" as const;
 
 function SettingsPage() {
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
-  const upgrade = useUpgradeToPro();
-  const isPro = planQuery.data?.plan === "pro";
+  const changePlan = useChangePlan();
+  const isBusiness = hasFeatureAccess(planQuery.data, BRANDING_MIN_TIER);
 
   const [form, setForm] = useState<Branding>(empty);
   const [saving, setSaving] = useState(false);
@@ -106,7 +110,7 @@ function SettingsPage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, review_prompt_enabled",
+          "business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, website_url, review_prompt_enabled",
         )
         .eq("id", id)
         .maybeSingle();
@@ -125,6 +129,7 @@ function SettingsPage() {
       google_maps_url: p.google_maps_url ?? "",
       google_rating: p.google_rating != null ? String(p.google_rating) : "",
       google_reviews_count: p.google_reviews_count != null ? String(p.google_reviews_count) : "",
+      website_url: p.website_url ?? "",
       review_prompt_enabled: p.review_prompt_enabled ?? true,
     });
   }, [profileQuery.data]);
@@ -160,6 +165,7 @@ function SettingsPage() {
         google_maps_url: form.google_maps_url.trim() || null,
         google_rating: rating,
         google_reviews_count: count,
+        website_url: form.website_url.trim() || null,
         review_prompt_enabled: form.review_prompt_enabled,
       })
       .eq("id", id);
@@ -197,33 +203,39 @@ function SettingsPage() {
           </div>
         </Reveal>
 
-        {!isPro && (
+        {!isBusiness && (
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-start gap-2 text-sm">
               <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <span>
-                Fonctionnalité réservée au plan <strong>Pro</strong> ({PRO_PRICE_LABEL}/mois) : avis
-                Google, note affichée et branding sur tes invitations.
+                Fonctionnalité réservée au plan <strong>{TIER_LABELS[BRANDING_MIN_TIER]}</strong> (
+                {TIER_PRICES[BRANDING_MIN_TIER]}
+                /mois) : avis Google, note affichée, site web et branding sur tes invitations.
               </span>
             </p>
             <Button
               className="gap-2 sm:shrink-0"
-              disabled={upgrade.isPending}
-              onClick={() => upgrade.mutate()}
+              disabled={changePlan.isPending}
+              onClick={() =>
+                changePlan.mutate({
+                  tier: BRANDING_MIN_TIER,
+                  hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
+                })
+              }
             >
-              {upgrade.isPending ? (
+              {changePlan.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Sparkles className="h-4 w-4" />
               )}
-              Passer en Pro
+              Passer en {TIER_LABELS[BRANDING_MIN_TIER]}
             </Button>
           </div>
         )}
 
         <Reveal>
           <section className="glass-panel mt-6 rounded-2xl p-5">
-            <fieldset disabled={!isPro} className="grid gap-4 disabled:opacity-60">
+            <fieldset disabled={!isBusiness} className="grid gap-4 disabled:opacity-60">
               <div className="grid gap-2">
                 <Label htmlFor="business_name">Nom affiché (entreprise)</Label>
                 <Input
@@ -282,6 +294,15 @@ function SettingsPage() {
                     value={form.google_reviews_count}
                     placeholder="127"
                     onChange={(e) => set("google_reviews_count", e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2 sm:col-span-2">
+                  <Label htmlFor="website_url">Site internet</Label>
+                  <Input
+                    id="website_url"
+                    value={form.website_url}
+                    placeholder="https://mon-site.com"
+                    onChange={(e) => set("website_url", e.target.value)}
                   />
                 </div>
               </div>

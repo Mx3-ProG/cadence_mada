@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, Star } from "lucide-react";
+import { ExternalLink, Globe, MapPin, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type ReviewBranding = {
@@ -7,6 +7,7 @@ export type ReviewBranding = {
   googleMapsUrl?: string | null;
   googleRating?: number | null;
   googleReviewsCount?: number | null;
+  websiteUrl?: string | null;
 };
 
 function Stars({ rating }: { rating: number }) {
@@ -28,10 +29,16 @@ function Stars({ rating }: { rating: number }) {
 
 /** Bloc « avis Google » affiché sur la page d'invitation des comptes Pro. */
 export function GoogleReviewCard({ branding }: { branding: ReviewBranding }) {
-  const { businessName, googleReviewUrl, googleMapsUrl, googleRating, googleReviewsCount } =
-    branding;
+  const {
+    businessName,
+    googleReviewUrl,
+    googleMapsUrl,
+    googleRating,
+    googleReviewsCount,
+    websiteUrl,
+  } = branding;
 
-  if (!googleReviewUrl && !googleMapsUrl && googleRating == null) return null;
+  if (!googleReviewUrl && !googleMapsUrl && !websiteUrl && googleRating == null) return null;
 
   return (
     <section className="mt-6 rounded-2xl border border-border/70 bg-surface/70 p-4">
@@ -61,6 +68,14 @@ export function GoogleReviewCard({ branding }: { branding: ReviewBranding }) {
           <Button asChild variant="outline" className="gap-2">
             <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
               <MapPin className="h-4 w-4" /> Voir sur Google Maps
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </Button>
+        )}
+        {websiteUrl && (
+          <Button asChild variant="outline" className="gap-2">
+            <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
+              <Globe className="h-4 w-4" /> Visiter le site
               <ExternalLink className="h-3 w-3" />
             </a>
           </Button>
