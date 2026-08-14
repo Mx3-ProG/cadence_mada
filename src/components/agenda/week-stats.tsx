@@ -29,7 +29,7 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="glass-panel h-full rounded-2xl p-4">
+    <section className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4">
       <header className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="flex items-center gap-2 font-display text-sm font-bold">
@@ -203,8 +203,8 @@ export function WeekStats({
             icon={CalendarClock}
             hint={`Jour le plus demandé : ${format(stats.busiestDay.day, "EEEE", { locale: fr })} (${stats.busiestDay.total})`}
           >
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="max-w-full overflow-x-auto overscroll-x-contain">
+              <table className="w-full min-w-[420px] text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
                     <th className="pb-2 font-medium">Jour</th>
@@ -266,8 +266,8 @@ export function WeekStats({
                 Aucun rendez-vous cette semaine
               </p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <div className="max-w-full overflow-x-auto overscroll-x-contain">
+                <table className="w-full min-w-[420px] text-sm">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
                       <th className="pb-2 font-medium">Contact</th>
@@ -332,40 +332,42 @@ export function WeekStats({
 
         <Reveal delay={0.2}>
           <Panel title="Suivi des invitations" icon={MailCheck} hint="Envois, réponses et blocages">
-            <table className="w-full text-sm">
-              <tbody>
-                {[
-                  {
-                    label: "Invitations envoyées par email",
-                    value: `${stats.invites.sent} / ${stats.total}`,
-                    detail: `${pct(stats.invites.sent, stats.total)} %`,
-                  },
-                  {
-                    label: "Réponses reçues",
-                    value: `${stats.invites.answered} / ${stats.total}`,
-                    detail: `${pct(stats.invites.answered, stats.total)} %`,
-                  },
-                  {
-                    label: "En attente, lien jamais envoyé",
-                    value: String(stats.invites.pendingNotSent),
-                    detail: stats.invites.pendingNotSent > 0 ? "à relancer" : "ok",
-                  },
-                  {
-                    label: "Contacts sans adresse email",
-                    value: String(stats.invites.noEmail),
-                    detail: stats.invites.noEmail > 0 ? "lien à copier" : "ok",
-                  },
-                ].map((row) => (
-                  <tr key={row.label} className="border-t border-border/60 first:border-t-0">
-                    <td className="py-2 pr-2 text-muted-foreground">{row.label}</td>
-                    <td className="py-2 text-right font-semibold tabular-nums">{row.value}</td>
-                    <td className="w-24 py-2 text-right text-xs text-muted-foreground">
-                      {row.detail}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="max-w-full overflow-x-auto overscroll-x-contain">
+              <table className="w-full min-w-[390px] text-sm">
+                <tbody>
+                  {[
+                    {
+                      label: "Invitations envoyées par email",
+                      value: `${stats.invites.sent} / ${stats.total}`,
+                      detail: `${pct(stats.invites.sent, stats.total)} %`,
+                    },
+                    {
+                      label: "Réponses reçues",
+                      value: `${stats.invites.answered} / ${stats.total}`,
+                      detail: `${pct(stats.invites.answered, stats.total)} %`,
+                    },
+                    {
+                      label: "En attente, lien jamais envoyé",
+                      value: String(stats.invites.pendingNotSent),
+                      detail: stats.invites.pendingNotSent > 0 ? "à relancer" : "ok",
+                    },
+                    {
+                      label: "Contacts sans adresse email",
+                      value: String(stats.invites.noEmail),
+                      detail: stats.invites.noEmail > 0 ? "lien à copier" : "ok",
+                    },
+                  ].map((row) => (
+                    <tr key={row.label} className="border-t border-border/60 first:border-t-0">
+                      <td className="py-2 pr-2 text-muted-foreground">{row.label}</td>
+                      <td className="py-2 text-right font-semibold tabular-nums">{row.value}</td>
+                      <td className="w-24 py-2 text-right text-xs text-muted-foreground">
+                        {row.detail}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Panel>
         </Reveal>
       </div>

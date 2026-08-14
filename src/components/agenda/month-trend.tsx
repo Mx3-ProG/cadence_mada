@@ -132,12 +132,15 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
         <Reveal delay={0.05} className="lg:col-span-2">
-          <section className="glass-panel h-full rounded-2xl p-4">
+          <section className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4">
             <h3 className="font-display text-sm font-bold">Rendez-vous demandés par jour</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Aire pleine : total demandé · aire claire : confirmés
             </p>
-            <ChartContainer config={chartConfig} className="mt-4 h-[240px] w-full">
+            <ChartContainer
+              config={chartConfig}
+              className="mt-4 h-[180px] min-w-0 w-full sm:h-[240px]"
+            >
               <ResponsiveContainer>
                 <AreaChart data={stats.series} margin={{ left: -20, right: 8, top: 8 }}>
                   <defs>
@@ -189,7 +192,7 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <section className="glass-panel h-full rounded-2xl p-4">
+          <section className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4">
             <h3 className="font-display text-sm font-bold">Hier vs aujourd'hui</h3>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-border/60 p-3">

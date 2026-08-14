@@ -2,7 +2,7 @@ import { DashboardSkeleton } from "@/components/loading/page-skeletons";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { addDays, format, isSameDay, isToday } from "date-fns";
+import { addDays, format, getWeekOfMonth, isSameDay, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CalendarPlus, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
@@ -72,6 +72,7 @@ function Dashboard() {
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const rangeStart = days[0]!;
   const rangeEnd = addDays(days[6]!, 1);
+  const weekOfMonth = getWeekOfMonth(rangeStart, { weekStartsOn: 1 });
 
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
@@ -167,13 +168,21 @@ function Dashboard() {
       <AppHeader />
       <CheckoutReturn />
 
-      <main className="relative mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6">
+      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pb-24 pt-8 sm:px-6">
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 opacity-60" />
 
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-2xl font-bold tracking-tight sm:text-3xl">
-              Semaine du {format(rangeStart, "d MMMM", { locale: fr })}
+            <h1
+              className="truncate font-display text-2xl font-bold tracking-tight sm:text-3xl"
+              aria-label={`Semaine ${weekOfMonth} du ${format(rangeStart, "d MMMM", { locale: fr })}`}
+            >
+              <span className="sm:hidden">
+                S{weekOfMonth} · {format(rangeStart, "d MMM", { locale: fr })}
+              </span>
+              <span className="hidden sm:inline">
+                Semaine du {format(rangeStart, "d MMMM", { locale: fr })}
+              </span>
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {appointments.length} rendez-vous · {counts.accepted} confirmés · {counts.pending} en
@@ -237,7 +246,7 @@ function Dashboard() {
             return (
               <Reveal key={day.toISOString()} delay={index * 0.04}>
                 <section
-                  className={`glass-panel h-full rounded-2xl p-4 transition-shadow hover:shadow-glow ${
+                  className={`glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow ${
                     isToday(day) ? "ring-1 ring-primary/50" : ""
                   }`}
                 >
