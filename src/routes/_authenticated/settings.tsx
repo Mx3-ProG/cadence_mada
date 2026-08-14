@@ -41,8 +41,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Reveal } from "@/components/reveal";
 import { GoogleReviewCard } from "@/components/agenda/google-review-card";
-import { hasFeatureAccess, TIER_LABELS, TIER_PRICES, usePlanUsage } from "@/lib/plan";
-import { useChangePlan } from "@/lib/billing";
+import {
+  hasFeatureAccess,
+  tierPricingHash,
+  TIER_LABELS,
+  TIER_PRICES,
+  usePlanUsage,
+} from "@/lib/plan";
 import { SettingsSkeleton } from "@/components/loading/page-skeletons";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -95,7 +100,6 @@ const BRANDING_MIN_TIER = "business" as const;
 function SettingsPage() {
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
-  const changePlan = useChangePlan();
   const isBusiness = hasFeatureAccess(planQuery.data, BRANDING_MIN_TIER);
 
   const [form, setForm] = useState<Branding>(empty);
@@ -213,22 +217,11 @@ function SettingsPage() {
                 /mois) : avis Google, note affichée, site web et branding sur tes invitations.
               </span>
             </p>
-            <Button
-              className="gap-2 sm:shrink-0"
-              disabled={changePlan.isPending}
-              onClick={() =>
-                changePlan.mutate({
-                  tier: BRANDING_MIN_TIER,
-                  hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
-                })
-              }
-            >
-              {changePlan.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
+            <Button asChild className="gap-2 sm:shrink-0">
+              <Link to="/tarifs" hash={tierPricingHash(BRANDING_MIN_TIER)}>
                 <Sparkles className="h-4 w-4" />
-              )}
-              Passer en {TIER_LABELS[BRANDING_MIN_TIER]}
+                Voir l’offre {TIER_LABELS[BRANDING_MIN_TIER]}
+              </Link>
             </Button>
           </div>
         )}

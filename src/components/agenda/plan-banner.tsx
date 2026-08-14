@@ -1,14 +1,13 @@
-import { Crown, Loader2, Zap } from "lucide-react";
+import { Crown, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { useChangePlan } from "@/lib/billing";
 import {
   nextTier,
+  tierPricingHash,
   TIER_LABELS,
   TIER_LIMITS,
   TIER_PRICES,
   usePlanUsage,
-  type PaidPlanTier,
   type PlanUsage,
 } from "@/lib/plan";
 
@@ -37,7 +36,6 @@ function Meter({ label, value, max }: { label: string; value: number; max: numbe
 
 export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
   const query = usePlanUsage();
-  const changePlan = useChangePlan();
   const data = usage ?? query.data;
   if (!data) return null;
 
@@ -75,23 +73,11 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
           />
         </div>
         {upsell && (
-          <Button
-            size="sm"
-            className="shrink-0 gap-2"
-            disabled={changePlan.isPending}
-            onClick={() =>
-              changePlan.mutate({
-                tier: upsell as PaidPlanTier,
-                hasActivePaidPlan: data.plan !== "free",
-              })
-            }
-          >
-            {changePlan.isPending ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
+          <Button asChild size="sm" className="shrink-0 gap-2">
+            <Link to="/tarifs" hash={tierPricingHash(upsell)}>
               <Zap className="h-3.5 w-3.5" />
-            )}
-            Passer en {TIER_LABELS[upsell]} — {TIER_PRICES[upsell]}/mois
+              Voir {TIER_LABELS[upsell]} — {TIER_PRICES[upsell]}/mois
+            </Link>
           </Button>
         )}
       </div>

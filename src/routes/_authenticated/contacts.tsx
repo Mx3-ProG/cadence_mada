@@ -31,12 +31,12 @@ import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
-import { useChangePlan } from "@/lib/billing";
 import {
   hasFeatureAccess,
   isContactLimitReached,
   nextTier,
   planUsageQueryKey,
+  tierPricingHash,
   TIER_LABELS,
   TIER_LIMITS,
   usePlanUsage,
@@ -77,7 +77,6 @@ export const Route = createFileRoute("/_authenticated/contacts")({
 
 function BookingLinkCard() {
   const queryClient = useQueryClient();
-  const changePlan = useChangePlan();
   const planQuery = usePlanUsage();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
   const [copied, setCopied] = useState(false);
@@ -161,19 +160,11 @@ function BookingLinkCard() {
             Réservé au plan <strong>Standard</strong> et plus : partage un lien public pour que tes
             contacts réservent eux-mêmes un créneau libre dans ton agenda.
           </p>
-          <Button
-            size="sm"
-            disabled={changePlan.isPending}
-            onClick={() =>
-              changePlan.mutate({
-                tier: "standard",
-                hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
-              })
-            }
-            className="shrink-0 gap-2"
-          >
-            <Link2 className="h-4 w-4" />
-            Passer en Standard
+          <Button asChild size="sm" className="shrink-0 gap-2">
+            <Link to="/tarifs" hash={tierPricingHash("standard")}>
+              <Link2 className="h-4 w-4" />
+              Voir l’offre Standard
+            </Link>
           </Button>
         </div>
       )}

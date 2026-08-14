@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, Loader2, Lock, Plus, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
@@ -9,8 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { BookingHourPickerDialog } from "@/components/agenda/booking-hour-picker-dialog";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, slugify } from "@/lib/agenda";
-import { hasFeatureAccess, TIER_LABELS, TIER_PRICES, usePlanUsage } from "@/lib/plan";
-import { useChangePlan } from "@/lib/billing";
+import {
+  hasFeatureAccess,
+  tierPricingHash,
+  TIER_LABELS,
+  TIER_PRICES,
+  usePlanUsage,
+} from "@/lib/plan";
 
 const BOOKING_MIN_TIER = "standard" as const;
 
@@ -43,7 +49,6 @@ const emptyForm: BookingSettingsForm = {
 export function BookingSettingsSection() {
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
-  const changePlan = useChangePlan();
   const hasBooking = hasFeatureAccess(planQuery.data, BOOKING_MIN_TIER);
   const [form, setForm] = useState<BookingSettingsForm>(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -217,22 +222,11 @@ export function BookingSettingsSection() {
               /mois) et plus.
             </span>
           </p>
-          <Button
-            className="gap-2 sm:shrink-0"
-            disabled={changePlan.isPending}
-            onClick={() =>
-              changePlan.mutate({
-                tier: BOOKING_MIN_TIER,
-                hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
-              })
-            }
-          >
-            {changePlan.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
+          <Button asChild className="gap-2 sm:shrink-0">
+            <Link to="/tarifs" hash={tierPricingHash(BOOKING_MIN_TIER)}>
               <Sparkles className="h-4 w-4" />
-            )}
-            Passer en {TIER_LABELS[BOOKING_MIN_TIER]}
+              Voir l’offre {TIER_LABELS[BOOKING_MIN_TIER]}
+            </Link>
           </Button>
         </div>
       )}

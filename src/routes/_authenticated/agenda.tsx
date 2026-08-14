@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, addMonths, endOfMonth, format, startOfMonth } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarPlus, ChevronLeft, ChevronRight, Loader2, Lock, Sparkles } from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,11 @@ import {
   isAppointmentLimitReached,
   nextTier,
   planUsageQueryKey,
+  tierPricingHash,
   TIER_LABELS,
   TIER_LIMITS,
   usePlanUsage,
 } from "@/lib/plan";
-import { useChangePlan } from "@/lib/billing";
 import {
   shortMonthLabel,
   weekDays,
@@ -53,7 +53,6 @@ type View = "week" | "month";
 function AgendaPage() {
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
-  const changePlan = useChangePlan();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
 
   const [view, setView] = useState<View>("week");
@@ -180,22 +179,11 @@ function AgendaPage() {
                 au plan <strong>Standard</strong> et plus.
               </span>
             </p>
-            <Button
-              className="gap-2 sm:shrink-0"
-              disabled={changePlan.isPending}
-              onClick={() =>
-                changePlan.mutate({
-                  tier: "standard",
-                  hasActivePaidPlan: (planQuery.data?.plan ?? "free") !== "free",
-                })
-              }
-            >
-              {changePlan.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
+            <Button asChild className="gap-2 sm:shrink-0">
+              <Link to="/tarifs" hash={tierPricingHash("standard")}>
                 <Sparkles className="h-4 w-4" />
-              )}
-              Passer en Standard
+                Voir l’offre Standard
+              </Link>
             </Button>
           </div>
         )}

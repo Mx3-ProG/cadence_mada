@@ -66,10 +66,11 @@ export function BookingLinkQuickAccess() {
             <span>
               Réservé au plan Standard et plus.{" "}
               <Link
-                to="/settings"
+                to="/tarifs"
+                hash="offre-standard"
                 className="font-medium text-primary underline-offset-2 hover:underline"
               >
-                Passer à Standard
+                Voir l’offre Standard
               </Link>
             </span>
           </div>

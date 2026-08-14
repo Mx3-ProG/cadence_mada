@@ -32,6 +32,11 @@ export const TIER_LABELS: Record<PlanTier, string> = {
   business: "Business",
 };
 
+/** Ancre stable de chaque offre sur la page publique des tarifs. */
+export function tierPricingHash(tier: PlanTier): string {
+  return `offre-${tier}`;
+}
+
 /** true si `plan` est au moins au niveau `min` dans l'ordre des paliers. */
 export function hasTierAtLeast(plan: PlanTier | undefined, min: PlanTier): boolean {
   if (!plan) return false;

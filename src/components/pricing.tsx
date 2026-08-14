@@ -3,7 +3,13 @@ import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { PlanCta } from "@/components/billing/plan-cta";
-import { TIER_LABELS, TIER_LIMITS, TIER_PRICES, type PaidPlanTier } from "@/lib/plan";
+import {
+  tierPricingHash,
+  TIER_LABELS,
+  TIER_LIMITS,
+  TIER_PRICES,
+  type PaidPlanTier,
+} from "@/lib/plan";
 
 const plans = [
   {
@@ -87,36 +93,52 @@ const plans = [
   },
 ];
 
-export function Pricing() {
+export function Pricing({
+  checkout = false,
+  showIntro = true,
+}: {
+  checkout?: boolean;
+  showIntro?: boolean;
+}) {
   return (
     <section id="pricing" className="scroll-mt-24 px-4 pb-28 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <Reveal>
-          <div className="text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-surface/70 px-4 py-1.5 text-xs font-medium text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Tarifs simples
-            </span>
-            <h2 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              5 paliers, une seule règle : tu paies pour ce dont tu as besoin
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-              Aucune carte demandée pour le plan {TIER_LABELS.free}. Change de palier à tout moment,
-              sans engagement.
-            </p>
-          </div>
-        </Reveal>
+        {showIntro && (
+          <Reveal>
+            <div className="text-center">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-surface/70 px-4 py-1.5 text-xs font-medium text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                Tarifs simples
+              </span>
+              <h2 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                5 paliers, une seule règle : tu paies pour ce dont tu as besoin
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
+                Aucune carte demandée pour le plan {TIER_LABELS.free}. Change de palier à tout
+                moment, sans engagement.
+              </p>
+            </div>
+          </Reveal>
+        )}
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div
+          className={`${showIntro ? "mt-12" : "mt-14"} grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5`}
+        >
           {plans.map((plan, i) => (
             <Reveal key={plan.tier} delay={i * 0.06}>
               <article
-                className={`glass-panel relative flex h-full flex-col rounded-3xl p-6 transition-transform duration-300 hover:-translate-y-1 ${
-                  plan.highlighted ? "ring-1 ring-primary/60 shadow-glow" : ""
+                id={tierPricingHash(plan.tier)}
+                className={`relative flex h-full scroll-mt-28 flex-col overflow-hidden rounded-[1.75rem] border bg-background/80 p-6 shadow-[0_18px_55px_-38px_rgba(15,23,42,0.55)] backdrop-blur-xl transition-[transform,box-shadow,border-color] duration-300 target:border-primary target:ring-2 target:ring-primary/35 hover:-translate-y-1 hover:shadow-[0_24px_65px_-36px_rgba(15,23,42,0.5)] ${
+                  plan.highlighted
+                    ? "border-primary/45 ring-1 ring-primary/20 shadow-glow"
+                    : "border-border/70"
                 }`}
               >
                 {plan.highlighted && (
-                  <span className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-primary" aria-hidden />
+                )}
+                {plan.highlighted && (
+                  <span className="mb-5 w-fit rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
                     Recommandé
                   </span>
                 )}
@@ -142,8 +164,14 @@ export function Pricing() {
                   <Button asChild size="lg" variant="outline" className="mt-8 w-full">
                     <Link to="/auth">{plan.cta}</Link>
                   </Button>
-                ) : (
+                ) : checkout ? (
                   <PlanCta tier={plan.tier as PaidPlanTier} />
+                ) : (
+                  <Button asChild size="lg" className="mt-8 w-full">
+                    <Link to="/tarifs" hash={tierPricingHash(plan.tier)}>
+                      Voir l’offre {plan.name}
+                    </Link>
+                  </Button>
                 )}
               </article>
             </Reveal>
