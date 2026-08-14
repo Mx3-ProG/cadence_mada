@@ -154,13 +154,13 @@ export function ContactDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{contact ? "Modifier le contact" : "Nouveau contact"}</DialogTitle>
           <DialogDescription>Les infos utiles pour préparer vos échanges.</DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="c-name">Nom complet</Label>
             <Input
@@ -170,7 +170,7 @@ export function ContactDialog({
               placeholder="Camille Dubois"
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="c-email">Email</Label>
               <Input
@@ -191,7 +191,7 @@ export function ContactDialog({
               />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="c-company">Société</Label>
               <Input
@@ -209,8 +209,8 @@ export function ContactDialog({
               />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="grid gap-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-2">
               <Label htmlFor="c-birthday">Date d'anniversaire</Label>
               <Input
                 id="c-birthday"
@@ -219,10 +219,10 @@ export function ContactDialog({
                 onChange={(e) => setForm({ ...form, birthday: e.target.value })}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="grid min-w-0 gap-2">
               <Label>Sexe</Label>
               <Select value={form.gender} onValueChange={(v) => setForm({ ...form, gender: v })}>
-                <SelectTrigger>
+                <SelectTrigger className="min-w-0">
                   <SelectValue placeholder="Non précisé" />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,7 +237,7 @@ export function ContactDialog({
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="c-city">Ville</Label>
               <Input
@@ -290,7 +290,7 @@ export function ContactDialog({
             <p className="text-xs text-muted-foreground">Sépare par des virgules.</p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="c-family">Famille</Label>
               <Input

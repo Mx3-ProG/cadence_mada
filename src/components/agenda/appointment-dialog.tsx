@@ -167,7 +167,7 @@ export function AppointmentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-xl">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
             {appointment ? "Modifier le rendez-vous" : "Nouveau rendez-vous"}
@@ -177,7 +177,7 @@ export function AppointmentDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="a-title">Titre</Label>
             <Input
@@ -194,7 +194,7 @@ export function AppointmentDialog({
               value={form.contact_id}
               onValueChange={(v) => setForm({ ...form, contact_id: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="min-w-0">
                 <SelectValue placeholder="Choisir un contact" />
               </SelectTrigger>
               <SelectContent>
@@ -209,7 +209,7 @@ export function AppointmentDialog({
             </Select>
           </div>
 
-          <div className="grid gap-3 rounded-2xl border border-border/70 bg-surface/40 p-3">
+          <div className="grid min-w-0 gap-3 rounded-2xl border border-border/70 bg-surface/40 p-3">
             <div className="grid gap-2">
               <Label>Date</Label>
               <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
@@ -222,11 +222,13 @@ export function AppointmentDialog({
                     )}
                   >
                     <CalendarIcon className="h-4 w-4 shrink-0 text-primary" />
-                    {form.date
-                      ? format(new Date(`${form.date}T00:00:00`), "EEEE d MMMM yyyy", {
-                          locale: fr,
-                        })
-                      : "Choisir une date"}
+                    <span className="min-w-0 truncate">
+                      {form.date
+                        ? format(new Date(`${form.date}T00:00:00`), "EEEE d MMMM yyyy", {
+                            locale: fr,
+                          })
+                        : "Choisir une date"}
+                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -244,23 +246,23 @@ export function AppointmentDialog({
               </Popover>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-2">
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:gap-3">
+              <div className="grid min-w-0 gap-2">
                 <Label htmlFor="a-start">Début</Label>
                 <Input
                   id="a-start"
                   type="time"
-                  className="h-11 rounded-xl text-center text-base"
+                  className="h-11 min-w-0 rounded-xl px-2 text-center text-base"
                   value={form.startTime}
                   onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="grid min-w-0 gap-2">
                 <Label htmlFor="a-end">Fin</Label>
                 <Input
                   id="a-end"
                   type="time"
-                  className="h-11 rounded-xl text-center text-base"
+                  className="h-11 min-w-0 rounded-xl px-2 text-center text-base"
                   value={form.endTime}
                   onChange={(e) => setForm({ ...form, endTime: e.target.value })}
                 />
