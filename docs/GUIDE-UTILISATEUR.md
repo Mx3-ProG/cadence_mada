@@ -50,14 +50,16 @@ Trois entrées possibles :
 - Depuis une case du calendrier de la semaine.
 - Depuis la fiche d'un contact.
 
-Champs : titre, contact, date, heure de début, durée, lieu, notes internes.
+Champs : titre, invités, date, heure de début, durée, lieu, notes internes. Dans **Invités**,
+choisissez **Un contact** ou **Plusieurs**, puis sélectionnez les personnes concernées. Le
+rendez-vous reste un seul créneau dans l'agenda, quel que soit le nombre d'invités.
 
 ---
 
 ## 5. Envoyer l'invitation et suivre la réponse
 
-À la création, l'application génère pour chaque rendez-vous un **jeton unique** et donc un
-**lien public** de la forme :
+À la création, l'application génère un **jeton unique par invité** et donc un lien public
+personnel de la forme :
 
 ```
 https://cadencemada.vercel.app/invite/<token>
@@ -65,11 +67,16 @@ https://cadencemada.vercel.app/invite/<token>
 
 Deux façons de le transmettre :
 
-1. **Envoi email automatique** (via Resend) : l'invité reçoit un email contenant le récapitulatif
-   du rendez-vous et le bouton de confirmation.
-2. **Copie du lien** : vous collez le lien dans WhatsApp, SMS, LinkedIn, etc.
+1. **Envoi email automatique** (via Resend) : tous les contacts ayant une adresse email reçoivent
+   leur récapitulatif et leur propre bouton de confirmation.
+2. **Partage direct** : le bouton **Inviter** propose WhatsApp, SMS et la feuille de partage du
+   téléphone pour choisir n'importe quelle application installée.
+3. **Copie du lien** : pour un rendez-vous collectif, choisissez d'abord l'invité afin de ne
+   partager que son lien personnel.
 
-Le statut du rendez-vous évolue automatiquement sur votre dashboard :
+Chaque invité dispose de son propre statut sur la fiche du rendez-vous. Le statut global évolue
+automatiquement : il est accepté quand tout le monde accepte, refusé quand tout le monde refuse,
+et reste en attente tant que les réponses sont incomplètes ou partagées.
 
 ```text
 en attente  ──▶  accepté      (l'invité a confirmé)

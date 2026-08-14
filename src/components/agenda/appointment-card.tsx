@@ -7,7 +7,6 @@ import {
   Cake,
   Check,
   ChevronDown,
-  Copy,
   Link2,
   Mail,
   MapPin,
@@ -16,9 +15,11 @@ import {
   StickyNote,
   Trash2,
   User,
+  Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppointmentShareMenu } from "@/components/agenda/appointment-share-menu";
 import { StatusBadge } from "@/components/agenda/status-badge";
 import { cn } from "@/lib/utils";
 import type { Appointment, Contact } from "@/lib/agenda";
@@ -30,7 +31,6 @@ function stop(e: React.SyntheticEvent) {
 export function AppointmentCard({
   appointment,
   contact,
-  onCopyLink,
   onEmail,
   onEdit,
   onDelete,
@@ -38,7 +38,6 @@ export function AppointmentCard({
 }: {
   appointment: Appointment;
   contact: Contact | null;
-  onCopyLink: (token: string) => void;
   onEmail: (appointment: Appointment) => void;
   onEdit: (appointment: Appointment) => void;
   onDelete: (id: string) => void;
@@ -46,6 +45,8 @@ export function AppointmentCard({
 }) {
   const [open, setOpen] = useState(false);
   const a = appointment;
+  const invitees =
+    a.invitations?.flatMap((invitation) => (invitation.contact ? [invitation.contact] : [])) ?? [];
 
   return (
     <motion.article
@@ -65,12 +66,16 @@ export function AppointmentCard({
             {format(new Date(a.starts_at), "HH:mm")} — {format(new Date(a.ends_at), "HH:mm")}
           </p>
           <h3 className="truncate font-semibold">{a.title}</h3>
-          {contact && (
+          {invitees.length > 1 ? (
+            <p className="truncate text-xs text-muted-foreground">
+              {invitees.map((invitee) => invitee.name).join(", ")}
+            </p>
+          ) : contact ? (
             <p className="truncate text-xs text-muted-foreground">
               {contact.name}
               {contact.company ? ` · ${contact.company}` : ""}
             </p>
-          )}
+          ) : null}
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
           <StatusBadge status={a.status} />
@@ -118,7 +123,17 @@ export function AppointmentCard({
                 </div>
               )}
 
-              {contact && (
+              {invitees.length > 1 ? (
+                <div className="rounded-lg bg-background/60 p-2.5">
+                  <p className="flex items-center gap-1.5 text-xs font-semibold">
+                    <Users className="h-3 w-3 shrink-0 text-primary" />
+                    {invitees.length} invités
+                  </p>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    {invitees.map((invitee) => invitee.name).join(", ")}
+                  </p>
+                </div>
+              ) : contact ? (
                 <div className="rounded-lg bg-background/60 p-2.5">
                   <p className="flex items-center gap-1.5 text-xs font-semibold">
                     <User className="h-3 w-3 shrink-0 text-primary" />
@@ -169,7 +184,7 @@ export function AppointmentCard({
                     )}
                   </div>
                 </div>
-              )}
+              ) : null}
 
               {a.status === "pending" && (
                 <div className="flex gap-2">
@@ -198,28 +213,7 @@ export function AppointmentCard({
               )}
 
               <div className="flex flex-wrap items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 gap-1 px-2 text-xs"
-                  onClick={(e) => {
-                    stop(e);
-                    onCopyLink(a.invite_token);
-                  }}
-                >
-                  <Copy className="h-3 w-3" /> Lien
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 gap-1 px-2 text-xs"
-                  onClick={(e) => {
-                    stop(e);
-                    onEmail(a);
-                  }}
-                >
-                  <Mail className="h-3 w-3" /> Email
-                </Button>
+                <AppointmentShareMenu appointment={a} onEmail={onEmail} compact />
                 <Button
                   variant="ghost"
                   size="icon"

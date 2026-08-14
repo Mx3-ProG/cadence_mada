@@ -2,7 +2,8 @@ import { addDays, startOfWeek } from "date-fns";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Contact = Tables<"contacts">;
-export type Appointment = Tables<"appointments">;
+export type AppointmentInvite = Tables<"appointment_invites"> & { contact?: Contact | null };
+export type Appointment = Tables<"appointments"> & { invitations?: AppointmentInvite[] };
 export type AppointmentWithContact = Appointment & { contact: Contact | null };
 export type AppointmentStatus = Appointment["status"];
 

@@ -4,7 +4,6 @@ import {
   Building2,
   Cake,
   Check,
-  Copy,
   Link2,
   Mail,
   MapPin,
@@ -13,6 +12,7 @@ import {
   StickyNote,
   Trash2,
   User,
+  Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/agenda/status-badge";
+import { AppointmentShareMenu } from "@/components/agenda/appointment-share-menu";
 import type { Appointment, Contact } from "@/lib/agenda";
 
 export function AppointmentDetailsSheet({
@@ -32,7 +33,6 @@ export function AppointmentDetailsSheet({
   onOpenChange,
   onEdit,
   onDelete,
-  onCopyLink,
   onEmail,
   onDecide,
 }: {
@@ -41,11 +41,11 @@ export function AppointmentDetailsSheet({
   onOpenChange: (v: boolean) => void;
   onEdit: (appointment: Appointment) => void;
   onDelete: (id: string) => void;
-  onCopyLink: (token: string) => void;
   onEmail: (appointment: Appointment) => void;
   onDecide: (appointment: Appointment, accept: boolean) => void;
 }) {
   const a = appointment;
+  const invitations = a?.invitations ?? [];
 
   return (
     <Sheet open={!!a} onOpenChange={onOpenChange}>
@@ -89,7 +89,24 @@ export function AppointmentDetailsSheet({
                 </div>
               )}
 
-              {contact && (
+              {invitations.length > 1 ? (
+                <div className="rounded-xl border border-border/70 bg-surface/70 p-3">
+                  <p className="flex items-center gap-1.5 text-sm font-semibold">
+                    <Users className="h-3.5 w-3.5 shrink-0 text-primary" />
+                    {invitations.length} invités
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    {invitations.map((invitation) => (
+                      <div key={invitation.id} className="flex items-center justify-between gap-3">
+                        <span className="min-w-0 truncate text-sm">
+                          {invitation.contact?.name ?? "Contact supprimé"}
+                        </span>
+                        <StatusBadge status={invitation.status} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : contact ? (
                 <div className="rounded-xl border border-border/70 bg-surface/70 p-3">
                   <p className="flex items-center gap-1.5 text-sm font-semibold">
                     <User className="h-3.5 w-3.5 shrink-0 text-primary" />
@@ -138,7 +155,7 @@ export function AppointmentDetailsSheet({
                     )}
                   </div>
                 </div>
-              )}
+              ) : null}
 
               {a.status === "pending" && (
                 <div className="flex gap-2">
@@ -156,22 +173,7 @@ export function AppointmentDetailsSheet({
               )}
 
               <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => onCopyLink(a.invite_token)}
-                >
-                  <Copy className="h-3.5 w-3.5" /> Copier le lien
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1.5"
-                  onClick={() => onEmail(a)}
-                >
-                  <Mail className="h-3.5 w-3.5" /> Envoyer l'email
-                </Button>
+                <AppointmentShareMenu appointment={a} onEmail={onEmail} />
               </div>
             </div>
 

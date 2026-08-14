@@ -90,7 +90,7 @@ function Dashboard() {
     queryFn: async (): Promise<Appointment[]> => {
       const { data, error } = await supabase
         .from("appointments")
-        .select("*")
+        .select("*, invitations:appointment_invites(*, contact:contacts(*))")
         .gte("starts_at", rangeStart.toISOString())
         .lt("starts_at", rangeEnd.toISOString())
         .order("starts_at");
@@ -107,7 +107,7 @@ function Dashboard() {
       const end = addDays(start, 1);
       const { data, error } = await supabase
         .from("appointments")
-        .select("*")
+        .select("*, invitations:appointment_invites(*, contact:contacts(*))")
         .gte("starts_at", start.toISOString())
         .lt("starts_at", end.toISOString())
         .order("starts_at");
@@ -120,8 +120,8 @@ function Dashboard() {
     (contactsQuery.isLoading && !contactsQuery.data) ||
     (appointmentsQuery.isLoading && !appointmentsQuery.data);
 
-  const contacts = contactsQuery.data ?? [];
-  const appointments = appointmentsQuery.data ?? [];
+  const contacts = useMemo(() => contactsQuery.data ?? [], [contactsQuery.data]);
+  const appointments = useMemo(() => appointmentsQuery.data ?? [], [appointmentsQuery.data]);
   const contactById = useMemo(() => new Map(contacts.map((c) => [c.id, c] as const)), [contacts]);
 
   const counts = useMemo(() => {
@@ -141,7 +141,7 @@ function Dashboard() {
     void queryClient.invalidateQueries({ queryKey: ["appointments"] });
     void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
   };
-  const { copyLink, email, decide, remove } = useAppointmentActions(refresh);
+  const { email, decide, remove } = useAppointmentActions(refresh);
 
   if (initialLoading) return <DashboardSkeleton />;
 
@@ -284,7 +284,6 @@ function Dashboard() {
                           key={a.id}
                           appointment={a}
                           contact={contact ?? null}
-                          onCopyLink={copyLink}
                           onEmail={email}
                           onEdit={openEdit}
                           onDelete={remove}

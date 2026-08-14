@@ -79,6 +79,63 @@ export type Database = {
           },
         ];
       };
+      appointment_invites: {
+        Row: {
+          appointment_id: string;
+          contact_id: string;
+          created_at: string;
+          id: string;
+          invite_sent_at: string | null;
+          invite_token: string;
+          owner_notified_at: string | null;
+          responded_at: string | null;
+          response_message: string | null;
+          status: Database["public"]["Enums"]["appointment_status"];
+          updated_at: string;
+        };
+        Insert: {
+          appointment_id: string;
+          contact_id: string;
+          created_at?: string;
+          id?: string;
+          invite_sent_at?: string | null;
+          invite_token?: string;
+          owner_notified_at?: string | null;
+          responded_at?: string | null;
+          response_message?: string | null;
+          status?: Database["public"]["Enums"]["appointment_status"];
+          updated_at?: string;
+        };
+        Update: {
+          appointment_id?: string;
+          contact_id?: string;
+          created_at?: string;
+          id?: string;
+          invite_sent_at?: string | null;
+          invite_token?: string;
+          owner_notified_at?: string | null;
+          responded_at?: string | null;
+          response_message?: string | null;
+          status?: Database["public"]["Enums"]["appointment_status"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "appointment_invites_appointment_id_fkey";
+            columns: ["appointment_id"];
+            isOneToOne: false;
+            referencedRelation: "appointments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "appointment_invites_contact_id_fkey";
+            columns: ["contact_id"];
+            isOneToOne: false;
+            referencedRelation: "contacts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       booking_hours: {
         Row: {
           created_at: string;

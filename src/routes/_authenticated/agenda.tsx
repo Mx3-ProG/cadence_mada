@@ -87,7 +87,7 @@ function AgendaPage() {
     queryFn: async (): Promise<Appointment[]> => {
       const { data, error } = await supabase
         .from("appointments")
-        .select("*")
+        .select("*, invitations:appointment_invites(*, contact:contacts(*))")
         .gte("starts_at", weekRangeStart.toISOString())
         .lt("starts_at", weekRangeEnd.toISOString())
         .order("starts_at");
@@ -102,7 +102,7 @@ function AgendaPage() {
     queryFn: async (): Promise<Appointment[]> => {
       const { data, error } = await supabase
         .from("appointments")
-        .select("*")
+        .select("*, invitations:appointment_invites(*, contact:contacts(*))")
         .gte("starts_at", monthGridStart.toISOString())
         .lt("starts_at", monthGridEnd.toISOString())
         .order("starts_at");
@@ -111,9 +111,12 @@ function AgendaPage() {
     },
   });
 
-  const contacts = contactsQuery.data ?? [];
+  const contacts = useMemo(() => contactsQuery.data ?? [], [contactsQuery.data]);
   const contactById = useMemo(() => new Map(contacts.map((c) => [c.id, c] as const)), [contacts]);
-  const appointments = (view === "week" ? weekQuery.data : monthQuery.data) ?? [];
+  const appointments = useMemo(
+    () => (view === "week" ? weekQuery.data : monthQuery.data) ?? [],
+    [monthQuery.data, view, weekQuery.data],
+  );
   const detailsContact = detailsAppointment?.contact_id
     ? (contactById.get(detailsAppointment.contact_id) ?? null)
     : null;
@@ -122,7 +125,7 @@ function AgendaPage() {
     void queryClient.invalidateQueries({ queryKey: ["appointments"] });
     void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
   };
-  const { copyLink, email, decide, remove } = useAppointmentActions(refresh);
+  const { email, decide, remove } = useAppointmentActions(refresh);
 
   const openNew = (date: Date) => {
     if (isAppointmentLimitReached(planQuery.data)) {
@@ -294,7 +297,6 @@ function AgendaPage() {
         onOpenChange={(v) => !v && setDetailsAppointment(null)}
         onEdit={openEdit}
         onDelete={remove}
-        onCopyLink={copyLink}
         onEmail={email}
         onDecide={decide}
       />

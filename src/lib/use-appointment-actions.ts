@@ -9,18 +9,16 @@ import type { Appointment } from "@/lib/agenda";
  * d'invitation, accepter/refuser, supprimer), partagées entre le dashboard et la page agenda.
  */
 export function useAppointmentActions(refresh: () => void) {
-  const copyLink = async (token: string) => {
-    const url = `${window.location.origin}/invite/${token}`;
-    await navigator.clipboard.writeText(url);
-    toast.success("Lien de confirmation copié");
-  };
-
   const email = async (appointment: Appointment) => {
     const result = await sendInviteEmail({
       data: { appointmentId: appointment.id, origin: window.location.origin },
     });
     if (result.sent) {
-      toast.success(`Invitation envoyée à ${result.to}`);
+      toast.success(
+        result.totalCount > result.sentCount
+          ? `${result.sentCount} invitation(s) envoyée(s) sur ${result.totalCount}.`
+          : `Invitations envoyées à ${result.to}.`,
+      );
       refresh();
       return;
     }
@@ -29,8 +27,8 @@ export function useAppointmentActions(refresh: () => void) {
       return;
     }
     if (result.reason === "no_api_key") {
-      await navigator.clipboard.writeText(result.link);
-      toast.info("Clé Resend absente — lien copié, envoie-le manuellement.");
+      await navigator.clipboard.writeText(result.links);
+      toast.info("Clé Resend absente — les liens ont été copiés pour un envoi manuel.");
       return;
     }
     toast.error("L'envoi a échoué, réessaie.");
@@ -69,5 +67,5 @@ export function useAppointmentActions(refresh: () => void) {
     refresh();
   };
 
-  return { copyLink, email, decide, remove };
+  return { email, decide, remove };
 }

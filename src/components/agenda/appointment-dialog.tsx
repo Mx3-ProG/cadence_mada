@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Check, User, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -65,7 +65,7 @@ export function AppointmentDialog({
 }) {
   const [form, setForm] = useState({
     title: "",
-    contact_id: NO_CONTACT,
+    contact_ids: [] as string[],
     date: "",
     startTime: "",
     endTime: "",
@@ -79,9 +79,12 @@ export function AppointmentDialog({
   useEffect(() => {
     if (!open) return;
     if (appointment) {
+      const contactIds =
+        appointment.invitations?.map((invitation) => invitation.contact_id) ??
+        (appointment.contact_id ? [appointment.contact_id] : []);
       setForm({
         title: appointment.title,
-        contact_id: appointment.contact_id ?? NO_CONTACT,
+        contact_ids: contactIds,
         date: toDateInputValue(appointment.starts_at),
         startTime: toTimeInputValue(appointment.starts_at),
         endTime: toTimeInputValue(appointment.ends_at),
@@ -97,7 +100,7 @@ export function AppointmentDialog({
     const end = new Date(base.getTime() + 60 * 60 * 1000);
     setForm({
       title: "",
-      contact_id: presetContactId ?? NO_CONTACT,
+      contact_ids: presetContactId ? [presetContactId] : [],
       date: toDateInputValue(base.toISOString()),
       startTime: toTimeInputValue(base.toISOString()),
       endTime: toTimeInputValue(end.toISOString()),
@@ -106,6 +109,14 @@ export function AppointmentDialog({
       prep_notes: "",
     });
   }, [open, appointment, defaultDate, presetContactId]);
+
+  const [contactMode, setContactMode] = useState<"single" | "multiple">("single");
+
+  useEffect(() => {
+    if (!open) return;
+    const count = appointment?.invitations?.length ?? (appointment?.contact_id ? 1 : 0);
+    setContactMode(count > 1 ? "multiple" : "single");
+  }, [open, appointment]);
 
   const submit = async () => {
     if (!form.title.trim()) {
@@ -126,7 +137,8 @@ export function AppointmentDialog({
     setSaving(true);
     const payload = {
       title: form.title.trim().slice(0, 150),
-      contact_id: form.contact_id === NO_CONTACT ? null : form.contact_id,
+      // Conservé pour les écrans et intégrations historiques : le premier invité est le contact principal.
+      contact_id: form.contact_ids[0] ?? null,
       starts_at: start.toISOString(),
       ends_at: end.toISOString(),
       location: form.location.trim() ? form.location.trim().slice(0, 200) : null,
@@ -134,17 +146,17 @@ export function AppointmentDialog({
       prep_notes: form.prep_notes.trim() ? form.prep_notes.trim().slice(0, 4000) : null,
     };
 
+    let appointmentId = appointment?.id;
     if (appointment) {
       const { error } = await supabase
         .from("appointments")
         .update(payload)
         .eq("id", appointment.id);
-      setSaving(false);
       if (error) {
+        setSaving(false);
         toast.error(error.message);
         return;
       }
-      toast.success("Rendez-vous mis à jour");
     } else {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData.user?.id;
@@ -153,14 +165,64 @@ export function AppointmentDialog({
         toast.error("Session expirée.");
         return;
       }
-      const { error } = await supabase.from("appointments").insert({ ...payload, owner_id: uid });
-      setSaving(false);
+      const { data, error } = await supabase
+        .from("appointments")
+        .insert({ ...payload, owner_id: uid })
+        .select("id")
+        .single();
       if (error) {
+        setSaving(false);
         toast.error(planErrorMessage(error.message) ?? error.message);
         return;
       }
-      toast.success("Rendez-vous créé");
+      appointmentId = data.id;
     }
+
+    if (appointmentId) {
+      const { data: existing, error: existingError } = await supabase
+        .from("appointment_invites")
+        .select("contact_id")
+        .eq("appointment_id", appointmentId);
+      if (existingError) {
+        setSaving(false);
+        toast.error(existingError.message);
+        return;
+      }
+
+      const selectedIds = new Set(form.contact_ids);
+      const existingIds = new Set((existing ?? []).map((invite) => invite.contact_id));
+      const removedIds = [...existingIds].filter((id) => !selectedIds.has(id));
+      const addedIds = [...selectedIds].filter((id) => !existingIds.has(id));
+
+      if (removedIds.length) {
+        const { error } = await supabase
+          .from("appointment_invites")
+          .delete()
+          .eq("appointment_id", appointmentId)
+          .in("contact_id", removedIds);
+        if (error) {
+          setSaving(false);
+          toast.error(error.message);
+          return;
+        }
+      }
+      if (addedIds.length) {
+        const { error } = await supabase.from("appointment_invites").insert(
+          addedIds.map((contactId) => ({
+            appointment_id: appointmentId!,
+            contact_id: contactId,
+          })),
+        );
+        if (error) {
+          setSaving(false);
+          toast.error(error.message);
+          return;
+        }
+      }
+    }
+
+    setSaving(false);
+    toast.success(appointment ? "Rendez-vous mis à jour" : "Rendez-vous créé");
     onOpenChange(false);
     onSaved();
   };
@@ -173,7 +235,7 @@ export function AppointmentDialog({
             {appointment ? "Modifier le rendez-vous" : "Nouveau rendez-vous"}
           </DialogTitle>
           <DialogDescription>
-            Une fois créé, tu pourras envoyer le lien de confirmation à ton invité.
+            Une fois créé, tu pourras prévenir tous les invités en un clic.
           </DialogDescription>
         </DialogHeader>
 
@@ -188,25 +250,113 @@ export function AppointmentDialog({
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label>Contact</Label>
-            <Select
-              value={form.contact_id}
-              onValueChange={(v) => setForm({ ...form, contact_id: v })}
-            >
-              <SelectTrigger className="min-w-0">
-                <SelectValue placeholder="Choisir un contact" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NO_CONTACT}>Aucun contact</SelectItem>
-                {contacts.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                    {c.company ? ` — ${c.company}` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <Label>Invités</Label>
+              {form.contact_ids.length > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {form.contact_ids.length} sélectionné{form.contact_ids.length > 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted/50 p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setContactMode("single");
+                  setForm((current) => ({
+                    ...current,
+                    contact_ids: current.contact_ids.slice(0, 1),
+                  }));
+                }}
+                className={cn(
+                  "flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  contactMode === "single"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground",
+                )}
+              >
+                <User className="h-4 w-4" /> Un contact
+              </button>
+              <button
+                type="button"
+                onClick={() => setContactMode("multiple")}
+                className={cn(
+                  "flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  contactMode === "multiple"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground",
+                )}
+              >
+                <Users className="h-4 w-4" /> Plusieurs
+              </button>
+            </div>
+
+            {contactMode === "single" ? (
+              <Select
+                value={form.contact_ids[0] ?? NO_CONTACT}
+                onValueChange={(value) =>
+                  setForm({ ...form, contact_ids: value === NO_CONTACT ? [] : [value] })
+                }
+              >
+                <SelectTrigger className="min-w-0">
+                  <SelectValue placeholder="Choisir un contact" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_CONTACT}>Aucun contact</SelectItem>
+                  {contacts.map((contact) => (
+                    <SelectItem key={contact.id} value={contact.id}>
+                      {contact.name}
+                      {contact.company ? ` — ${contact.company}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="max-h-52 overflow-y-auto rounded-xl border border-border/70 p-1">
+                {contacts.length === 0 ? (
+                  <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                    Aucun contact disponible.
+                  </p>
+                ) : (
+                  contacts.map((contact) => {
+                    const selected = form.contact_ids.includes(contact.id);
+                    return (
+                      <button
+                        key={contact.id}
+                        type="button"
+                        onClick={() =>
+                          setForm((current) => ({
+                            ...current,
+                            contact_ids: selected
+                              ? current.contact_ids.filter((id) => id !== contact.id)
+                              : [...current.contact_ids, contact.id],
+                          }))
+                        }
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-muted/70"
+                      >
+                        <span
+                          className={cn(
+                            "grid h-5 w-5 shrink-0 place-items-center rounded border",
+                            selected && "border-primary bg-primary text-primary-foreground",
+                          )}
+                        >
+                          {selected && <Check className="h-3.5 w-3.5" />}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block truncate text-sm font-medium">{contact.name}</span>
+                          {contact.company && (
+                            <span className="block truncate text-xs text-muted-foreground">
+                              {contact.company}
+                            </span>
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid min-w-0 gap-3 rounded-2xl border border-border/70 bg-surface/40 p-3">

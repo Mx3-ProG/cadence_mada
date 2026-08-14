@@ -8,6 +8,7 @@ import {
   Linkedin,
   Loader2,
   Send,
+  Share2,
   Twitter,
   Users,
   Wallet,
@@ -17,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ReferralTierGauge } from "@/components/agenda/referral-tier-gauge";
+import { WhatsAppIcon } from "@/components/share-icons";
+import { shareNatively, shareOnWhatsApp } from "@/lib/share";
 import {
   useReferralSummary,
   useMyReferrals,
@@ -85,9 +88,21 @@ export function ReferralSection() {
   };
 
   const shareText = "Cadence, l'agenda de rendez-vous qui se confirme tout seul";
+  const referralPayload = summary
+    ? {
+        title: "Découvre Cadence",
+        text: shareText,
+        url: referralLink(summary.referralCode),
+      }
+    : null;
 
   const socialTargets = summary
     ? [
+        {
+          name: "WhatsApp",
+          icon: WhatsAppIcon,
+          onClick: () => shareOnWhatsApp(referralPayload!),
+        },
         {
           name: "Facebook",
           icon: Facebook,
@@ -209,6 +224,22 @@ export function ReferralSection() {
             <social.icon className="h-4 w-4" />
           </Button>
         ))}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="gap-1.5 rounded-full"
+          onClick={() => {
+            const payload = referralPayload!;
+            void shareNatively(payload).then(async (shared) => {
+              if (shared) return;
+              await navigator.clipboard.writeText(`${payload.text}\n${payload.url}`);
+              toast.info("Menu de partage indisponible — message copié.");
+            });
+          }}
+        >
+          <Share2 className="h-4 w-4" /> Plus
+        </Button>
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
