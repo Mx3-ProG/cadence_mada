@@ -9,7 +9,7 @@ import { DEFAULT_NAMESPACE, NAMESPACES } from "./namespaces";
 // data and hydration can't desync.
 export function createI18nInstance(
   locale: Locale,
-  resources: Record<string, Record<string, string>>,
+  resources: Record<Locale, Record<string, Record<string, string>>>,
 ): I18nInstance {
   const instance = i18next.createInstance();
   instance.use(initReactI18next);
@@ -18,9 +18,10 @@ export function createI18nInstance(
     fallbackLng: DEFAULT_LOCALE,
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
-    resources: { [locale]: resources },
+    resources,
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
+    returnEmptyString: false,
   });
   return instance;
 }

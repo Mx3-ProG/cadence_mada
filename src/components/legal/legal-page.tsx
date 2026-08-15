@@ -1,28 +1,38 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrandLogo } from "@/components/brand-logo";
 import { useLocale } from "@/i18n/use-locale";
+import { DEFAULT_LOCALE } from "@/i18n/config";
 
 export const legalLinks = [
-  { to: "/$locale/mentions-legales", label: "Mentions légales" },
-  { to: "/$locale/confidentialite", label: "Confidentialité (RGPD)" },
-  { to: "/$locale/cgu", label: "CGU" },
-  { to: "/$locale/cookies", label: "Cookies" },
-  { to: "/$locale/documentation", label: "Documentation" },
+  { to: "/$locale/mentions-legales", labelKey: "nav.mentions" },
+  { to: "/$locale/confidentialite", labelKey: "nav.confidentialite" },
+  { to: "/$locale/cgu", labelKey: "nav.cgu" },
+  { to: "/$locale/cookies", labelKey: "nav.cookies" },
+  { to: "/$locale/documentation", labelKey: "nav.documentation" },
 ] as const;
+
+// Legal content is machine-translated; French remains the legally
+// authoritative version until each translation has been reviewed.
+const LAST_UPDATED = new Date("2026-08-06T00:00:00Z");
 
 export function LegalPage({
   title,
-  updatedAt = "6 août 2026",
+  currentDocPath,
   children,
 }: {
   title: string;
-  updatedAt?: string;
+  /** This page's own route (e.g. "/$locale/cgu"), to link to its French original. */
+  currentDocPath?: string;
   children: ReactNode;
 }) {
   const locale = useLocale();
+  const { t } = useTranslation("legal");
+  const updatedAt = new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(LAST_UPDATED);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
@@ -40,11 +50,26 @@ export function LegalPage({
           params={{ locale }}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+          <ArrowLeft className="h-4 w-4" /> {t("back_home")}
         </Link>
 
         <h1 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-        <p className="mt-2 text-xs text-muted-foreground">Dernière mise à jour : {updatedAt}</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t("updated_at", { date: updatedAt })}</p>
+
+        {locale !== DEFAULT_LOCALE && (
+          <div className="mt-6 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            {t("authoritative.notice")}{" "}
+            {currentDocPath && (
+              <Link
+                to={currentDocPath}
+                params={{ locale: DEFAULT_LOCALE }}
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                {t("authoritative.link")}
+              </Link>
+            )}
+          </div>
+        )}
 
         <div className="prose-legal mt-8 space-y-8 text-sm leading-relaxed text-muted-foreground [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mt-1 [&_p]:mt-2 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:pl-5">
           {children}
@@ -58,7 +83,7 @@ export function LegalPage({
               params={{ locale }}
               className="transition-colors hover:text-foreground"
             >
-              {l.label}
+              {t(l.labelKey)}
             </Link>
           ))}
         </nav>

@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { LegalPage } from "@/components/legal/legal-page";
 import { openCookieSettings } from "@/components/legal/cookie-consent";
 
 export const Route = createFileRoute("/$locale/cookies")({
+  // SEO meta stays French-only for now — per-locale <head> translation is
+  // follow-up work (needs hreflang/canonical wiring alongside it).
   head: () => ({
     meta: [
       { title: "Politique cookies — Cadence" },
@@ -26,62 +29,29 @@ export const Route = createFileRoute("/$locale/cookies")({
   component: Cookies,
 });
 
-const rows = [
-  {
-    name: "Session d'authentification",
-    type: "Strictement nécessaire",
-    purpose: "Maintenir ta connexion et sécuriser tes requêtes.",
-    duration: "Jusqu'à la déconnexion (max. 1 an)",
-  },
-  {
-    name: "Préférence de thème",
-    type: "Strictement nécessaire",
-    purpose: "Mémoriser le mode clair ou sombre choisi.",
-    duration: "1 an",
-  },
-  {
-    name: "Consentement cookies",
-    type: "Strictement nécessaire",
-    purpose: "Conserver tes choix pour ne plus afficher le bandeau.",
-    duration: "6 mois",
-  },
-  {
-    name: "Mesure d'audience",
-    type: "Soumis au consentement",
-    purpose: "Statistiques d'usage agrégées pour améliorer le produit.",
-    duration: "13 mois maximum",
-  },
-  {
-    name: "Marketing",
-    type: "Soumis au consentement",
-    purpose: "Personnalisation des contenus et mesure des campagnes.",
-    duration: "13 mois maximum",
-  },
-];
+type CookieRow = { name: string; type: string; purpose: string; duration: string };
 
 function Cookies() {
+  const { t } = useTranslation("legal");
+  const rows = t("cookies.rows", { returnObjects: true }) as CookieRow[];
+
   return (
-    <LegalPage title="Politique de gestion des cookies">
+    <LegalPage title={t("cookies.page.title")} currentDocPath="/$locale/cookies">
       <section>
-        <h2>Qu'est-ce qu'un cookie ?</h2>
-        <p>
-          Un cookie est un petit fichier déposé sur ton terminal lors de la visite d'un site.
-          Cadence utilise également le stockage local du navigateur, soumis aux mêmes règles. Les
-          traceurs non essentiels ne sont déposés qu'après ton accord explicite, conformément au
-          RGPD et aux recommandations de la CNIL.
-        </p>
+        <h2>{t("cookies.s1.heading")}</h2>
+        <p>{t("cookies.s1.p")}</p>
       </section>
 
       <section>
-        <h2>Traceurs utilisés</h2>
+        <h2>{t("cookies.s2.heading")}</h2>
         <div className="mt-4 overflow-x-auto rounded-2xl border border-border/60">
           <table className="w-full min-w-[600px] text-left text-xs">
             <thead className="bg-surface/60 text-foreground">
               <tr>
-                <th className="px-4 py-3 font-semibold">Traceur</th>
-                <th className="px-4 py-3 font-semibold">Catégorie</th>
-                <th className="px-4 py-3 font-semibold">Finalité</th>
-                <th className="px-4 py-3 font-semibold">Durée</th>
+                <th className="px-4 py-3 font-semibold">{t("cookies.table.name")}</th>
+                <th className="px-4 py-3 font-semibold">{t("cookies.table.type")}</th>
+                <th className="px-4 py-3 font-semibold">{t("cookies.table.purpose")}</th>
+                <th className="px-4 py-3 font-semibold">{t("cookies.table.duration")}</th>
               </tr>
             </thead>
             <tbody>
@@ -99,23 +69,16 @@ function Cookies() {
       </section>
 
       <section>
-        <h2>Gérer ton consentement</h2>
-        <p>
-          Tu peux modifier ou retirer ton choix à tout moment. Le refus des traceurs optionnels
-          n'empêche pas l'utilisation du Service.
-        </p>
+        <h2>{t("cookies.s3.heading")}</h2>
+        <p>{t("cookies.s3.p")}</p>
         <Button className="mt-4 rounded-full" onClick={() => openCookieSettings()}>
-          Modifier mes préférences cookies
+          {t("cookies.s3.button")}
         </Button>
       </section>
 
       <section>
-        <h2>Paramétrage du navigateur</h2>
-        <p>
-          Les principaux navigateurs permettent également de bloquer ou supprimer les cookies depuis
-          leurs réglages de confidentialité. Ce blocage global peut dégrader certaines
-          fonctionnalités, notamment le maintien de la session.
-        </p>
+        <h2>{t("cookies.s4.heading")}</h2>
+        <p>{t("cookies.s4.p")}</p>
       </section>
     </LegalPage>
   );

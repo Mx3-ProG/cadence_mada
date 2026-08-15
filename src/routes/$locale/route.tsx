@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 import { I18nextProvider } from "react-i18next";
 import { isSupportedLocale, type Locale } from "@/i18n/config";
 import { detectLocaleFromCurrentRequest } from "@/i18n/detect-locale";
-import { loadNamespaces } from "@/i18n/resources";
+import { loadNamespacesWithFallback } from "@/i18n/resources";
 import { NAMESPACES } from "@/i18n/namespaces";
 import { createI18nInstance } from "@/i18n/i18n-instance";
 
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/$locale")({
     return { locale: params.locale };
   },
   loader: async ({ params }) => {
-    const i18nResources = await loadNamespaces(params.locale as Locale, NAMESPACES);
+    const i18nResources = await loadNamespacesWithFallback(params.locale as Locale, NAMESPACES);
     return { i18nResources };
   },
   component: LocaleLayout,

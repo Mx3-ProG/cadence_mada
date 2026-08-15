@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Cookie, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useLocale } from "@/i18n/use-locale";
@@ -37,6 +38,7 @@ export function openCookieSettings() {
 
 export function CookieConsent() {
   const locale = useLocale();
+  const { t } = useTranslation("legal");
   const [visible, setVisible] = useState(false);
   const [details, setDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -87,7 +89,7 @@ export function CookieConsent() {
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
           role="dialog"
-          aria-label="Gestion des cookies"
+          aria-label={t("consent.aria_label")}
           className="fixed inset-x-0 bottom-0 z-[60] px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:px-4 sm:pb-4"
         >
           <div className="glass-panel mx-auto max-w-3xl rounded-2xl border border-border/70 bg-background/95 p-4 shadow-xl backdrop-blur-xl sm:p-5">
@@ -96,24 +98,22 @@ export function CookieConsent() {
                 <Cookie className="h-4 w-4" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 className="font-display text-sm font-bold">On respecte ta vie privée</h2>
+                <h2 className="font-display text-sm font-bold">{t("consent.title")}</h2>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Cadence utilise des cookies strictement nécessaires au fonctionnement (session,
-                  sécurité). Les cookies de mesure d'audience et marketing ne sont déposés qu'avec
-                  ton accord, conformément au RGPD.{" "}
+                  {t("consent.body")}{" "}
                   <Link
                     to="/$locale/cookies"
                     params={{ locale }}
                     className="underline underline-offset-2 hover:text-foreground"
                   >
-                    En savoir plus
+                    {t("consent.learn_more")}
                   </Link>
                 </p>
               </div>
               <button
                 type="button"
                 onClick={refuseAll}
-                aria-label="Fermer et refuser les cookies optionnels"
+                aria-label={t("consent.close_aria")}
                 className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <X className="h-4 w-4" />
@@ -130,20 +130,20 @@ export function CookieConsent() {
                 >
                   <div className="mt-4 space-y-3 border-t border-border/60 pt-4">
                     <Row
-                      title="Strictement nécessaires"
-                      text="Authentification, sécurité, préférence de thème. Toujours actifs."
+                      title={t("consent.necessary.title")}
+                      text={t("consent.necessary.text")}
                       checked
                       disabled
                     />
                     <Row
-                      title="Mesure d'audience"
-                      text="Statistiques anonymisées d'utilisation pour améliorer le produit."
+                      title={t("consent.analytics.title")}
+                      text={t("consent.analytics.text")}
                       checked={analytics}
                       onChange={setAnalytics}
                     />
                     <Row
-                      title="Marketing"
-                      text="Personnalisation des contenus et campagnes. Aucun dépôt sans accord."
+                      title={t("consent.marketing.title")}
+                      text={t("consent.marketing.text")}
                       checked={marketing}
                       onChange={setMarketing}
                     />
@@ -159,18 +159,18 @@ export function CookieConsent() {
                 className="rounded-full"
                 onClick={() => setDetails((d) => !d)}
               >
-                {details ? "Masquer les détails" : "Personnaliser"}
+                {details ? t("consent.hide_details") : t("consent.customize")}
               </Button>
               <Button variant="outline" size="sm" className="rounded-full" onClick={refuseAll}>
-                Tout refuser
+                {t("consent.refuse_all")}
               </Button>
               {details && (
                 <Button variant="outline" size="sm" className="rounded-full" onClick={saveChoice}>
-                  Enregistrer mes choix
+                  {t("consent.save_choices")}
                 </Button>
               )}
               <Button size="sm" className="rounded-full" onClick={acceptAll}>
-                Tout accepter
+                {t("consent.accept_all")}
               </Button>
             </div>
           </div>

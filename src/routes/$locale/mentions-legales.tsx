@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { LegalPage } from "@/components/legal/legal-page";
 
 export const Route = createFileRoute("/$locale/mentions-legales")({
+  // SEO meta stays French-only for now — per-locale <head> translation is
+  // follow-up work (needs hreflang/canonical wiring alongside it).
   head: () => ({
     meta: [
       { title: "Mentions légales — Cadence" },
@@ -24,69 +27,60 @@ export const Route = createFileRoute("/$locale/mentions-legales")({
   component: MentionsLegales,
 });
 
+const EDITOR_INFO = [
+  { key: "name", value: "Wayne-Web" },
+  {
+    key: "address",
+    value: "3 Allée du Docteur Lejzer Ludwik Zamenhof, 31100 Toulouse, France",
+  },
+  { key: "email", value: "contact@wayne-web.com" },
+  { key: "director", value: "Wayne-Web" },
+] as const;
+
 function MentionsLegales() {
+  const { t } = useTranslation("legal");
+
   return (
-    <LegalPage title="Mentions légales">
+    <LegalPage title={t("mentions.page.title")} currentDocPath="/$locale/mentions-legales">
       <section>
-        <h2>Éditeur du site</h2>
+        <h2>{t("mentions.s1.heading")}</h2>
         <p>
-          Le service <strong>Cadence</strong> (ci-après « le Service ») est édité par l'exploitant
-          du site{" "}
+          {t("mentions.s1.p1_prefix")}
+          <strong>Cadence</strong>
+          {t("mentions.s1.p1_mid")}
           <a href="https://www.wayne-web.com" target="_blank" rel="noopener noreferrer">
             Wayne-Web
           </a>
-          . <br />
-          Les coordonnées complètes de l'éditeur (dénomination sociale, forme juridique, capital
-          social, numéro RCS et numéro de TVA intracommunautaire) doivent être renseignées ici avant
-          toute mise en ligne publique.
+          {t("mentions.s1.p1_suffix")} <br />
+          {t("mentions.s1.p2")}
         </p>
         <ul>
-          <li>Nom / raison sociale : Wayne-Web</li>
-          <li>
-            Adresse du siège : 3 Allée du Docteur Lejzer Ludwik Zamenhof, 31100 Toulouse, France
-          </li>
-          <li>Email de contact : contact@wayne-web.com</li>
-          <li>Directeur de la publication : Wayne-Web</li>
+          {EDITOR_INFO.map((item) => (
+            <li key={item.key}>
+              {t(`mentions.s1.list_labels.${item.key}`)} : {item.value}
+            </li>
+          ))}
         </ul>
       </section>
 
       <section>
-        <h2>Hébergement</h2>
-        <p>
-          L'application et sa base de données sont hébergées sur une infrastructure cloud européenne
-          opérée par nos prestataires techniques (hébergement applicatif et base de données
-          managée). Les coordonnées précises de l'hébergeur sont communiquées sur simple demande à
-          l'adresse de contact ci-dessus.
-        </p>
+        <h2>{t("mentions.s2.heading")}</h2>
+        <p>{t("mentions.s2.p")}</p>
       </section>
 
       <section>
-        <h2>Propriété intellectuelle</h2>
-        <p>
-          L'ensemble des éléments du Service (marque, logo, interface, textes, graphismes, code
-          source) est protégé par le droit de la propriété intellectuelle. Toute reproduction,
-          représentation ou adaptation, totale ou partielle, sans autorisation écrite préalable est
-          interdite.
-        </p>
+        <h2>{t("mentions.s3.heading")}</h2>
+        <p>{t("mentions.s3.p")}</p>
       </section>
 
       <section>
-        <h2>Responsabilité</h2>
-        <p>
-          L'éditeur met tout en œuvre pour assurer l'exactitude des informations diffusées et la
-          disponibilité du Service, sans pouvoir garantir une absence totale d'interruption ou
-          d'erreur. Les contenus saisis par les utilisateurs (contacts, notes, rendez-vous) relèvent
-          de leur seule responsabilité.
-        </p>
+        <h2>{t("mentions.s4.heading")}</h2>
+        <p>{t("mentions.s4.p")}</p>
       </section>
 
       <section>
-        <h2>Contact</h2>
-        <p>
-          Pour toute question relative au Service, à ses conditions d'utilisation ou à la protection
-          des données, une demande peut être adressée à l'adresse email de contact indiquée
-          ci-dessus.
-        </p>
+        <h2>{t("mentions.s5.heading")}</h2>
+        <p>{t("mentions.s5.p")}</p>
       </section>
     </LegalPage>
   );

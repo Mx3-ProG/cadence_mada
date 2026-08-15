@@ -95,6 +95,7 @@ function Landing() {
   const locale = useLocale();
   const { t } = useTranslation("home");
   const { t: tCommon } = useTranslation("common");
+  const { t: tLegal } = useTranslation("legal");
 
   const previewItems = t("preview.items", { returnObjects: true }) as PreviewItem[];
   const howSteps = t("how.steps", { returnObjects: true }) as TextCard[];
@@ -375,7 +376,7 @@ function Landing() {
               params={{ locale }}
               className="transition-colors hover:text-foreground"
             >
-              {l.label}
+              {tLegal(l.labelKey)}
             </Link>
           ))}
           <button
