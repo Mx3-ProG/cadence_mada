@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { format, isSameDay } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import { Activity, CalendarClock, MailCheck, TrendingUp, Users } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { StatusBadge } from "@/components/agenda/status-badge";
-import { statusLabel, type Appointment, type AppointmentStatus, type Contact } from "@/lib/agenda";
+import type { Appointment, AppointmentStatus, Contact } from "@/lib/agenda";
 
 const STATUSES: AppointmentStatus[] = ["pending", "accepted", "declined", "cancelled"];
 
@@ -57,6 +58,9 @@ export function WeekStats({
   contacts: Contact[];
   days: Date[];
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
+  const noContactLabel = t("week_stats.no_contact");
   const stats = useMemo(() => {
     const total = appointments.length;
 
@@ -112,7 +116,7 @@ export function WeekStats({
       const c = a.contact_id ? contactName.get(a.contact_id) : undefined;
       const entry = perContactMap.get(key) ?? {
         id: key,
-        name: c?.name ?? "Sans contact",
+        name: c?.name ?? noContactLabel,
         company: c?.company ?? null,
         total: 0,
         counts: { pending: 0, accepted: 0, declined: 0, cancelled: 0 },
@@ -138,9 +142,9 @@ export function WeekStats({
 
     // Créneaux horaires
     const slots = [
-      { label: "Matin (avant 12h)", from: 0, to: 12 },
-      { label: "Après-midi (12h–17h)", from: 12, to: 17 },
-      { label: "Fin de journée (17h+)", from: 17, to: 24 },
+      { label: t("week_stats.panel3.morning"), from: 0, to: 12 },
+      { label: t("week_stats.panel3.afternoon"), from: 12, to: 17 },
+      { label: t("week_stats.panel3.evening"), from: 17, to: 24 },
     ].map((s) => ({
       ...s,
       total: appointments.filter((a) => {
@@ -175,7 +179,7 @@ export function WeekStats({
       totalMinutes,
       invites: { sent, answered, noEmail, pendingNotSent },
     };
-  }, [appointments, contacts, days]);
+  }, [appointments, contacts, days, t, noContactLabel]);
 
   const maxDay = Math.max(1, ...stats.perDay.map((d) => d.total));
   const maxContact = Math.max(1, ...stats.perContact.map((c) => c.total));
@@ -187,40 +191,50 @@ export function WeekStats({
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
           <h2 className="font-display text-xl font-bold tracking-tight sm:text-2xl">
-            Statistiques de la semaine
+            {t("week_stats.title")}
           </h2>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          {stats.total} rendez-vous · {(stats.totalMinutes / 60).toFixed(1)} h planifiées · taux
-          d'acceptation {pct(stats.byStatus.accepted, stats.total)} %
+          {t("week_stats.summary", {
+            count: stats.total,
+            hours: (stats.totalMinutes / 60).toFixed(1),
+            rate: pct(stats.byStatus.accepted, stats.total),
+          })}
         </p>
       </Reveal>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <Reveal delay={0.05}>
           <Panel
-            title="Répartition par jour × statut"
+            title={t("week_stats.panel1.title")}
             icon={CalendarClock}
-            hint={`Jour le plus demandé : ${format(stats.busiestDay.day, "EEEE", { locale: fr })} (${stats.busiestDay.total})`}
+            hint={t("week_stats.panel1.hint", {
+              day: format(stats.busiestDay.day, "EEEE", { locale: dateFnsLocale }),
+              count: stats.busiestDay.total,
+            })}
           >
             <div className="max-w-full overflow-x-auto overscroll-x-contain">
               <table className="w-full min-w-[420px] text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                    <th className="pb-2 font-medium">Jour</th>
+                    <th className="pb-2 font-medium">{t("week_stats.panel1.day_col")}</th>
                     {STATUSES.map((s) => (
                       <th key={s} className="pb-2 text-center font-medium">
-                        {statusLabel[s]}
+                        {t(`status.${s}`)}
                       </th>
                     ))}
-                    <th className="pb-2 text-right font-medium">Total</th>
+                    <th className="pb-2 text-right font-medium">
+                      {t("week_stats.panel1.total_col")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {stats.perDay.map((d) => (
                     <tr key={d.day.toISOString()} className="border-t border-border/60">
                       <td className="py-2 pr-2">
-                        <span className="capitalize">{format(d.day, "EEE d", { locale: fr })}</span>
+                        <span className="capitalize">
+                          {format(d.day, "EEE d", { locale: dateFnsLocale })}
+                        </span>
                         <Bar value={d.total} max={maxDay} />
                       </td>
                       {STATUSES.map((s) => (
@@ -240,7 +254,7 @@ export function WeekStats({
                 <tfoot>
                   <tr className="border-t border-border">
                     <td className="pt-2 text-xs uppercase tracking-wider text-muted-foreground">
-                      Semaine
+                      {t("week_stats.panel1.week_row")}
                     </td>
                     {STATUSES.map((s) => (
                       <td key={s} className="pt-2 text-center font-semibold tabular-nums">
@@ -257,24 +271,32 @@ export function WeekStats({
 
         <Reveal delay={0.1}>
           <Panel
-            title="Contacts les plus demandeurs"
+            title={t("week_stats.panel2.title")}
             icon={Users}
-            hint="Score = volume + temps passé, pénalisé par les refus"
+            hint={t("week_stats.panel2.hint")}
           >
             {stats.perContact.length === 0 ? (
               <p className="rounded-xl border border-dashed border-border/70 px-3 py-6 text-center text-xs text-muted-foreground">
-                Aucun rendez-vous cette semaine
+                {t("week_stats.panel2.empty")}
               </p>
             ) : (
               <div className="max-w-full overflow-x-auto overscroll-x-contain">
                 <table className="w-full min-w-[420px] text-sm">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                      <th className="pb-2 font-medium">Contact</th>
-                      <th className="pb-2 text-center font-medium">RDV</th>
-                      <th className="pb-2 text-center font-medium">Heures</th>
-                      <th className="pb-2 text-center font-medium">Accept.</th>
-                      <th className="pb-2 text-right font-medium">Score</th>
+                      <th className="pb-2 font-medium">{t("week_stats.panel2.contact_col")}</th>
+                      <th className="pb-2 text-center font-medium">
+                        {t("week_stats.panel2.appt_col")}
+                      </th>
+                      <th className="pb-2 text-center font-medium">
+                        {t("week_stats.panel2.hours_col")}
+                      </th>
+                      <th className="pb-2 text-center font-medium">
+                        {t("week_stats.panel2.accept_col")}
+                      </th>
+                      <th className="pb-2 text-right font-medium">
+                        {t("week_stats.panel2.score_col")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -303,7 +325,11 @@ export function WeekStats({
         </Reveal>
 
         <Reveal delay={0.15}>
-          <Panel title="Créneaux préférés" icon={Activity} hint="Répartition horaire des demandes">
+          <Panel
+            title={t("week_stats.panel3.title")}
+            icon={Activity}
+            hint={t("week_stats.panel3.hint")}
+          >
             <ul className="space-y-3">
               {stats.slots.map((s) => (
                 <li key={s.label}>
@@ -331,30 +357,40 @@ export function WeekStats({
         </Reveal>
 
         <Reveal delay={0.2}>
-          <Panel title="Suivi des invitations" icon={MailCheck} hint="Envois, réponses et blocages">
+          <Panel
+            title={t("week_stats.panel4.title")}
+            icon={MailCheck}
+            hint={t("week_stats.panel4.hint")}
+          >
             <div className="max-w-full overflow-x-auto overscroll-x-contain">
               <table className="w-full min-w-[390px] text-sm">
                 <tbody>
                   {[
                     {
-                      label: "Invitations envoyées par email",
+                      label: t("week_stats.panel4.sent"),
                       value: `${stats.invites.sent} / ${stats.total}`,
                       detail: `${pct(stats.invites.sent, stats.total)} %`,
                     },
                     {
-                      label: "Réponses reçues",
+                      label: t("week_stats.panel4.answered"),
                       value: `${stats.invites.answered} / ${stats.total}`,
                       detail: `${pct(stats.invites.answered, stats.total)} %`,
                     },
                     {
-                      label: "En attente, lien jamais envoyé",
+                      label: t("week_stats.panel4.not_sent"),
                       value: String(stats.invites.pendingNotSent),
-                      detail: stats.invites.pendingNotSent > 0 ? "à relancer" : "ok",
+                      detail:
+                        stats.invites.pendingNotSent > 0
+                          ? t("week_stats.panel4.to_follow_up")
+                          : t("week_stats.panel4.ok"),
                     },
                     {
-                      label: "Contacts sans adresse email",
+                      label: t("week_stats.panel4.no_email"),
                       value: String(stats.invites.noEmail),
-                      detail: stats.invites.noEmail > 0 ? "lien à copier" : "ok",
+                      detail:
+                        stats.invites.noEmail > 0
+                          ? t("week_stats.panel4.copy_link")
+                          : t("week_stats.panel4.ok"),
                     },
                   ].map((row) => (
                     <tr key={row.label} className="border-t border-border/60 first:border-t-0">

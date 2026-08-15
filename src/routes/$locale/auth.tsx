@@ -14,11 +14,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
 import { BrandMark } from "@/components/brand-logo";
-import {
-  getLoginSessionState,
-  startAuthenticatedLoginChallenge,
-  startPasswordLoginChallenge,
-} from "@/lib/two-factor.functions";
+import { getLoginSessionState, startPasswordLoginChallenge } from "@/lib/two-factor.functions";
+import { registerWithPassword } from "@/lib/auth.functions";
+import { displayNameSchema } from "@/lib/auth-validation";
 import { useLocale } from "@/i18n/use-locale";
 
 const authSearchSchema = z.object({
@@ -102,38 +100,38 @@ function AuthPage() {
     }
   };
 
-  const startChallengeForCurrentSession = async () => {
-    const result = await startAuthenticatedLoginChallenge();
-    if (!result.ok) {
-      toast.error(t("errors.verification_email_failed"));
-      return;
-    }
-    sessionStorage.setItem("cadence:login-challenge", result.challengeId);
-    sessionStorage.setItem("cadence:login-email", result.maskedEmail);
-    await supabase.auth.signOut({ scope: "local" });
-    navigate({ to: "/$locale/verification", params: { locale } });
-  };
-
   const signUp = async () => {
+    const parsedName = displayNameSchema.safeParse(fullName);
+    if (!parsedName.success) {
+      toast.error(t("errors.name_required"));
+      return;
+    }
+    if (password.length < 8) {
+      toast.error(t("errors.password_too_short"));
+      return;
+    }
+
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { full_name: fullName.trim() },
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    try {
+      const result = await registerWithPassword({
+        data: { displayName: parsedName.data, email: email.trim(), password },
+      });
+      if (!result.ok) {
+        toast.error(
+          result.reason === "ACCOUNT_EXISTS"
+            ? t("errors.account_exists")
+            : t("errors.signup_failed"),
+        );
+        return;
+      }
+      sessionStorage.setItem("cadence:login-challenge", result.challengeId);
+      sessionStorage.setItem("cadence:login-email", result.maskedEmail);
+      navigate({ to: "/$locale/verification", params: { locale } });
+    } catch {
+      toast.error(t("errors.signup_failed"));
+    } finally {
+      setLoading(false);
     }
-    if (!data.session) {
-      toast.success(t("success.account_created"));
-      return;
-    }
-    await startChallengeForCurrentSession();
   };
 
   const sendResetLink = async () => {
@@ -262,6 +260,10 @@ function AuthPage() {
                 <Label htmlFor="up-name">{t("signup.name_label")}</Label>
                 <Input
                   id="up-name"
+                  required
+                  minLength={2}
+                  maxLength={80}
+                  autoComplete="name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder={t("signup.name_placeholder")}

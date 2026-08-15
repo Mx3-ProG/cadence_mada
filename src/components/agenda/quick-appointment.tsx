@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CalendarPlus, UserPlus, Users } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
@@ -44,6 +45,7 @@ export function QuickAppointmentFlow({
   defaultDate?: Date | null;
 }) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation("agenda");
   const [step, setStep] = useState<Step>("choose");
   const [contactOpen, setContactOpen] = useState(false);
   const [apptOpen, setApptOpen] = useState(false);
@@ -97,8 +99,8 @@ export function QuickAppointmentFlow({
           {step === "choose" ? (
             <>
               <DialogHeader>
-                <DialogTitle>Ajouter un rendez-vous</DialogTitle>
-                <DialogDescription>Avec qui veux-tu fixer ce rendez-vous&nbsp;?</DialogDescription>
+                <DialogTitle>{t("quick.title")}</DialogTitle>
+                <DialogDescription>{t("quick.subtitle")}</DialogDescription>
               </DialogHeader>
 
               <div className="grid min-w-0 gap-3">
@@ -111,9 +113,9 @@ export function QuickAppointmentFlow({
                     <Users className="h-5 w-5" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-semibold">Un contact existant</span>
+                    <span className="block font-semibold">{t("quick.existing_contact")}</span>
                     <span className="block text-sm text-muted-foreground">
-                      {contacts.length} contact{contacts.length > 1 ? "s" : ""} dans ton carnet
+                      {t("quick.contacts_count", { count: contacts.length })}
                     </span>
                   </span>
                 </button>
@@ -127,9 +129,9 @@ export function QuickAppointmentFlow({
                     <UserPlus className="h-5 w-5" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-semibold">Créer un nouveau contact</span>
+                    <span className="block font-semibold">{t("quick.new_contact")}</span>
                     <span className="block text-sm text-muted-foreground">
-                      On enchaîne ensuite sur la date du rendez-vous
+                      {t("quick.new_contact_hint")}
                     </span>
                   </span>
                 </button>
@@ -140,7 +142,7 @@ export function QuickAppointmentFlow({
                   className="flex items-center gap-2 rounded-2xl border border-dashed border-border/70 p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <CalendarPlus className="h-4 w-4" />
-                  Sans contact, juste un créneau
+                  {t("quick.no_contact")}
                 </button>
               </div>
             </>
@@ -152,20 +154,20 @@ export function QuickAppointmentFlow({
                     variant="ghost"
                     size="icon"
                     className="-ml-2 h-7 w-7 shrink-0"
-                    aria-label="Retour"
+                    aria-label={t("quick.back_aria")}
                     onClick={() => setStep("choose")}
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <DialogTitle>Choisir un contact</DialogTitle>
+                  <DialogTitle>{t("quick.pick_contact_title")}</DialogTitle>
                 </div>
-                <DialogDescription>Recherche par nom ou société.</DialogDescription>
+                <DialogDescription>{t("quick.pick_contact_subtitle")}</DialogDescription>
               </DialogHeader>
 
               <Command className="rounded-xl border border-border/70">
-                <CommandInput placeholder="Rechercher un contact…" />
+                <CommandInput placeholder={t("quick.search_placeholder")} />
                 <CommandList>
-                  <CommandEmpty>Aucun contact trouvé.</CommandEmpty>
+                  <CommandEmpty>{t("quick.no_results")}</CommandEmpty>
                   <CommandGroup>
                     {contacts.map((c) => (
                       <CommandItem

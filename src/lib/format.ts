@@ -14,13 +14,16 @@ export function formatCentsLocalized(cents: number, locale: Locale): string {
 
 export function formatDateTime(iso: string | null, locale: Locale): string | null {
   if (!iso) return null;
-  return new Intl.DateTimeFormat(BCP47_TAGS[locale], { dateStyle: "long", timeStyle: "short" }).format(
-    new Date(iso),
-  );
+  return new Intl.DateTimeFormat(BCP47_TAGS[locale], {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(iso));
 }
 
 export function formatDayMonth(date: Date, locale: Locale): string {
-  return new Intl.DateTimeFormat(BCP47_TAGS[locale], { day: "numeric", month: "short" }).format(date);
+  return new Intl.DateTimeFormat(BCP47_TAGS[locale], { day: "numeric", month: "short" }).format(
+    date,
+  );
 }
 
 export function formatLongDate(date: Date, locale: Locale): string {

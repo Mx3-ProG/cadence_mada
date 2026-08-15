@@ -271,6 +271,60 @@ export type Database = {
         };
         Relationships: [];
       };
+      email_deliveries: {
+        Row: {
+          appointment_id: string | null;
+          appointment_invite_id: string | null;
+          attempts: number;
+          contact_id: string | null;
+          created_at: string;
+          dedupe_key: string;
+          id: string;
+          kind: Database["public"]["Enums"]["email_delivery_kind"];
+          last_error: string | null;
+          owner_id: string;
+          provider_message_id: string | null;
+          scheduled_for: string;
+          sent_at: string | null;
+          status: Database["public"]["Enums"]["email_delivery_status"];
+          updated_at: string;
+        };
+        Insert: {
+          appointment_id?: string | null;
+          appointment_invite_id?: string | null;
+          attempts?: number;
+          contact_id?: string | null;
+          created_at?: string;
+          dedupe_key: string;
+          id?: string;
+          kind: Database["public"]["Enums"]["email_delivery_kind"];
+          last_error?: string | null;
+          owner_id: string;
+          provider_message_id?: string | null;
+          scheduled_for: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["email_delivery_status"];
+          updated_at?: string;
+        };
+        Update: {
+          appointment_id?: string | null;
+          appointment_invite_id?: string | null;
+          attempts?: number;
+          contact_id?: string | null;
+          created_at?: string;
+          dedupe_key?: string;
+          id?: string;
+          kind?: Database["public"]["Enums"]["email_delivery_kind"];
+          last_error?: string | null;
+          owner_id?: string;
+          provider_message_id?: string | null;
+          scheduled_for?: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["email_delivery_status"];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       login_challenges: {
         Row: {
           attempts: number;
@@ -339,6 +393,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          automatic_reminders_enabled: boolean;
           avatar_url: string | null;
           business_name: string | null;
           cancel_at_period_end: boolean;
@@ -351,6 +406,7 @@ export type Database = {
           google_reviews_count: number | null;
           id: string;
           invite_message: string | null;
+          onboarding_completed_at: string | null;
           plan: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at: string | null;
           referral_code: string;
@@ -363,6 +419,7 @@ export type Database = {
           website_url: string | null;
         };
         Insert: {
+          automatic_reminders_enabled?: boolean;
           avatar_url?: string | null;
           business_name?: string | null;
           cancel_at_period_end?: boolean;
@@ -375,6 +432,7 @@ export type Database = {
           google_reviews_count?: number | null;
           id: string;
           invite_message?: string | null;
+          onboarding_completed_at?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;
           referral_code?: string;
@@ -387,6 +445,7 @@ export type Database = {
           website_url?: string | null;
         };
         Update: {
+          automatic_reminders_enabled?: boolean;
           avatar_url?: string | null;
           business_name?: string | null;
           cancel_at_period_end?: boolean;
@@ -399,6 +458,7 @@ export type Database = {
           google_reviews_count?: number | null;
           id?: string;
           invite_message?: string | null;
+          onboarding_completed_at?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;
           referral_code?: string;
@@ -676,6 +736,9 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user";
       appointment_status: "pending" | "accepted" | "declined" | "cancelled";
+      email_delivery_kind:
+        "pending_invite_reminder" | "upcoming_appointment_reminder" | "owner_daily_summary";
+      email_delivery_status: "processing" | "sent" | "failed" | "skipped";
       plan_tier: "free" | "basic" | "standard" | "economic" | "business";
     };
     CompositeTypes: {
@@ -800,6 +863,12 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       appointment_status: ["pending", "accepted", "declined", "cancelled"],
+      email_delivery_kind: [
+        "pending_invite_reminder",
+        "upcoming_appointment_reminder",
+        "owner_daily_summary",
+      ],
+      email_delivery_status: ["processing", "sent", "failed", "skipped"],
       plan_tier: ["free", "basic", "standard", "economic", "business"],
     },
   },

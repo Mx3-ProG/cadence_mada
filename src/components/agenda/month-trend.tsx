@@ -10,18 +10,14 @@ import {
   startOfMonth,
   subDays,
 } from "date-fns";
-import { fr } from "date-fns/locale";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CalendarRange } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Reveal } from "@/components/reveal";
 import { supabase } from "@/integrations/supabase/client";
 import type { Appointment } from "@/lib/agenda";
-
-const chartConfig = {
-  total: { label: "Rendez-vous", color: "oklch(0.62 0.146 162.5)" },
-  accepted: { label: "Confirmés", color: "oklch(0.62 0.146 162.5)" },
-} as const;
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 
 function Delta({ value }: { value: number }) {
   const Icon = value > 0 ? ArrowUpRight : value < 0 ? ArrowDownRight : ArrowRight;
@@ -37,6 +33,12 @@ function Delta({ value }: { value: number }) {
 }
 
 export function MonthTrend({ anchor }: { anchor: Date }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
+  const chartConfig = {
+    total: { label: t("month_trend.chart.total_label"), color: "oklch(0.62 0.146 162.5)" },
+    accepted: { label: t("month_trend.chart.accepted_label"), color: "oklch(0.62 0.146 162.5)" },
+  } as const;
   const monthStart = useMemo(() => startOfMonth(anchor), [anchor]);
   const monthEnd = useMemo(() => endOfMonth(anchor), [anchor]);
 
@@ -62,8 +64,8 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
       const list = appointments.filter((a) => isSameDay(new Date(a.starts_at), day));
       return {
         day,
-        label: format(day, "d", { locale: fr }),
-        full: format(day, "EEEE d MMMM", { locale: fr }),
+        label: format(day, "d", { locale: dateFnsLocale }),
+        full: format(day, "EEEE d MMMM", { locale: dateFnsLocale }),
         total: list.length,
         accepted: list.filter((a) => a.status === "accepted").length,
         declined: list.filter((a) => a.status === "declined").length,
@@ -88,7 +90,7 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
       const e = weekdayMap.get(k) ?? { sum: 0, n: 0 };
       return {
         key: k,
-        label: format(addDays(new Date(2024, 0, 7), k), "EEEE", { locale: fr }),
+        label: format(addDays(new Date(2024, 0, 7), k), "EEEE", { locale: dateFnsLocale }),
         avg: e.n > 0 ? e.sum / e.n : 0,
         total: e.sum,
       };
@@ -111,7 +113,7 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
       best,
       worst,
     };
-  }, [appointments, monthStart, monthEnd]);
+  }, [appointments, monthStart, monthEnd, dateFnsLocale]);
 
   const maxAvg = Math.max(0.001, ...stats.weekdays.map((w) => w.avg));
 
@@ -121,21 +123,28 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
         <div className="flex items-center gap-2">
           <CalendarRange className="h-5 w-5 text-primary" />
           <h2 className="font-display text-xl font-bold tracking-tight sm:text-2xl">
-            Tendance du mois — {format(monthStart, "MMMM yyyy", { locale: fr })}
+            {t("month_trend.title", {
+              month: format(monthStart, "MMMM yyyy", { locale: dateFnsLocale }),
+            })}
           </h2>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          {stats.monthTotal} rendez-vous · {stats.accepted} confirmés · {stats.declined} refusés ·{" "}
-          {stats.pending} en attente · moyenne {stats.avgAll.toFixed(1)} / jour
+          {t("month_trend.summary", {
+            total: stats.monthTotal,
+            accepted: stats.accepted,
+            declined: stats.declined,
+            pending: stats.pending,
+            avg: stats.avgAll.toFixed(1),
+          })}
         </p>
       </Reveal>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
         <Reveal delay={0.05} className="lg:col-span-2">
           <section className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4">
-            <h3 className="font-display text-sm font-bold">Rendez-vous demandés par jour</h3>
+            <h3 className="font-display text-sm font-bold">{t("month_trend.panel1.title")}</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Aire pleine : total demandé · aire claire : confirmés
+              {t("month_trend.panel1.subtitle")}
             </p>
             <ChartContainer
               config={chartConfig}
@@ -170,7 +179,7 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
                   <Area
                     type="monotone"
                     dataKey="total"
-                    name="Rendez-vous"
+                    name={chartConfig.total.label}
                     stroke="var(--color-total)"
                     strokeWidth={2}
                     fill="url(#areaTotal)"
@@ -178,7 +187,7 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
                   <Area
                     type="monotone"
                     dataKey="accepted"
-                    name="Confirmés"
+                    name={chartConfig.accepted.label}
                     stroke="var(--color-total)"
                     strokeOpacity={0.5}
                     strokeWidth={1.5}
@@ -193,31 +202,40 @@ export function MonthTrend({ anchor }: { anchor: Date }) {
 
         <Reveal delay={0.1}>
           <section className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4">
-            <h3 className="font-display text-sm font-bold">Hier vs aujourd'hui</h3>
+            <h3 className="font-display text-sm font-bold">{t("month_trend.panel2.title")}</h3>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-border/60 p-3">
-                <p className="text-xs text-muted-foreground">Hier</p>
+                <p className="text-xs text-muted-foreground">{t("month_trend.panel2.yesterday")}</p>
                 <p className="font-display text-2xl font-bold tabular-nums">
                   {stats.yesterdayCount}
                 </p>
               </div>
               <div className="rounded-xl border border-primary/40 bg-primary/5 p-3">
-                <p className="text-xs text-muted-foreground">Aujourd'hui</p>
+                <p className="text-xs text-muted-foreground">{t("month_trend.panel2.today")}</p>
                 <p className="font-display text-2xl font-bold tabular-nums">{stats.todayCount}</p>
               </div>
             </div>
             <p className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-              Variation <Delta value={stats.delta} />
-              {stats.delta === 0 ? "· stable" : stats.delta > 0 ? "· plus chargé" : "· plus calme"}
+              {t("month_trend.panel2.variation")} <Delta value={stats.delta} />
+              {stats.delta === 0
+                ? t("month_trend.panel2.stable")
+                : stats.delta > 0
+                  ? t("month_trend.panel2.busier")
+                  : t("month_trend.panel2.calmer")}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Aujourd'hui est {stats.todayCount >= stats.avgAll ? "au-dessus" : "en dessous"} de ta
-              moyenne du mois ({stats.avgAll.toFixed(1)} / jour).
+              {t("month_trend.panel2.compare", {
+                state:
+                  stats.todayCount >= stats.avgAll
+                    ? t("month_trend.panel2.above")
+                    : t("month_trend.panel2.below"),
+                avg: stats.avgAll.toFixed(1),
+              })}
             </p>
 
             <div className="mt-4 space-y-2">
               <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                Moyenne par jour de semaine
+                {t("month_trend.panel2.weekday_avg_title")}
               </p>
               {stats.weekdays.map((w) => (
                 <div key={w.key} className="flex items-center gap-2">

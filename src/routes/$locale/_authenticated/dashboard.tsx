@@ -1,17 +1,18 @@
 import { DashboardSkeleton } from "@/components/loading/page-skeletons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, format, isSameDay, isToday } from "date-fns";
-import { fr } from "date-fns/locale";
 import { CalendarPlus, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppHeader } from "@/components/agenda/app-header";
 import { AppointmentCard } from "@/components/agenda/appointment-card";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
+import { ContactImportDialog } from "@/components/agenda/contact-import-dialog";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { WeekStats } from "@/components/agenda/week-stats";
 import { TodayPanel } from "@/components/agenda/today-panel";
@@ -19,9 +20,14 @@ import { MonthTrend } from "@/components/agenda/month-trend";
 import { CheckoutReturn } from "@/components/billing/checkout-return";
 import { PlanBanner } from "@/components/agenda/plan-banner";
 import { useLocale } from "@/i18n/use-locale";
-import { LockedFeatureCard } from "@/components/agenda/locked-feature-card";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
+import { FeatureTeaser } from "@/components/agenda/locked-feature-card";
 import { Reveal } from "@/components/reveal";
 import { useAppointmentActions } from "@/lib/use-appointment-actions";
+import {
+  contactImportReminderKey,
+  shouldShowContactImportReminder,
+} from "@/lib/contact-import-reminder";
 
 import {
   hasFeatureAccess,
@@ -36,7 +42,6 @@ import {
   weekDays,
   weekNumberInMonth,
   weekStart,
-  shortMonthLabel,
   type Appointment,
   type Contact,
   type AppointmentStatus,
@@ -66,12 +71,16 @@ export const Route = createFileRoute("/$locale/_authenticated/dashboard")({
 
 function Dashboard() {
   const locale = useLocale();
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("dashboard");
   const queryClient = useQueryClient();
   const [anchor, setAnchor] = useState(() => new Date());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Appointment | null>(null);
   const [quickOpen, setQuickOpen] = useState(false);
   const [quickDefaultDate, setQuickDefaultDate] = useState<Date | null>(null);
+  const [contactImportOpen, setContactImportOpen] = useState(false);
+  const reminderChecked = useRef(false);
 
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const rangeStart = days[0]!;
@@ -139,8 +148,32 @@ function Dashboard() {
 
   const planQuery = usePlanUsage();
 
+  useEffect(() => {
+    if (!contactsQuery.isSuccess || reminderChecked.current) return;
+    reminderChecked.current = true;
+    let active = true;
+
+    void supabase.auth.getUser().then(({ data }) => {
+      const userId = data.user?.id;
+      if (!active || !userId) return;
+      const key = contactImportReminderKey(userId);
+      try {
+        if (!shouldShowContactImportReminder(window.localStorage.getItem(key))) return;
+        window.localStorage.setItem(key, String(Date.now()));
+      } catch {
+        // Le rappel reste utilisable lorsque le stockage local est bloqué par le navigateur.
+      }
+      setContactImportOpen(true);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [contactsQuery.isSuccess]);
+
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    void queryClient.invalidateQueries({ queryKey: ["contacts"] });
     void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
   };
   const { email, decide, remove } = useAppointmentActions(refresh);
@@ -153,8 +186,8 @@ function Dashboard() {
       const limit = TIER_LIMITS[plan].appointments;
       const upsell = nextTier(plan);
       toast.error(
-        `Plan ${TIER_LABELS[plan]} : ${limit} rendez-vous par mois maximum.` +
-          (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
+        t("plan_limit_error", { plan: TIER_LABELS[plan], limit }) +
+          (upsell ? t("plan_limit_upsell", { plan: TIER_LABELS[upsell] }) : ""),
       );
       return;
     }
@@ -179,43 +212,51 @@ function Dashboard() {
           <div className="min-w-0">
             <h1
               className="truncate font-display text-2xl font-bold tracking-tight sm:text-3xl"
-              aria-label={`Semaine ${weekOfMonth} du ${format(rangeStart, "d MMMM", { locale: fr })}`}
+              aria-label={t("page.aria_week", {
+                n: weekOfMonth,
+                date: format(rangeStart, "d MMMM", { locale: dateFnsLocale }),
+              })}
             >
               <span className="sm:hidden">
-                S{weekOfMonth} · {shortMonthLabel(rangeStart)}
+                S{weekOfMonth} · {format(rangeStart, "MMM", { locale: dateFnsLocale })}
               </span>
               <span className="hidden sm:inline">
-                Semaine du {format(rangeStart, "d MMMM", { locale: fr })}
+                {t("page.week_of", {
+                  date: format(rangeStart, "d MMMM", { locale: dateFnsLocale }),
+                })}
               </span>
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {appointments.length} rendez-vous · {counts.accepted} confirmés · {counts.pending} en
-              attente
+              {t("page.stats", {
+                count: appointments.length,
+                accepted: counts.accepted,
+                pending: counts.pending,
+              })}
             </p>
           </div>
           <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
             <Button
               variant="outline"
               size="icon"
-              aria-label="Semaine précédente"
+              aria-label={t("nav.prev_week_aria")}
               onClick={() => setAnchor(addDays(weekStart(anchor), -7))}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={() => setAnchor(new Date())}>
-              Aujourd'hui
+              {t("nav.today")}
             </Button>
             <Button
               variant="outline"
               size="icon"
-              aria-label="Semaine suivante"
+              aria-label={t("nav.next_week_aria")}
               onClick={() => setAnchor(addDays(weekStart(anchor), 7))}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button onClick={() => openNew(null)} className="gap-2">
               <CalendarPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Nouveau</span>
+              <span className="hidden sm:inline">{t("nav.new")}</span>
             </Button>
           </div>
         </div>
@@ -229,7 +270,7 @@ function Dashboard() {
         >
           <span className="flex items-center gap-2 text-sm font-medium">
             <LayoutGrid className="h-4 w-4 text-primary" />
-            Snip rapide — voir l'agenda complet
+            {t("quick_link.label")}
             {planQuery.data && !hasFeatureAccess(planQuery.data, "standard") && (
               <Badge variant="secondary">Standard</Badge>
             )}
@@ -258,16 +299,16 @@ function Dashboard() {
                   <header className="flex items-center justify-between">
                     <div className="min-w-0">
                       <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                        {format(day, "EEEE", { locale: fr })}
+                        {format(day, "EEEE", { locale: dateFnsLocale })}
                       </p>
                       <p className="font-display text-xl font-bold">
-                        {format(day, "d MMM", { locale: fr })}
+                        {format(day, "d MMM", { locale: dateFnsLocale })}
                       </p>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      aria-label="Ajouter un rendez-vous"
+                      aria-label={t("day.add_aria")}
                       onClick={() => openNew(day)}
                     >
                       <CalendarPlus className="h-4 w-4" />
@@ -277,7 +318,7 @@ function Dashboard() {
                   <div className="mt-3 space-y-3">
                     {dayAppointments.length === 0 && (
                       <p className="rounded-xl border border-dashed border-border/70 px-3 py-6 text-center text-xs text-muted-foreground">
-                        Journée libre
+                        {t("day.empty")}
                       </p>
                     )}
                     {dayAppointments.map((a) => {
@@ -304,21 +345,17 @@ function Dashboard() {
         {hasFeatureAccess(planQuery.data, "standard") ? (
           <WeekStats appointments={appointments} contacts={contacts} days={days} />
         ) : (
-          <LockedFeatureCard
-            title="Statistiques de la semaine"
-            minTier="standard"
-            currentPlan={planQuery.data?.plan}
-          />
+          <FeatureTeaser title={t("locked.week_stats")} minTier="standard">
+            <WeekStats appointments={appointments} contacts={contacts} days={days} />
+          </FeatureTeaser>
         )}
 
         {hasFeatureAccess(planQuery.data, "economic") ? (
           <MonthTrend anchor={anchor} />
         ) : (
-          <LockedFeatureCard
-            title="Tendance du mois"
-            minTier="economic"
-            currentPlan={planQuery.data?.plan}
-          />
+          <FeatureTeaser title={t("locked.month_trend")} minTier="economic">
+            <MonthTrend anchor={anchor} />
+          </FeatureTeaser>
         )}
       </main>
 
@@ -335,6 +372,14 @@ function Dashboard() {
         open={quickOpen}
         onOpenChange={setQuickOpen}
         defaultDate={quickDefaultDate}
+      />
+
+      <ContactImportDialog
+        open={contactImportOpen}
+        onOpenChange={setContactImportOpen}
+        existingContacts={contacts}
+        usage={planQuery.data}
+        onImported={refresh}
       />
     </div>
   );

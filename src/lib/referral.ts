@@ -90,15 +90,15 @@ export function useSendReferralInvite() {
   });
 }
 
-export function referralPayoutErrorMessage(error: unknown): string {
+export function referralPayoutErrorMessage(error: unknown, t: (key: string) => string): string {
   const message = error instanceof Error ? error.message : String(error);
   if (message.includes("REFERRAL_PAYOUT_ALREADY_PENDING")) {
-    return "Une demande de retrait est déjà en cours de traitement.";
+    return t("referral.payout_errors.already_pending");
   }
   if (message.includes("REFERRAL_BALANCE_TOO_LOW")) {
-    return "Solde insuffisant : le retrait est possible à partir de 25 €.";
+    return t("referral.payout_errors.balance_too_low");
   }
-  return "La demande de retrait n'a pas pu être envoyée. Réessaie dans un instant.";
+  return t("referral.payout_errors.generic");
 }
 
 export function referralLink(code: string) {
@@ -151,21 +151,4 @@ export function getTierProgress(
 }
 
 export const REFERRAL_COUNT_BOUNDARIES = [0, 1, 5, 20, 100, 500];
-export const REFERRAL_COUNT_LABELS = [
-  "Premiers filleuls",
-  "1 – 5 filleuls",
-  "5 – 20 filleuls",
-  "20 – 100 filleuls",
-  "100 – 500 filleuls",
-  "500+ filleuls",
-];
-
 export const REFERRAL_MONEY_BOUNDARIES_CENTS = [0, 1000, 5000, 10000, 30000, 100000];
-export const REFERRAL_MONEY_LABELS = [
-  "0 – 10 €",
-  "10 – 50 €",
-  "50 – 100 €",
-  "100 – 300 €",
-  "300 – 1000 €",
-  "1000 €+",
-];

@@ -3,16 +3,22 @@
  * Renseigne RESEND_API_KEY (et RESEND_FROM) dans les variables d'environnement.
  */
 export type SendEmailResult =
-  { sent: true; to: string } | { sent: false; reason: "no_api_key" | "provider_error" };
+  | { sent: true; to: string; id: string | null }
+  | {
+      sent: false;
+      reason: "no_api_key" | "provider_error";
+    };
 
 export async function sendEmail({
   to,
   subject,
   html,
+  idempotencyKey,
 }: {
   to: string;
   subject: string;
   html: string;
+  idempotencyKey?: string;
 }): Promise<SendEmailResult> {
   const apiKey = process.env["RESEND_API_KEY"];
   const from = process.env["RESEND_FROM"] ?? "Cadence Mada <rdv@cadencemada.com>";
@@ -26,6 +32,7 @@ export async function sendEmail({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: JSON.stringify({ from, to: [to], subject, html }),
   });
@@ -36,5 +43,6 @@ export async function sendEmail({
     return { sent: false, reason: "provider_error" };
   }
 
-  return { sent: true, to };
+  const payload = (await response.json().catch(() => null)) as { id?: string } | null;
+  return { sent: true, to, id: payload?.id ?? null };
 }

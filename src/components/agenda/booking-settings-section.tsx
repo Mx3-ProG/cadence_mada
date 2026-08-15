@@ -1,35 +1,21 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, Loader2, Lock, Plus, Sparkles, X } from "lucide-react";
+import { CalendarClock, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { BookingHourPickerDialog } from "@/components/agenda/booking-hour-picker-dialog";
+import { FeatureTeaser } from "@/components/agenda/locked-feature-card";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, slugify } from "@/lib/agenda";
-import { useLocale } from "@/i18n/use-locale";
-import {
-  hasFeatureAccess,
-  tierPricingHash,
-  TIER_LABELS,
-  TIER_PRICES,
-  usePlanUsage,
-} from "@/lib/plan";
+import { hasFeatureAccess, usePlanUsage } from "@/lib/plan";
 
 const BOOKING_MIN_TIER = "standard" as const;
 
-const WEEKDAYS = [
-  { value: 1, label: "Lundi" },
-  { value: 2, label: "Mardi" },
-  { value: 3, label: "Mercredi" },
-  { value: 4, label: "Jeudi" },
-  { value: 5, label: "Vendredi" },
-  { value: 6, label: "Samedi" },
-  { value: 0, label: "Dimanche" },
-];
+const WEEKDAY_VALUES = [1, 2, 3, 4, 5, 6, 0];
 
 type BookingSettingsForm = {
   slug: string;
@@ -48,7 +34,11 @@ const emptyForm: BookingSettingsForm = {
 };
 
 export function BookingSettingsSection() {
-  const locale = useLocale();
+  const { t } = useTranslation("settings");
+  const WEEKDAYS = WEEKDAY_VALUES.map((value, i) => ({
+    value,
+    label: (t("booking.weekdays", { returnObjects: true }) as string[])[i]!,
+  }));
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const hasBooking = hasFeatureAccess(planQuery.data, BOOKING_MIN_TIER);
@@ -109,15 +99,15 @@ export function BookingSettingsSection() {
     const minNotice = Number(form.min_notice_hours);
     const window = Number(form.booking_window_days);
     if (!Number.isFinite(slotDuration) || slotDuration <= 0) {
-      toast.error("La durée des créneaux doit être un nombre positif.");
+      toast.error(t("booking.errors.slot_duration"));
       return;
     }
     if (!Number.isFinite(minNotice) || minNotice < 0) {
-      toast.error("Le préavis minimum est invalide.");
+      toast.error(t("booking.errors.min_notice"));
       return;
     }
     if (!Number.isFinite(window) || window <= 0) {
-      toast.error("La fenêtre de réservation doit être un nombre de jours positif.");
+      toast.error(t("booking.errors.window"));
       return;
     }
 
@@ -152,7 +142,7 @@ export function BookingSettingsSection() {
       setSaving(false);
       toast.error(
         error.message.includes("duplicate") || error.message.includes("unique")
-          ? "Ce lien est déjà pris, choisis-en un autre."
+          ? t("booking.errors.slug_taken")
           : error.message,
       );
       return;
@@ -170,7 +160,7 @@ export function BookingSettingsSection() {
     }
 
     setSaving(false);
-    toast.success("Réglages enregistrés");
+    toast.success(t("booking.success.saved"));
     void queryClient.invalidateQueries({ queryKey: ["booking-settings"] });
   };
 
@@ -189,7 +179,7 @@ export function BookingSettingsSection() {
       return;
     }
     setPickerWeekday(null);
-    toast.success("Créneau ajouté");
+    toast.success(t("booking.success.hour_added"));
     void queryClient.invalidateQueries({ queryKey: ["booking-hours"] });
   };
 
@@ -204,42 +194,15 @@ export function BookingSettingsSection() {
 
   const hours = hoursQuery.data ?? [];
 
-  return (
-    <section className="glass-panel min-w-0 overflow-hidden rounded-3xl p-4 sm:p-6">
-      <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <CalendarClock className="h-4 w-4 text-primary" /> Lien de réservation
-      </h2>
-      <p className="mt-1.5 text-sm text-muted-foreground">
-        Configure le lien public que tes contacts utilisent pour réserver eux-mêmes un créneau dans
-        ton agenda.
-      </p>
-
-      {!hasBooking && (
-        <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-start gap-2 text-sm">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>
-              Le lien de réservation est réservé au plan{" "}
-              <strong>{TIER_LABELS[BOOKING_MIN_TIER]}</strong> ({TIER_PRICES[BOOKING_MIN_TIER]}
-              /mois) et plus.
-            </span>
-          </p>
-          <Button asChild className="gap-2 sm:shrink-0">
-            <Link to="/$locale/tarifs" params={{ locale }} hash={tierPricingHash(BOOKING_MIN_TIER)}>
-              <Sparkles className="h-4 w-4" />
-              Voir l’offre {TIER_LABELS[BOOKING_MIN_TIER]}
-            </Link>
-          </Button>
-        </div>
-      )}
-
-      <fieldset disabled={!hasBooking} className="min-w-0 disabled:opacity-60">
+  const bookingFieldset = (
+    <>
+      <fieldset disabled={!hasBooking} className="min-w-0">
         <div className="mt-5 grid min-w-0 gap-4">
           <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-border/70 bg-surface/40 px-4 py-3.5">
             <div className="min-w-0">
-              <p className="text-sm font-medium">Lien actif</p>
+              <p className="text-sm font-medium">{t("booking.active_link_label")}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {form.slug ? bookingUrl(form.slug) : "Sera généré à l'enregistrement"}
+                {form.slug ? bookingUrl(form.slug) : t("booking.active_link_pending")}
               </p>
             </div>
             <Switch
@@ -250,11 +213,11 @@ export function BookingSettingsSection() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="booking-slug">Adresse du lien</Label>
+            <Label htmlFor="booking-slug">{t("booking.slug_label")}</Label>
             <Input
               id="booking-slug"
               value={form.slug}
-              placeholder="mon-agenda"
+              placeholder={t("booking.slug_placeholder")}
               onChange={(e) => set("slug", e.target.value)}
               onBlur={(e) => e.target.value.trim() && set("slug", slugify(e.target.value))}
             />
@@ -262,7 +225,7 @@ export function BookingSettingsSection() {
 
           <div className="grid min-w-0 gap-4 sm:grid-cols-3">
             <div className="grid min-w-0 gap-2">
-              <Label htmlFor="slot-duration">Durée des créneaux (min)</Label>
+              <Label htmlFor="slot-duration">{t("booking.slot_duration_label")}</Label>
               <Input
                 id="slot-duration"
                 inputMode="numeric"
@@ -271,7 +234,7 @@ export function BookingSettingsSection() {
               />
             </div>
             <div className="grid min-w-0 gap-2">
-              <Label htmlFor="min-notice">Préavis minimum (heures)</Label>
+              <Label htmlFor="min-notice">{t("booking.min_notice_label")}</Label>
               <Input
                 id="min-notice"
                 inputMode="numeric"
@@ -280,7 +243,7 @@ export function BookingSettingsSection() {
               />
             </div>
             <div className="grid min-w-0 gap-2">
-              <Label htmlFor="booking-window">Fenêtre de réservation (jours)</Label>
+              <Label htmlFor="booking-window">{t("booking.window_label")}</Label>
               <Input
                 id="booking-window"
                 inputMode="numeric"
@@ -293,18 +256,14 @@ export function BookingSettingsSection() {
           <div>
             <Button onClick={save} disabled={saving} className="gap-2">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {t("booking.save")}
             </Button>
           </div>
         </div>
 
         <div className="mt-8 border-t border-border/70 pt-6">
-          <h3 className="font-display text-base font-semibold">Horaires disponibles</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Par défaut : 07h30–12h00 et 13h00–20h30, tous les jours. Clique sur « Ajouter un créneau
-            » pour glisser un nouvel horaire sur chaque jour — aucune limite, une journée peut être
-            ouverte en continu de 00h à 24h.
-          </p>
+          <h3 className="font-display text-base font-semibold">{t("booking.hours.title")}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{t("booking.hours.description")}</p>
           <div className="mt-4 grid gap-3">
             {WEEKDAYS.map(({ value, label }) => {
               const dayHours = hours.filter((h) => h.weekday === value);
@@ -316,7 +275,9 @@ export function BookingSettingsSection() {
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold">{label}</p>
                     {dayHours.length === 0 && (
-                      <span className="text-xs text-muted-foreground">Aucun créneau</span>
+                      <span className="text-xs text-muted-foreground">
+                        {t("booking.hours.none")}
+                      </span>
                     )}
                   </div>
 
@@ -331,7 +292,9 @@ export function BookingSettingsSection() {
                           {h.end_time.slice(0, 5) === "23:59" ? "24:00" : h.end_time.slice(0, 5)}
                           <button
                             type="button"
-                            aria-label={`Supprimer ${h.start_time.slice(0, 5)}–${h.end_time.slice(0, 5)}`}
+                            aria-label={t("booking.hours.delete_aria", {
+                              range: `${h.start_time.slice(0, 5)}–${h.end_time.slice(0, 5)}`,
+                            })}
                             onClick={() => removeHour(h.id)}
                             className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                           >
@@ -350,7 +313,7 @@ export function BookingSettingsSection() {
                     onClick={() => setPickerWeekday(value)}
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Ajouter un créneau
+                    {t("booking.hours.add_cta")}
                   </Button>
                 </div>
               );
@@ -367,6 +330,23 @@ export function BookingSettingsSection() {
           if (pickerWeekday !== null) void addHour(pickerWeekday, range);
         }}
       />
+    </>
+  );
+
+  return (
+    <section className="glass-panel min-w-0 overflow-hidden rounded-3xl p-4 sm:p-6">
+      <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+        <CalendarClock className="h-4 w-4 text-primary" /> {t("booking.title")}
+      </h2>
+      <p className="mt-1.5 text-sm text-muted-foreground">{t("booking.subtitle")}</p>
+
+      {hasBooking ? (
+        bookingFieldset
+      ) : (
+        <FeatureTeaser title={t("booking.title")} minTier={BOOKING_MIN_TIER}>
+          {bookingFieldset}
+        </FeatureTeaser>
+      )}
     </section>
   );
 }

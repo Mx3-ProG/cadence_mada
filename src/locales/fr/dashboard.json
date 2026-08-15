@@ -1,0 +1,19 @@
+{
+  "page.aria_week": "Semaine {{n}} du {{date}}",
+  "page.week_of": "Semaine du {{date}}",
+  "page.stats": "{{count}} rendez-vous · {{accepted}} confirmés · {{pending}} en attente",
+  "nav.prev_week_aria": "Semaine précédente",
+  "nav.next_week_aria": "Semaine suivante",
+  "nav.today": "Aujourd'hui",
+  "nav.new": "Nouveau",
+  "quick_link.label": "Snip rapide — voir l'agenda complet",
+  "day.add_aria": "Ajouter un rendez-vous",
+  "day.empty": "Journée libre",
+  "locked.week_stats": "Statistiques de la semaine",
+  "locked.month_trend": "Tendance du mois",
+  "plan_limit_error": "Plan {{plan}} : {{limit}} rendez-vous par mois maximum.",
+  "plan_limit_upsell": " Passe au plan {{plan}} pour continuer.",
+  "checkout.cancelled": "Paiement annulé — tu restes sur le plan {{plan}}.",
+  "checkout.success": "Bienvenue en {{plan}} !",
+  "checkout.pending": "Paiement reçu, activation en cours. Recharge la page dans un instant."
+}

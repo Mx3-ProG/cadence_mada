@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import { CalendarIcon, Check, User, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,14 +38,7 @@ import { cn } from "@/lib/utils";
 
 const NO_CONTACT = "none";
 
-const DURATIONS = [
-  { label: "15 min", minutes: 15 },
-  { label: "30 min", minutes: 30 },
-  { label: "45 min", minutes: 45 },
-  { label: "1 h", minutes: 60 },
-  { label: "1 h 30", minutes: 90 },
-  { label: "2 h", minutes: 120 },
-];
+const DURATION_MINUTES = [15, 30, 45, 60, 90, 120];
 
 export function AppointmentDialog({
   open,
@@ -63,6 +57,9 @@ export function AppointmentDialog({
   presetContactId?: string | null;
   onSaved: () => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
+  const durationLabels = t("dialog.durations", { returnObjects: true }) as string[];
   const [form, setForm] = useState({
     title: "",
     contact_ids: [] as string[],
@@ -120,17 +117,17 @@ export function AppointmentDialog({
 
   const submit = async () => {
     if (!form.title.trim()) {
-      toast.error("Donne un titre au rendez-vous.");
+      toast.error(t("dialog.errors.title_required"));
       return;
     }
     if (!form.date) {
-      toast.error("Choisis une date.");
+      toast.error(t("dialog.errors.date_required"));
       return;
     }
     const start = new Date(`${form.date}T${form.startTime}:00`);
     const end = new Date(`${form.date}T${form.endTime}:00`);
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
-      toast.error("Vérifie les horaires : la fin doit suivre le début.");
+      toast.error(t("dialog.errors.time_invalid"));
       return;
     }
 
@@ -162,7 +159,7 @@ export function AppointmentDialog({
       const uid = userData.user?.id;
       if (!uid) {
         setSaving(false);
-        toast.error("Session expirée.");
+        toast.error(t("dialog.errors.session_expired"));
         return;
       }
       const { data, error } = await supabase
@@ -222,7 +219,7 @@ export function AppointmentDialog({
     }
 
     setSaving(false);
-    toast.success(appointment ? "Rendez-vous mis à jour" : "Rendez-vous créé");
+    toast.success(appointment ? t("dialog.success.updated") : t("dialog.success.created"));
     onOpenChange(false);
     onSaved();
   };
@@ -231,31 +228,27 @@ export function AppointmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-[1.75rem] border-border/70 p-4 shadow-[0_24px_80px_-28px_rgba(0,0,0,0.65)] sm:max-h-[92dvh] sm:max-w-xl sm:p-6">
         <DialogHeader>
-          <DialogTitle>
-            {appointment ? "Modifier le rendez-vous" : "Nouveau rendez-vous"}
-          </DialogTitle>
-          <DialogDescription>
-            Une fois créé, tu pourras prévenir tous les invités en un clic.
-          </DialogDescription>
+          <DialogTitle>{appointment ? t("dialog.title_edit") : t("dialog.title_new")}</DialogTitle>
+          <DialogDescription>{t("dialog.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="grid min-w-0 gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="a-title">Titre</Label>
+            <Label htmlFor="a-title">{t("dialog.title_label")}</Label>
             <Input
               id="a-title"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Point stratégie Q3"
+              placeholder={t("dialog.title_placeholder")}
             />
           </div>
 
           <div className="grid gap-3">
             <div className="flex items-center justify-between gap-3">
-              <Label>Invités</Label>
+              <Label>{t("dialog.guests_label")}</Label>
               {form.contact_ids.length > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  {form.contact_ids.length} sélectionné{form.contact_ids.length > 1 ? "s" : ""}
+                  {t("dialog.guests_selected", { count: form.contact_ids.length })}
                 </span>
               )}
             </div>
@@ -276,7 +269,7 @@ export function AppointmentDialog({
                     : "text-muted-foreground",
                 )}
               >
-                <User className="h-4 w-4" /> Un contact
+                <User className="h-4 w-4" /> {t("dialog.mode_single")}
               </button>
               <button
                 type="button"
@@ -288,7 +281,7 @@ export function AppointmentDialog({
                     : "text-muted-foreground",
                 )}
               >
-                <Users className="h-4 w-4" /> Plusieurs
+                <Users className="h-4 w-4" /> {t("dialog.mode_multiple")}
               </button>
             </div>
 
@@ -300,10 +293,10 @@ export function AppointmentDialog({
                 }
               >
                 <SelectTrigger className="min-w-0">
-                  <SelectValue placeholder="Choisir un contact" />
+                  <SelectValue placeholder={t("dialog.choose_contact")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={NO_CONTACT}>Aucun contact</SelectItem>
+                  <SelectItem value={NO_CONTACT}>{t("dialog.no_contact")}</SelectItem>
                   {contacts.map((contact) => (
                     <SelectItem key={contact.id} value={contact.id}>
                       {contact.name}
@@ -316,7 +309,7 @@ export function AppointmentDialog({
               <div className="max-h-52 overflow-y-auto rounded-xl border border-border/70 p-1">
                 {contacts.length === 0 ? (
                   <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-                    Aucun contact disponible.
+                    {t("dialog.no_contact_available")}
                   </p>
                 ) : (
                   contacts.map((contact) => {
@@ -361,7 +354,7 @@ export function AppointmentDialog({
 
           <div className="grid min-w-0 gap-4 rounded-[1.5rem] border border-border/70 bg-surface/40 p-3.5 sm:p-4">
             <div className="grid gap-2">
-              <Label>Date</Label>
+              <Label>{t("dialog.date_label")}</Label>
               <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -375,9 +368,9 @@ export function AppointmentDialog({
                     <span className="min-w-0 truncate">
                       {form.date
                         ? format(new Date(`${form.date}T00:00:00`), "EEEE d MMMM yyyy", {
-                            locale: fr,
+                            locale: dateFnsLocale,
                           })
-                        : "Choisir une date"}
+                        : t("dialog.date_placeholder")}
                     </span>
                   </Button>
                 </PopoverTrigger>
@@ -399,7 +392,7 @@ export function AppointmentDialog({
             <div className="grid min-w-0 grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
               <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
                 <Label htmlFor="a-start" className="text-muted-foreground sm:text-foreground">
-                  Début
+                  {t("dialog.start_label")}
                 </Label>
                 <Input
                   id="a-start"
@@ -411,7 +404,7 @@ export function AppointmentDialog({
               </div>
               <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
                 <Label htmlFor="a-end" className="text-muted-foreground sm:text-foreground">
-                  Fin
+                  {t("dialog.end_label")}
                 </Label>
                 <Input
                   id="a-end"
@@ -424,33 +417,33 @@ export function AppointmentDialog({
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {DURATIONS.map((d) => (
+              {DURATION_MINUTES.map((minutes, i) => (
                 <button
-                  key={d.minutes}
+                  key={minutes}
                   type="button"
                   onClick={() =>
-                    setForm((f) => ({ ...f, endTime: addMinutesToTime(f.startTime, d.minutes) }))
+                    setForm((f) => ({ ...f, endTime: addMinutesToTime(f.startTime, minutes) }))
                   }
                   className="min-h-11 rounded-xl border border-border/70 bg-background/55 px-2 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/60 hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
                 >
-                  {d.label}
+                  {durationLabels[i]}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="a-loc">Lieu / lien visio</Label>
+            <Label htmlFor="a-loc">{t("dialog.location_label")}</Label>
             <Input
               id="a-loc"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
-              placeholder="Bureau, café, visio…"
+              placeholder={t("dialog.location_placeholder")}
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="a-desc">Description (visible par l'invité)</Label>
+            <Label htmlFor="a-desc">{t("dialog.description_label")}</Label>
             <Textarea
               id="a-desc"
               rows={3}
@@ -460,23 +453,23 @@ export function AppointmentDialog({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="a-notes">Notes privées — de quoi parler</Label>
+            <Label htmlFor="a-notes">{t("dialog.notes_label")}</Label>
             <Textarea
               id="a-notes"
               rows={4}
               value={form.prep_notes}
               onChange={(e) => setForm({ ...form, prep_notes: e.target.value })}
-              placeholder="Points à aborder, objections attendues, objectif de la réunion…"
+              placeholder={t("dialog.notes_placeholder")}
             />
           </div>
         </div>
 
         <DialogFooter className="sticky -bottom-4 -mx-4 -mb-4 grid grid-cols-2 gap-2 border-t border-border/70 bg-background/90 p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] backdrop-blur-xl sm:static sm:mx-0 sm:mb-0 sm:flex sm:border-0 sm:bg-transparent sm:p-0 sm:pb-0">
           <Button className="h-11 rounded-xl" variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {t("dialog.cancel")}
           </Button>
           <Button className="h-11 rounded-xl" onClick={submit} disabled={saving}>
-            {saving ? "Enregistrement…" : "Enregistrer"}
+            {saving ? t("dialog.saving") : t("dialog.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

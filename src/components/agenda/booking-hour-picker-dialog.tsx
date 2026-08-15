@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Clock, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -44,6 +45,7 @@ export function BookingHourPickerDialog({
   dayLabel: string;
   onConfirm: (range: { start: string; end: string }) => void;
 }) {
+  const { t } = useTranslation("settings");
   const [range, setRange] = useState<[number, number]>(DEFAULT_RANGE);
 
   useEffect(() => {
@@ -63,11 +65,10 @@ export function BookingHourPickerDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" /> Nouveau créneau — {dayLabel}
+            <Clock className="h-4 w-4 text-primary" />
+            {t("booking.hour_picker.title", { day: dayLabel })}
           </DialogTitle>
-          <DialogDescription>
-            Fais glisser les poignées pour choisir l'heure de début et de fin.
-          </DialogDescription>
+          <DialogDescription>{t("booking.hour_picker.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="py-2">
@@ -107,16 +108,16 @@ export function BookingHourPickerDialog({
             onClick={() => setRange([0, DAY_MAX_MINUTES])}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Toute la journée — 00h à 24h
+            {t("booking.hour_picker.full_day")}
           </Button>
         </div>
 
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {t("booking.hour_picker.cancel")}
           </Button>
           <Button type="button" onClick={confirm}>
-            Ajouter ce créneau
+            {t("booking.hour_picker.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

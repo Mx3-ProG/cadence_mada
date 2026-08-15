@@ -7,6 +7,8 @@ import { BrandMark } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +18,8 @@ import {
   startAuthenticatedLoginChallenge,
   verifyLoginCode,
 } from "@/lib/two-factor.functions";
+import { completeOnboarding, getOnboardingState } from "@/lib/auth.functions";
+import { displayNameSchema } from "@/lib/auth-validation";
 import { useLocale } from "@/i18n/use-locale";
 
 export const Route = createFileRoute("/$locale/verification")({
@@ -46,6 +50,9 @@ function VerificationPage() {
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (initializationStarted.current) return;
@@ -69,6 +76,12 @@ function VerificationPage() {
       }
 
       try {
+        const onboarding = await getOnboardingState();
+        if (!onboarding.completed) {
+          setNeedsOnboarding(true);
+          setLoading(false);
+          return;
+        }
         const result = await startAuthenticatedLoginChallenge();
         if (!result.ok) throw new Error(result.reason);
         sessionStorage.setItem("cadence:login-challenge", result.challengeId);
@@ -87,6 +100,33 @@ function VerificationPage() {
 
     void initialize();
   }, [navigate, locale, t]);
+
+  const saveOnboarding = async () => {
+    const parsedName = displayNameSchema.safeParse(displayName);
+    if (!parsedName.success) {
+      toast.error(t("errors.name_required"));
+      return;
+    }
+
+    setSavingName(true);
+    try {
+      const completed = await completeOnboarding({ data: { displayName: parsedName.data } });
+      if (!completed.ok) throw new Error("ONBOARDING_FAILED");
+
+      const result = await startAuthenticatedLoginChallenge();
+      if (!result.ok) throw new Error(result.reason);
+      sessionStorage.setItem("cadence:login-challenge", result.challengeId);
+      sessionStorage.setItem("cadence:login-email", result.maskedEmail);
+      setChallengeId(result.challengeId);
+      setMaskedEmail(result.maskedEmail);
+      setNeedsOnboarding(false);
+      await supabase.auth.signOut({ scope: "local" });
+    } catch {
+      toast.error(t("onboarding.errors.save_failed"));
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   const verify = async (submittedCode = code) => {
     if (!challengeId || submittedCode.length !== 6) return;
@@ -147,6 +187,62 @@ function VerificationPage() {
   };
 
   if (loading) return <SimpleSkeleton />;
+
+  if (needsOnboarding) {
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+        <div className="aurora pointer-events-none absolute inset-0 -z-10" />
+        <div className="grid-lines pointer-events-none absolute inset-0 -z-10 opacity-30" />
+        <div className="absolute right-4 top-4 flex items-center gap-2">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
+        <div className="w-full max-w-md">
+          <Link
+            to="/$locale"
+            params={{ locale }}
+            className="mb-8 flex items-center justify-center gap-2.5"
+          >
+            <BrandMark className="h-10 w-10" />
+            <span className="font-display text-2xl font-bold tracking-tight">Cadence</span>
+          </Link>
+          <div className="glass-panel rounded-3xl p-6 sm:p-8">
+            <h1 className="font-display text-2xl font-bold tracking-tight">
+              {t("onboarding.title")}
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {t("onboarding.description")}
+            </p>
+            <div className="mt-6 grid gap-2">
+              <Label htmlFor="onboarding-name">{t("onboarding.name_label")}</Label>
+              <Input
+                id="onboarding-name"
+                autoFocus
+                required
+                minLength={2}
+                maxLength={80}
+                autoComplete="name"
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                placeholder={t("onboarding.name_placeholder")}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") void saveOnboarding();
+                }}
+              />
+            </div>
+            <Button
+              className="mt-6 w-full gap-2"
+              onClick={() => void saveOnboarding()}
+              disabled={savingName}
+            >
+              {savingName && <Loader2 className="h-4 w-4 animate-spin" />}
+              {t("onboarding.submit")}
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">

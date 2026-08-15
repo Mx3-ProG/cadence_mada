@@ -1,5 +1,6 @@
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import {
   Building2,
   Cake,
@@ -44,6 +45,8 @@ export function AppointmentDetailsSheet({
   onEmail: (appointment: Appointment) => void;
   onDecide: (appointment: Appointment, accept: boolean) => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
   const a = appointment;
   const invitations = a?.invitations ?? [];
 
@@ -58,12 +61,12 @@ export function AppointmentDetailsSheet({
                 <StatusBadge status={a.status} />
               </div>
               <SheetDescription className="text-left">
-                {format(new Date(a.starts_at), "EEEE d MMMM", { locale: fr })} ·{" "}
+                {format(new Date(a.starts_at), "EEEE d MMMM", { locale: dateFnsLocale })} ·{" "}
                 {format(new Date(a.starts_at), "HH:mm")}–{format(new Date(a.ends_at), "HH:mm")}
               </SheetDescription>
               {a.source === "public_booking" && (
                 <span className="flex w-fit items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                  <Link2 className="h-3 w-3" /> Demande reçue via le lien de réservation
+                  <Link2 className="h-3 w-3" /> {t("sheet.public_booking")}
                 </span>
               )}
             </SheetHeader>
@@ -93,13 +96,13 @@ export function AppointmentDetailsSheet({
                 <div className="rounded-xl border border-border/70 bg-surface/70 p-3">
                   <p className="flex items-center gap-1.5 text-sm font-semibold">
                     <Users className="h-3.5 w-3.5 shrink-0 text-primary" />
-                    {invitations.length} invités
+                    {t("card.invitees_count", { count: invitations.length })}
                   </p>
                   <div className="mt-2 space-y-2">
                     {invitations.map((invitation) => (
                       <div key={invitation.id} className="flex items-center justify-between gap-3">
                         <span className="min-w-0 truncate text-sm">
-                          {invitation.contact?.name ?? "Contact supprimé"}
+                          {invitation.contact?.name ?? t("sheet.deleted_contact")}
                         </span>
                         <StatusBadge status={invitation.status} />
                       </div>
@@ -145,7 +148,7 @@ export function AppointmentDetailsSheet({
                         <Cake className="h-3.5 w-3.5 shrink-0" />
                         <span>
                           {format(new Date(`${contact.birthday}T00:00:00`), "d MMMM", {
-                            locale: fr,
+                            locale: dateFnsLocale,
                           })}
                         </span>
                       </p>
@@ -160,14 +163,14 @@ export function AppointmentDetailsSheet({
               {a.status === "pending" && (
                 <div className="flex gap-2">
                   <Button className="flex-1 gap-1.5" onClick={() => onDecide(a, true)}>
-                    <Check className="h-4 w-4" /> Accepter
+                    <Check className="h-4 w-4" /> {t("card.accept")}
                   </Button>
                   <Button
                     variant="outline"
                     className="flex-1 gap-1.5"
                     onClick={() => onDecide(a, false)}
                   >
-                    <X className="h-4 w-4" /> Refuser
+                    <X className="h-4 w-4" /> {t("card.decline")}
                   </Button>
                 </div>
               )}
@@ -179,7 +182,7 @@ export function AppointmentDetailsSheet({
 
             <div className="mt-auto flex gap-2 border-t border-border/70 pt-4">
               <Button variant="ghost" className="flex-1 gap-1.5" onClick={() => onEdit(a)}>
-                <Pencil className="h-4 w-4" /> Modifier
+                <Pencil className="h-4 w-4" /> {t("sheet.edit")}
               </Button>
               <Button
                 variant="ghost"
@@ -189,7 +192,7 @@ export function AppointmentDetailsSheet({
                   onOpenChange(false);
                 }}
               >
-                <Trash2 className="h-4 w-4" /> Supprimer
+                <Trash2 className="h-4 w-4" /> {t("sheet.delete")}
               </Button>
             </div>
           </>

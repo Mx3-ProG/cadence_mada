@@ -207,9 +207,19 @@ export function ContactImportDialog({
                 <Smartphone className="h-4 w-4" /> Carnet du téléphone indisponible
               </p>
               <p className="mt-1 text-xs">
-                Ce navigateur ne permet pas l’accès direct. Exporte tes contacts en CSV ou VCF, puis
-                dépose le fichier ci-dessous.
+                Ce navigateur bloque l’accès direct. Exporte tout ton carnet en un fichier VCF, puis
+                sélectionne-le ci-dessous :
               </p>
+              <ul className="mt-2 space-y-1 text-xs">
+                <li>
+                  <strong className="text-foreground">iPhone :</strong> Contacts → Listes → appui
+                  long sur une liste → Exporter.
+                </li>
+                <li>
+                  <strong className="text-foreground">Android :</strong> Contacts → Corriger et
+                  gérer → Exporter vers un fichier.
+                </li>
+              </ul>
             </div>
           )}
 

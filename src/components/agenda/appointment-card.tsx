@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import {
   Building2,
   Cake,
@@ -43,6 +44,8 @@ export function AppointmentCard({
   onDelete: (id: string) => void;
   onDecide: (appointment: Appointment, accept: boolean) => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
   const [open, setOpen] = useState(false);
   const a = appointment;
   const invitees =
@@ -81,7 +84,7 @@ export function AppointmentCard({
           <StatusBadge status={a.status} />
           {a.source === "public_booking" && (
             <span className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
-              <Link2 className="h-2.5 w-2.5" /> Demande reçue
+              <Link2 className="h-2.5 w-2.5" /> {t("card.public_booking")}
             </span>
           )}
           <ChevronDown
@@ -127,7 +130,7 @@ export function AppointmentCard({
                 <div className="rounded-lg bg-background/60 p-2.5">
                   <p className="flex items-center gap-1.5 text-xs font-semibold">
                     <Users className="h-3 w-3 shrink-0 text-primary" />
-                    {invitees.length} invités
+                    {t("card.invitees_count", { count: invitees.length })}
                   </p>
                   <p className="mt-1.5 text-xs text-muted-foreground">
                     {invitees.map((invitee) => invitee.name).join(", ")}
@@ -174,7 +177,7 @@ export function AppointmentCard({
                         <Cake className="h-3 w-3 shrink-0" />
                         <span>
                           {format(new Date(`${contact.birthday}T00:00:00`), "d MMMM", {
-                            locale: fr,
+                            locale: dateFnsLocale,
                           })}
                         </span>
                       </p>
@@ -196,7 +199,7 @@ export function AppointmentCard({
                       onDecide(a, true);
                     }}
                   >
-                    <Check className="h-3 w-3" /> Accepter
+                    <Check className="h-3 w-3" /> {t("card.accept")}
                   </Button>
                   <Button
                     variant="outline"
@@ -207,7 +210,7 @@ export function AppointmentCard({
                       onDecide(a, false);
                     }}
                   >
-                    <X className="h-3 w-3" /> Refuser
+                    <X className="h-3 w-3" /> {t("card.decline")}
                   </Button>
                 </div>
               )}
@@ -218,7 +221,7 @@ export function AppointmentCard({
                   variant="ghost"
                   size="icon"
                   className="ml-auto h-7 w-7"
-                  aria-label="Modifier"
+                  aria-label={t("card.edit_aria")}
                   onClick={(e) => {
                     stop(e);
                     onEdit(a);
@@ -230,7 +233,7 @@ export function AppointmentCard({
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7 text-destructive"
-                  aria-label="Supprimer"
+                  aria-label={t("card.delete_aria")}
                   onClick={(e) => {
                     stop(e);
                     onDelete(a.id);

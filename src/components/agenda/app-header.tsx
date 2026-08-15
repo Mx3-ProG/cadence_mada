@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -21,9 +22,9 @@ import { BrandLogo } from "@/components/brand-logo";
 import { useLocale } from "@/i18n/use-locale";
 
 const nav = [
-  { to: "/$locale/dashboard", path: "/dashboard", label: "Semaine", icon: CalendarDays },
-  { to: "/$locale/contacts", path: "/contacts", label: "Contacts", icon: Users },
-  { to: "/$locale/settings", path: "/settings", label: "Réglages", icon: Settings },
+  { to: "/$locale/dashboard", path: "/dashboard", labelKey: "nav.week", icon: CalendarDays },
+  { to: "/$locale/contacts", path: "/contacts", labelKey: "nav.contacts", icon: Users },
+  { to: "/$locale/settings", path: "/settings", labelKey: "nav.settings", icon: Settings },
 ] as const;
 
 const MOBILE_KEYBOARD_MIN_HEIGHT = 120;
@@ -114,12 +115,17 @@ export function AppHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const locale = useLocale();
+  const { t } = useTranslation("app");
+  const { t: tCommon } = useTranslation("common");
   const queryClient = useQueryClient();
   const { data: isAdmin } = useIsAdmin();
   const [quickOpen, setQuickOpen] = useState(false);
   const mobileKeyboardOpen = useMobileKeyboardOpen();
   const items = isAdmin
-    ? [...nav, { to: "/$locale/admin", path: "/admin", label: "Admin", icon: ShieldCheck } as const]
+    ? [
+        ...nav,
+        { to: "/$locale/admin", path: "/admin", labelKey: "nav.admin", icon: ShieldCheck } as const,
+      ]
     : nav;
 
   const signOut = async () => {
@@ -166,7 +172,7 @@ export function AppHeader() {
                   )}
                 >
                   <item.icon className="h-3.5 w-3.5" />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               ))}
             </nav>
@@ -177,7 +183,11 @@ export function AppHeader() {
                 size="icon"
                 className="rounded-full border border-border/60"
               >
-                <Link to="/$locale/contact" params={{ locale }} aria-label="Contacter Cadence">
+                <Link
+                  to="/$locale/contact"
+                  params={{ locale }}
+                  aria-label={tCommon("nav.contact_aria")}
+                >
                   <MessageCircle className="h-4 w-4" />
                 </Link>
               </Button>
@@ -187,7 +197,7 @@ export function AppHeader() {
               className="hidden rounded-full lg:inline-flex"
             >
               <CalendarPlus className="h-4 w-4" />
-              Ajouter un rendez-vous
+              {t("add_appointment")}
             </Button>
             <BookingLinkQuickAccess />
             <ThemeToggle />
@@ -196,7 +206,7 @@ export function AppHeader() {
               variant="ghost"
               size="icon"
               onClick={signOut}
-              aria-label="Se déconnecter"
+              aria-label={t("sign_out_aria")}
               className="rounded-full border border-border/60"
             >
               <LogOut className="h-4 w-4" />
@@ -206,7 +216,7 @@ export function AppHeader() {
       </header>
 
       <nav
-        aria-label="Navigation principale"
+        aria-label={t("nav.aria")}
         aria-hidden={mobileKeyboardOpen}
         data-mobile-nav
         className={cn(
@@ -231,7 +241,7 @@ export function AppHeader() {
                   )}
                 >
                   <item.icon className={cn("h-5 w-5", active && "text-primary")} />
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{t(item.labelKey)}</span>
                 </Link>
               </li>
             );
@@ -243,7 +253,7 @@ export function AppHeader() {
               className="flex w-full flex-col items-center gap-1 rounded-2xl bg-primary px-2 py-2 text-[11px] font-semibold text-primary-foreground transition-opacity active:opacity-80"
             >
               <CalendarPlus className="h-5 w-5" />
-              <span className="truncate">Ajouter</span>
+              <span className="truncate">{t("add_appointment_short")}</span>
             </button>
           </li>
         </ul>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Check,
   Copy,
@@ -28,9 +29,7 @@ import {
   referralPayoutErrorMessage,
   referralLink,
   REFERRAL_COUNT_BOUNDARIES,
-  REFERRAL_COUNT_LABELS,
   REFERRAL_MONEY_BOUNDARIES_CENTS,
-  REFERRAL_MONEY_LABELS,
   REFERRAL_PAYOUT_MIN_CENTS,
 } from "@/lib/referral";
 import { hasTierAtLeast, TIER_LABELS } from "@/lib/plan";
@@ -47,6 +46,7 @@ function DiscordIcon({ className }: { className?: string }) {
 
 export function ReferralSection() {
   const locale = useLocale();
+  const { t } = useTranslation("settings");
   const formatCents = (cents: number) => formatCentsLocalized(cents, locale);
   const summaryQuery = useReferralSummary();
   const referralsQuery = useMyReferrals();
@@ -62,7 +62,7 @@ export function ReferralSection() {
     if (!summary) return;
     await navigator.clipboard.writeText(referralLink(summary.referralCode));
     setCopied(true);
-    toast.success("Lien de parrainage copié");
+    toast.success(t("referral.copied_toast"));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -72,28 +72,28 @@ export function ReferralSection() {
     sendInvite.mutate(email, {
       onSuccess: (result) => {
         if (result.sent) {
-          toast.success(`Invitation envoyée à ${result.to}`);
+          toast.success(t("referral.invite_success", { email: result.to }));
           setInviteEmail("");
         } else if (result.reason === "already_member") {
-          toast.error("Cette personne a déjà un compte Cadence.");
+          toast.error(t("referral.invite_already_member"));
         } else {
-          toast.error("L'invitation n'a pas pu être envoyée. Réessaie dans un instant.");
+          toast.error(t("referral.invite_failed"));
         }
       },
-      onError: () => toast.error("L'invitation n'a pas pu être envoyée. Réessaie dans un instant."),
+      onError: () => toast.error(t("referral.invite_failed")),
     });
   };
 
   const shareViaClipboard = async (network: string) => {
     if (!summary) return;
     await navigator.clipboard.writeText(referralLink(summary.referralCode));
-    toast.success(`Lien copié — colle-le dans ${network}`);
+    toast.success(t("referral.share_copied_toast", { network }));
   };
 
-  const shareText = "Cadence, l'agenda de rendez-vous qui se confirme tout seul";
+  const shareText = t("referral.share_payload.text");
   const referralPayload = summary
     ? {
-        title: "Découvre Cadence",
+        title: t("referral.share_payload.title"),
         text: shareText,
         url: referralLink(summary.referralCode),
       }
@@ -139,27 +139,27 @@ export function ReferralSection() {
         {
           name: "Instagram",
           icon: Instagram,
-          onClick: () => void shareViaClipboard("ta story ou ta bio Instagram"),
+          onClick: () => void shareViaClipboard(t("referral.share_targets.instagram")),
         },
         {
           name: "Discord",
           icon: DiscordIcon,
-          onClick: () => void shareViaClipboard("ton serveur Discord"),
+          onClick: () => void shareViaClipboard(t("referral.share_targets.discord")),
         },
       ]
     : [];
 
   const withdraw = () => {
     requestPayout.mutate(undefined, {
-      onSuccess: () => toast.success("Demande de retrait envoyée."),
-      onError: (error) => toast.error(referralPayoutErrorMessage(error)),
+      onSuccess: () => toast.success(t("referral.balance.withdraw_success")),
+      onError: (error) => toast.error(referralPayoutErrorMessage(error, t)),
     });
   };
 
   if (summaryQuery.isLoading || !summary) {
     return (
       <section className="glass-panel rounded-2xl p-5">
-        <p className="text-sm text-muted-foreground">Chargement du parrainage…</p>
+        <p className="text-sm text-muted-foreground">{t("referral.loading")}</p>
       </section>
     );
   }
@@ -170,26 +170,22 @@ export function ReferralSection() {
   return (
     <section className="glass-panel rounded-2xl p-5">
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <Gift className="h-4 w-4 text-primary" /> Parrainage
+        <Gift className="h-4 w-4 text-primary" /> {t("referral.title")}
       </h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Partage ton lien : 30 % de ce que paie chaque filleul, chaque mois, tant qu'il reste abonné.
-        Ton filleul apparaît aussi dans tes contacts, et toi dans les siens — vous pouvez vous fixer
-        un rendez-vous quand vous voulez.
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{t("referral.description")}</p>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <Input readOnly value={referralLink(summary.referralCode)} className="font-mono text-xs" />
         <Button variant="outline" className="shrink-0 gap-2" onClick={() => void copyLink()}>
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? "Copié" : "Copier"}
+          {copied ? t("referral.copied") : t("referral.copy")}
         </Button>
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <Input
           type="email"
-          placeholder="email@exemple.com"
+          placeholder={t("referral.invite_placeholder")}
           value={inviteEmail}
           onChange={(e) => setInviteEmail(e.target.value)}
           onKeyDown={(e) => {
@@ -207,12 +203,12 @@ export function ReferralSection() {
           ) : (
             <Send className="h-4 w-4" />
           )}
-          Inviter par email
+          {t("referral.invite_cta")}
         </Button>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <span className="text-xs text-muted-foreground">Ou partage sur :</span>
+        <span className="text-xs text-muted-foreground">{t("referral.share_prefix")}</span>
         {socialTargets.map((social) => (
           <Button
             key={social.name}
@@ -220,8 +216,8 @@ export function ReferralSection() {
             variant="outline"
             size="icon"
             className="rounded-full"
-            aria-label={`Partager sur ${social.name}`}
-            title={`Partager sur ${social.name}`}
+            aria-label={t("referral.share_aria", { network: social.name })}
+            title={t("referral.share_aria", { network: social.name })}
             onClick={social.onClick}
           >
             <social.icon className="h-4 w-4" />
@@ -237,47 +233,51 @@ export function ReferralSection() {
             void shareNatively(payload).then(async (shared) => {
               if (shared) return;
               await navigator.clipboard.writeText(`${payload.text}\n${payload.url}`);
-              toast.info("Menu de partage indisponible — message copié.");
+              toast.info(t("referral.share_native_fallback"));
             });
           }}
         >
-          <Share2 className="h-4 w-4" /> Plus
+          <Share2 className="h-4 w-4" /> {t("referral.share_more")}
         </Button>
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <ReferralTierGauge
           icon={<Users className="h-4 w-4 text-primary" />}
-          title="Filleuls"
+          title={t("referral.gauge.referrals_title")}
           value={summary.totalReferrals}
           boundaries={REFERRAL_COUNT_BOUNDARIES}
-          labels={REFERRAL_COUNT_LABELS}
+          labels={t("referral.count_labels", { returnObjects: true }) as string[]}
           formatValue={(v) => `${v}`}
         />
         <ReferralTierGauge
           icon={<Wallet className="h-4 w-4 text-primary" />}
-          title="Revenus (filleuls payants)"
+          title={t("referral.gauge.revenue_title")}
           value={summary.balanceCents}
           boundaries={REFERRAL_MONEY_BOUNDARIES_CENTS}
-          labels={REFERRAL_MONEY_LABELS}
+          labels={t("referral.money_labels", { returnObjects: true }) as string[]}
           formatValue={formatCents}
         />
       </div>
 
       <div className="mt-5 rounded-2xl border border-border/70 p-4">
-        <p className="text-sm font-medium">Mes filleuls</p>
+        <p className="text-sm font-medium">{t("referral.table.title")}</p>
         {referrals.length === 0 ? (
-          <p className="mt-2 text-sm text-muted-foreground">
-            Personne pour l'instant — partage ton lien pour commencer.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("referral.table.empty")}</p>
         ) : (
           <div className="mt-3 overflow-x-auto rounded-xl border border-border/60">
             <table className="w-full text-sm">
               <thead className="bg-surface/70 text-xs uppercase text-muted-foreground">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium">Filleul</th>
-                  <th className="px-3 py-2 text-left font-medium">Plan</th>
-                  <th className="px-3 py-2 text-left font-medium">RDV ce mois-ci</th>
+                  <th className="px-3 py-2 text-left font-medium">
+                    {t("referral.table.col_referred")}
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium">
+                    {t("referral.table.col_plan")}
+                  </th>
+                  <th className="px-3 py-2 text-left font-medium">
+                    {t("referral.table.col_appointments")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -300,12 +300,14 @@ export function ReferralSection() {
 
       <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-border/70 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium">Solde disponible</p>
+          <p className="text-sm font-medium">{t("referral.balance.title")}</p>
           <p className="font-display text-xl font-bold tracking-tight">
             {formatCents(summary.balanceCents)}
           </p>
           <p className="text-xs text-muted-foreground">
-            Retrait possible à partir de {formatCents(REFERRAL_PAYOUT_MIN_CENTS)}.
+            {t("referral.balance.withdraw_hint", {
+              amount: formatCents(REFERRAL_PAYOUT_MIN_CENTS),
+            })}
           </p>
         </div>
         <Button
@@ -314,7 +316,9 @@ export function ReferralSection() {
           className="gap-2 sm:shrink-0"
         >
           {requestPayout.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {summary.hasPendingPayout ? "Demande en cours" : "Demander mon retrait"}
+          {summary.hasPendingPayout
+            ? t("referral.balance.withdraw_pending")
+            : t("referral.balance.withdraw_cta")}
         </Button>
       </div>
     </section>

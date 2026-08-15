@@ -24,6 +24,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,7 @@ import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { ContactSearchDialog } from "@/components/agenda/contact-search-dialog";
 import { ContactImportDialog } from "@/components/agenda/contact-import-dialog";
+import { FeatureTeaser } from "@/components/agenda/locked-feature-card";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
@@ -43,7 +45,6 @@ import {
   isContactLimitReached,
   nextTier,
   planUsageQueryKey,
-  tierPricingHash,
   TIER_LABELS,
   TIER_LIMITS,
   usePlanUsage,
@@ -56,16 +57,16 @@ import {
   type ContactAppointmentLink,
 } from "@/lib/contact-search";
 
-const GENDER_LABEL: Record<string, string> = {
-  female: "Femme",
-  male: "Homme",
-  other: "Autre",
-};
-
 function formatBirthday(value: string, locale: Locale) {
   const d = new Date(`${value}T00:00:00`);
   if (Number.isNaN(d.getTime())) return value;
   return formatLongDate(d, locale);
+}
+
+const KNOWN_GENDERS = ["female", "male", "other"];
+
+function genderLabel(gender: string, t: (key: string) => string) {
+  return KNOWN_GENDERS.includes(gender) ? t(`gender.${gender}`) : gender;
 }
 
 export const Route = createFileRoute("/$locale/_authenticated/contacts")({
@@ -91,6 +92,7 @@ export const Route = createFileRoute("/$locale/_authenticated/contacts")({
 
 function BookingLinkCard() {
   const locale = useLocale();
+  const { t } = useTranslation("contacts");
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
@@ -134,7 +136,7 @@ function BookingLinkCard() {
       .upsert({ owner_id: userId, slug, enabled: true }, { onConflict: "owner_id" });
     if (error) {
       setActivating(false);
-      toast.error("Impossible d'activer le lien, réessaie.");
+      toast.error(t("booking.activate_error"));
       return;
     }
 
@@ -150,7 +152,7 @@ function BookingLinkCard() {
     }
 
     setActivating(false);
-    toast.success("Lien de réservation activé");
+    toast.success(t("booking.activated"));
     void queryClient.invalidateQueries({ queryKey: ["booking-settings"] });
   };
 
@@ -162,64 +164,59 @@ function BookingLinkCard() {
 
   const settings = settingsQuery.data;
 
+  const bookingBody =
+    !settingsQuery.isLoading && !settings?.enabled ? (
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">{t("booking.share_text")}</p>
+        <Button size="sm" disabled={activating} onClick={activate} className="shrink-0 gap-2">
+          <Link2 className="h-4 w-4" />
+          {t("booking.activate")}
+        </Button>
+      </div>
+    ) : settings?.enabled && settings.slug ? (
+      <div className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <code className="min-w-0 max-w-full truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
+          {bookingUrl(settings.slug)}
+        </code>
+        <div className="flex shrink-0 gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            className="gap-2"
+            onClick={() => copyLink(settings.slug!)}
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {copied ? t("booking.copied") : t("booking.copy")}
+          </Button>
+          <Button asChild size="sm" variant="ghost" className="gap-2">
+            <Link to="/$locale/settings" params={{ locale }}>
+              <Settings className="h-4 w-4" />
+              {t("booking.hours")}
+            </Link>
+          </Button>
+        </div>
+      </div>
+    ) : null;
+
   return (
     <div className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
       <div className="flex items-center gap-2">
         <Link2 className="h-4 w-4 text-primary" />
-        <h2 className="font-display text-base font-bold">Lien de réservation</h2>
+        <h2 className="font-display text-base font-bold">{t("booking.title")}</h2>
       </div>
 
-      {!isPro && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            Réservé au plan <strong>Standard</strong> et plus : partage un lien public pour que tes
-            contacts réservent eux-mêmes un créneau libre dans ton agenda.
-          </p>
-          <Button asChild size="sm" className="shrink-0 gap-2">
-            <Link to="/$locale/tarifs" params={{ locale }} hash={tierPricingHash("standard")}>
+      {isPro ? (
+        bookingBody
+      ) : (
+        <FeatureTeaser title={t("booking.title")} minTier="standard">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">{t("booking.share_text")}</p>
+            <Button size="sm" className="shrink-0 gap-2">
               <Link2 className="h-4 w-4" />
-              Voir l’offre Standard
-            </Link>
-          </Button>
-        </div>
-      )}
-
-      {isPro && !settingsQuery.isLoading && !settings?.enabled && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            Partage un lien public pour que tes contacts réservent eux-mêmes un créneau libre dans
-            ton agenda.
-          </p>
-          <Button size="sm" disabled={activating} onClick={activate} className="shrink-0 gap-2">
-            <Link2 className="h-4 w-4" />
-            Activer mon lien
-          </Button>
-        </div>
-      )}
-
-      {isPro && settings?.enabled && settings.slug && (
-        <div className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <code className="min-w-0 max-w-full truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
-            {bookingUrl(settings.slug)}
-          </code>
-          <div className="flex shrink-0 gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="gap-2"
-              onClick={() => copyLink(settings.slug!)}
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copié" : "Copier"}
-            </Button>
-            <Button asChild size="sm" variant="ghost" className="gap-2">
-              <Link to="/$locale/settings" params={{ locale }}>
-                <Settings className="h-4 w-4" />
-                Horaires
-              </Link>
+              {t("booking.activate")}
             </Button>
           </div>
-        </div>
+        </FeatureTeaser>
       )}
     </div>
   );
@@ -227,6 +224,7 @@ function BookingLinkCard() {
 
 function ContactsPage() {
   const locale = useLocale();
+  const { t } = useTranslation("contacts");
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Contact | null>(null);
@@ -313,7 +311,7 @@ function ContactsPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Contact supprimé");
+    toast.success(t("delete.success"));
     refresh();
   };
 
@@ -326,12 +324,12 @@ function ContactsPage() {
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
           <div className="min-w-0">
             <h1 className="truncate font-display text-2xl font-bold tracking-tight sm:text-3xl">
-              Contacts
+              {t("page.title")}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {activeFilters > 0
-                ? `${visibleContacts.length} résultat${visibleContacts.length > 1 ? "s" : ""} sur ${contacts.length}`
-                : `${contacts.length} personne${contacts.length > 1 ? "s" : ""} dans ton carnet`}
+                ? t("page.results_count", { count: visibleContacts.length, total: contacts.length })
+                : t("page.count", { count: contacts.length })}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -339,7 +337,7 @@ function ContactsPage() {
               variant="outline"
               size="icon"
               className="relative rounded-full"
-              aria-label="Rechercher un contact"
+              aria-label={t("search_aria")}
               onClick={() => setSearchOpen(true)}
             >
               <Search className="h-4 w-4" />
@@ -355,7 +353,7 @@ function ContactsPage() {
               onClick={() => setImportOpen(true)}
             >
               <Upload className="h-4 w-4" />
-              <span className="hidden sm:inline">Importer</span>
+              <span className="hidden sm:inline">{t("import")}</span>
             </Button>
             <Button
               className="shrink-0 gap-2"
@@ -365,8 +363,8 @@ function ContactsPage() {
                   const limit = TIER_LIMITS[plan].contacts;
                   const upsell = nextTier(plan);
                   toast.error(
-                    `Plan ${TIER_LABELS[plan]} : ${limit} contacts maximum.` +
-                      (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
+                    t("plan_limit_error", { plan: TIER_LABELS[plan], limit }) +
+                      (upsell ? t("plan_limit_upsell", { plan: TIER_LABELS[upsell] }) : ""),
                   );
                   return;
                 }
@@ -375,7 +373,7 @@ function ContactsPage() {
               }}
             >
               <UserPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Nouveau contact</span>
+              <span className="hidden sm:inline">{t("new_contact")}</span>
             </Button>
           </div>
         </div>
@@ -385,23 +383,18 @@ function ContactsPage() {
 
         {contacts.length === 0 ? (
           <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">
-            <p className="text-sm text-muted-foreground">
-              Aucun contact pour l'instant. Ajoute les personnes que tu rencontres pour retrouver
-              leurs infos avant chaque rendez-vous.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("empty.title")}</p>
           </div>
         ) : visibleContacts.length === 0 ? (
           <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">
-            <p className="text-sm font-medium">Aucun contact ne correspond à ces critères.</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Modifie les filtres ou réinitialise la recherche pour retrouver tout ton carnet.
-            </p>
+            <p className="text-sm font-medium">{t("empty_filtered.title")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("empty_filtered.subtitle")}</p>
             <Button
               variant="outline"
               className="mt-5"
               onClick={() => setSearchFilters({ ...EMPTY_CONTACT_SEARCH_FILTERS })}
             >
-              Réinitialiser les filtres
+              {t("empty_filtered.reset")}
             </Button>
           </div>
         ) : (
@@ -416,7 +409,9 @@ function ContactsPage() {
                         {c.relationship && (
                           <Badge variant="secondary" className="shrink-0 gap-1">
                             <Gift className="h-3 w-3" />
-                            {c.relationship === "parrain" ? "Parrain" : "Filleul"}
+                            {c.relationship === "parrain"
+                              ? t("card.relationship.parrain")
+                              : t("card.relationship.filleul")}
                           </Badge>
                         )}
                       </div>
@@ -428,7 +423,7 @@ function ContactsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Modifier"
+                        aria-label={t("card.edit_aria")}
                         className="h-8 w-8"
                         onClick={() => {
                           setEditing(c);
@@ -440,7 +435,7 @@ function ContactsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label="Supprimer"
+                        aria-label={t("card.delete_aria")}
                         className="h-8 w-8 text-destructive"
                         onClick={() => remove(c.id)}
                       >
@@ -481,14 +476,14 @@ function ContactsPage() {
                         <Cake className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">
                           {formatBirthday(c.birthday, locale)}
-                          {c.gender && GENDER_LABEL[c.gender] ? ` · ${GENDER_LABEL[c.gender]}` : ""}
+                          {c.gender ? ` · ${genderLabel(c.gender, t)}` : ""}
                         </span>
                       </p>
                     )}
-                    {!c.birthday && c.gender && GENDER_LABEL[c.gender] && (
+                    {!c.birthday && c.gender && (
                       <p className="flex items-center gap-2">
                         <Cake className="h-3.5 w-3.5 shrink-0" />
-                        <span className="truncate">{GENDER_LABEL[c.gender]}</span>
+                        <span className="truncate">{genderLabel(c.gender, t)}</span>
                       </p>
                     )}
                     {c.languages && c.languages.length > 0 && (
@@ -510,7 +505,7 @@ function ContactsPage() {
                           {[
                             c.family_situation,
                             c.children_count !== null
-                              ? `${c.children_count} enfant${(c.children_count ?? 0) > 1 ? "s" : ""}`
+                              ? t("card.children_count", { count: c.children_count })
                               : null,
                           ]
                             .filter(Boolean)
@@ -535,7 +530,7 @@ function ContactsPage() {
                     }}
                   >
                     <CalendarPlus className="h-4 w-4" />
-                    Fixer un rendez-vous
+                    {t("card.schedule")}
                   </Button>
                 </article>
               </Reveal>

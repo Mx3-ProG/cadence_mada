@@ -1,4 +1,39 @@
-project_id = "wmygbrpmayayccbjrgbu"
+project_id = "ecdpfhacuwrfihyulqzf"
+
+[auth]
+site_url = "https://www.cadencemada.com"
+additional_redirect_urls = [
+  "https://www.cadencemada.com/**",
+  "https://cadencemada.com/**",
+  "https://cadencemada.vercel.app/**",
+  "http://localhost:5173/**"
+]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+double_confirm_changes = true
+max_frequency = "1m"
+otp_length = 8
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_OAUTH_CLIENT_ID)"
+secret = "env(GOOGLE_OAUTH_CLIENT_SECRET)"
+skip_nonce_check = false
+
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "rdv@cadencemada.com"
+sender_name = "Cadence Mada"
 
 [auth.email.template.confirmation]
 subject = "Confirmez votre adresse email — Cadence Mada"
@@ -24,5 +59,5 @@ content_path = "./supabase/templates/recovery.html"
 subject = "{{ .Token }} est votre code de vérification Cadence Mada"
 content_path = "./supabase/templates/reauthentication.html"
 
-[auth.sessions]
-inactivity_timeout = "10h"
+[functions.send-reminders]
+verify_jwt = false

@@ -6,8 +6,8 @@ const root = new URL("../", import.meta.url);
 
 const [passwordInput, auth, resetPassword, accountSettings] = await Promise.all([
   readFile(new URL("src/components/ui/password-input.tsx", root), "utf8"),
-  readFile(new URL("src/routes/auth.tsx", root), "utf8"),
-  readFile(new URL("src/routes/reset-password.tsx", root), "utf8"),
+  readFile(new URL("src/routes/$locale/auth.tsx", root), "utf8"),
+  readFile(new URL("src/routes/$locale/reset-password.tsx", root), "utf8"),
   readFile(new URL("src/components/agenda/account-settings.tsx", root), "utf8"),
 ]);
 

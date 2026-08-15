@@ -7,25 +7,6 @@ export type Appointment = Tables<"appointments"> & { invitations?: AppointmentIn
 export type AppointmentWithContact = Appointment & { contact: Contact | null };
 export type AppointmentStatus = Appointment["status"];
 
-const SHORT_MONTH_LABELS = [
-  "Jan",
-  "Fév",
-  "Mar",
-  "Avr",
-  "Mai",
-  "Juin",
-  "Juil",
-  "Août",
-  "Sept",
-  "Oct",
-  "Nov",
-  "Déc",
-] as const;
-
-export function shortMonthLabel(date: Date) {
-  return SHORT_MONTH_LABELS[date.getMonth()] ?? "";
-}
-
 /** Numérote les semaines du mois à partir de son premier lundi. */
 export function weekNumberInMonth(date: Date) {
   const monday = weekStart(date);

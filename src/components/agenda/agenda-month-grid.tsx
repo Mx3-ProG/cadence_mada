@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { addDays, endOfMonth, format, isSameMonth, isToday, startOfMonth } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import { weekStart, type Appointment, type Contact } from "@/lib/agenda";
 
-const WEEKDAY_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const MAX_CHIPS = 3;
 
 const STATUS_DOT: Record<Appointment["status"], string> = {
@@ -32,6 +33,8 @@ export function AgendaMonthGrid({
   onSlotClick: (date: Date) => void;
   onAppointmentClick: (appointment: Appointment) => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
   const days = useMemo(() => {
     const monthStart = startOfMonth(anchor);
     const monthEnd = endOfMonth(anchor);
@@ -40,6 +43,13 @@ export function AgendaMonthGrid({
     const totalDays = Math.round((gridEndExclusive.getTime() - gridStart.getTime()) / 86_400_000);
     return Array.from({ length: totalDays }, (_, i) => addDays(gridStart, i));
   }, [anchor]);
+
+  const weekdayLabels = useMemo(() => {
+    const monday = weekStart(new Date());
+    return Array.from({ length: 7 }, (_, i) =>
+      format(addDays(monday, i), "EEE", { locale: dateFnsLocale }),
+    );
+  }, [dateFnsLocale]);
 
   const appointmentsByDay = useMemo(() => {
     const map = new Map<string, Appointment[]>();
@@ -56,7 +66,7 @@ export function AgendaMonthGrid({
   return (
     <div className="glass-panel min-w-0 max-w-full overflow-hidden rounded-2xl">
       <div className="grid grid-cols-7 border-b border-border/70">
-        {WEEKDAY_LABELS.map((label) => (
+        {weekdayLabels.map((label) => (
           <div
             key={label}
             className="border-l border-border/70 px-2 py-2 text-center text-[11px] uppercase tracking-wider text-muted-foreground first:border-l-0"
@@ -125,7 +135,9 @@ export function AgendaMonthGrid({
                   );
                 })}
                 {overflow > 0 && (
-                  <p className="px-1.5 text-[10px] text-muted-foreground">+{overflow} autres</p>
+                  <p className="px-1.5 text-[10px] text-muted-foreground">
+                    {t("month_grid.more", { count: overflow })}
+                  </p>
                 )}
               </div>
             </div>

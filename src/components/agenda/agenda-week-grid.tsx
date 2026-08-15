@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { format, isSameDay, isToday } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import { cn } from "@/lib/utils";
 import type { Appointment, Contact } from "@/lib/agenda";
 
@@ -95,6 +96,8 @@ export function AgendaWeekGrid({
   onSlotClick: (date: Date) => void;
   onAppointmentClick: (appointment: Appointment) => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
   const byDay = useMemo(() => {
     return days.map((day) =>
       layoutDay(appointments.filter((a) => isSameDay(new Date(a.starts_at), day))),
@@ -119,7 +122,7 @@ export function AgendaWeekGrid({
             )}
           >
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              {format(day, "EEE", { locale: fr })}
+              {format(day, "EEE", { locale: dateFnsLocale })}
             </p>
             <p className={cn("font-display text-sm font-semibold", isToday(day) && "text-primary")}>
               {format(day, "d")}
@@ -158,7 +161,7 @@ export function AgendaWeekGrid({
                 <button
                   key={slot}
                   type="button"
-                  aria-label={`Ajouter un rendez-vous à ${format(date, "HH:mm")}`}
+                  aria-label={t("week_grid.add_slot_aria", { time: format(date, "HH:mm") })}
                   onClick={() => onSlotClick(date)}
                   className={cn(
                     "block w-full border-t border-border/40 transition-colors first:border-t-0 hover:bg-primary/5",

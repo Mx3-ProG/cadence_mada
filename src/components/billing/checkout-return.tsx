@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { syncCheckoutSession } from "@/lib/billing.functions";
 import { planUsageQueryKey, TIER_LABELS, type PlanTier } from "@/lib/plan";
 
@@ -10,6 +11,7 @@ import { planUsageQueryKey, TIER_LABELS, type PlanTier } from "@/lib/plan";
  * sans attendre le webhook puis nettoie l'URL.
  */
 export function CheckoutReturn() {
+  const { t } = useTranslation("dashboard");
   const sync = useServerFn(syncCheckoutSession);
   const queryClient = useQueryClient();
   const handled = useRef(false);
@@ -25,7 +27,7 @@ export function CheckoutReturn() {
     window.history.replaceState({}, "", window.location.pathname);
 
     if (status === "cancelled") {
-      toast.info(`Paiement annulé — tu restes sur le plan ${TIER_LABELS.free}.`);
+      toast.info(t("checkout.cancelled", { plan: TIER_LABELS.free }));
       return;
     }
     if (status !== "success" || !sessionId) return;
@@ -35,12 +37,12 @@ export function CheckoutReturn() {
         const result = await sync({ data: { origin: window.location.origin, sessionId } });
         await queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
         const label = TIER_LABELS[(result.plan as PlanTier) ?? "free"];
-        toast.success(`Bienvenue en ${label} !`);
+        toast.success(t("checkout.success", { plan: label }));
       } catch {
-        toast.info("Paiement reçu, activation en cours. Recharge la page dans un instant.");
+        toast.info(t("checkout.pending"));
       }
     })();
-  }, [queryClient, sync]);
+  }, [queryClient, sync, t]);
 
   return null;
 }

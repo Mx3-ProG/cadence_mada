@@ -11,6 +11,8 @@ import {
   hi,
   type Locale as DateFnsLocale,
 } from "date-fns/locale";
+
+export type { DateFnsLocale };
 import { useLocale } from "./use-locale";
 import type { Locale } from "./config";
 

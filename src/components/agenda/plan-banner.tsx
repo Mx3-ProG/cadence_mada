@@ -1,5 +1,6 @@
 import { Crown, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { nextTier, TIER_LIMITS, usePlanUsage, type PlanUsage } from "@/lib/plan";
 import { useLocale } from "@/i18n/use-locale";
@@ -29,6 +30,7 @@ function Meter({ label, value, max }: { label: string; value: number; max: numbe
 
 export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
   const locale = useLocale();
+  const { t } = useTranslation("app");
   const query = usePlanUsage();
   const data = usage ?? query.data;
   if (!data) return null;
@@ -40,12 +42,12 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
           <Crown className="h-4 w-4" />
         </span>
         <p className="min-w-0 flex-1 text-sm">
-          <span className="font-semibold">Plan Business</span>{" "}
-          <span className="text-muted-foreground">— contacts et rendez-vous illimités.</span>
+          <span className="font-semibold">{t("plan_banner.business.title")}</span>{" "}
+          <span className="text-muted-foreground">{t("plan_banner.business.subtitle")}</span>
         </p>
         <Button variant="outline" size="sm" className="shrink-0" asChild>
           <Link to="/$locale/settings" params={{ locale }} hash="abonnement">
-            Gérer l'abonnement
+            {t("plan_banner.business.manage_cta")}
           </Link>
         </Button>
       </div>
@@ -59,9 +61,13 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
     <div className="glass-panel mt-6 rounded-2xl p-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:gap-6">
-          <Meter label="Contacts" value={data.contacts} max={limits.contacts ?? data.contacts} />
           <Meter
-            label="Rendez-vous ce mois-ci"
+            label={t("plan_banner.meter.contacts")}
+            value={data.contacts}
+            max={limits.contacts ?? data.contacts}
+          />
+          <Meter
+            label={t("plan_banner.meter.appointments")}
             value={data.appointmentsThisMonth}
             max={limits.appointments ?? data.appointmentsThisMonth}
           />
@@ -70,7 +76,7 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
           <Button asChild size="sm" className="shrink-0 gap-2">
             <Link to="/$locale/tarifs" params={{ locale }}>
               <Zap className="h-3.5 w-3.5" />
-              Passer en version supérieure
+              {t("plan_banner.upgrade_cta")}
             </Link>
           </Button>
         )}

@@ -1,6 +1,7 @@
 import { Check, Clock, X, Ban } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { statusLabel, type AppointmentStatus } from "@/lib/agenda";
+import type { AppointmentStatus } from "@/lib/agenda";
 
 const styles: Record<AppointmentStatus, string> = {
   pending: "bg-warning/15 text-warning border-warning/30",
@@ -23,6 +24,7 @@ export function StatusBadge({
   status: AppointmentStatus;
   className?: string;
 }) {
+  const { t } = useTranslation("agenda");
   const Icon = icons[status];
   return (
     <span
@@ -33,7 +35,7 @@ export function StatusBadge({
       )}
     >
       <Icon className="h-3 w-3" />
-      {statusLabel[status]}
+      {t(`status.${status}`)}
     </span>
   );
 }

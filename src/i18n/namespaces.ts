@@ -11,6 +11,11 @@ export const NAMESPACES = [
   "documentation",
   "auth",
   "legal",
+  "app",
+  "dashboard",
+  "agenda",
+  "contacts",
+  "settings",
 ] as const;
 
 export type Namespace = (typeof NAMESPACES)[number];

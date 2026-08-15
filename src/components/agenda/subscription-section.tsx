@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Crown, FileText, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useBillingPortal, useCancelSubscription, useReactivateSubscription } from "@/lib/billing";
 import { TIER_LABELS, TIER_PRICES, usePlanUsage } from "@/lib/plan";
 import { Button } from "@/components/ui/button";
@@ -19,10 +20,10 @@ import {
 import { formatDateTime as formatDateTimeLocalized } from "@/lib/format";
 import { useLocale } from "@/i18n/use-locale";
 
-const CANCEL_PHRASE = "je me désabonne";
-
 export function SubscriptionSection() {
   const locale = useLocale();
+  const { t } = useTranslation("settings");
+  const CANCEL_PHRASE = t("subscription.cancel_dialog.cancel_phrase");
   const formatDateTime = (iso: string | null) => formatDateTimeLocalized(iso, locale);
   const planQuery = usePlanUsage();
   const cancel = useCancelSubscription();
@@ -49,8 +50,8 @@ export function SubscriptionSection() {
       const when = formatDateTime(iso);
       toast.success(
         when
-          ? `Abonnement résilié. Le plan ${planLabel} reste actif jusqu'au ${when}.`
-          : "Abonnement résilié à la fin de la période en cours.",
+          ? t("subscription.success.cancelled_with_date", { plan: planLabel, date: when })
+          : t("subscription.success.cancelled_generic"),
       );
     } catch {
       // erreur déjà affichée par le hook
@@ -65,13 +66,18 @@ export function SubscriptionSection() {
         className="scroll-mt-24 rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5"
       >
         <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-          <Crown className="h-4 w-4 text-amber-600" /> Ton abonnement {planLabel} se termine bientôt
+          <Crown className="h-4 w-4 text-amber-600" />
+          {t("subscription.ending_soon.title", { plan: planLabel })}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Tu profites encore de tous les avantages {planLabel} jusqu'au{" "}
-          <strong className="text-foreground">{endLabel ?? "prochain renouvellement"}</strong>.
-          Passé ce délai, ton compte repasse automatiquement en plan {TIER_LABELS.free} et un nouvel
-          abonnement coûtera de nouveau {planPrice}/mois.
+          {t("subscription.ending_soon.body_prefix", { plan: planLabel })}
+          <strong className="text-foreground">
+            {endLabel ?? t("subscription.ending_soon.end_label_fallback")}
+          </strong>
+          {t("subscription.ending_soon.body_suffix", {
+            freePlan: TIER_LABELS.free,
+            price: planPrice,
+          })}
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button
@@ -84,7 +90,7 @@ export function SubscriptionSection() {
             ) : (
               <ShieldCheck className="h-4 w-4" />
             )}
-            Rester en {planLabel}
+            {t("subscription.ending_soon.stay_cta", { plan: planLabel })}
           </Button>
           <Button
             variant="ghost"
@@ -98,7 +104,7 @@ export function SubscriptionSection() {
             ) : (
               <FileText className="h-3.5 w-3.5" />
             )}
-            Revoir ma facturation
+            {t("subscription.billing_cta")}
           </Button>
         </div>
       </section>
@@ -111,23 +117,26 @@ export function SubscriptionSection() {
       className="scroll-mt-24 glass-panel min-w-0 overflow-hidden rounded-2xl border border-primary/30 p-4 sm:p-5"
     >
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <Crown className="h-4 w-4 text-primary" /> Abonnement
+        <Crown className="h-4 w-4 text-primary" /> {t("subscription.active.title")}
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Tu es sur le plan <strong className="text-foreground">{planLabel}</strong> ({planPrice}
-        /mois).
+        {t("subscription.active.body_prefix")}
+        <strong className="text-foreground">{planLabel}</strong>
+        {t("subscription.active.body_middle", { price: planPrice })}
         {renewsAt && (
           <>
-            {" "}
-            Prochain renouvellement le <strong className="text-foreground">{renewsAt}</strong>.
+            {t("subscription.active.renews_prefix")}
+            <strong className="text-foreground">{renewsAt}</strong>
+            {t("subscription.active.renews_suffix")}
           </>
         )}
       </p>
 
       {endsAt && (
         <p className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-sm">
-          Ton abonnement prendra fin le <strong>{formatDateTime(endsAt)}</strong>. Tu gardes le plan{" "}
-          {planLabel} jusque-là.
+          {t("subscription.active.ending_notice_prefix")}
+          <strong>{formatDateTime(endsAt)}</strong>
+          {t("subscription.active.ending_notice_suffix", { plan: planLabel })}
         </p>
       )}
 
@@ -137,7 +146,7 @@ export function SubscriptionSection() {
           disabled
         >
           <ShieldCheck className="h-4 w-4 shrink-0" />
-          <span>Tu es déjà en {planLabel} — merci de ta confiance</span>
+          <span>{t("subscription.active.already_on_plan", { plan: planLabel })}</span>
         </Button>
         <Button
           variant="ghost"
@@ -151,7 +160,7 @@ export function SubscriptionSection() {
           ) : (
             <FileText className="h-3.5 w-3.5" />
           )}
-          Revoir ma facturation
+          {t("subscription.billing_cta")}
         </Button>
       </div>
 
@@ -168,26 +177,29 @@ export function SubscriptionSection() {
               type="button"
               className="text-xs text-muted-foreground underline-offset-2 hover:text-destructive hover:underline"
             >
-              Se désabonner
+              {t("subscription.active.unsubscribe_link")}
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Résilier ton abonnement {planLabel} ?</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t("subscription.cancel_dialog.title", { plan: planLabel })}
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                Tu perdras les avantages du plan {planLabel}
+                {t("subscription.cancel_dialog.body_lose_prefix")}
+                <strong className="text-foreground">{planLabel}</strong>
                 {renewsAt ? (
                   <>
-                    {" "}
-                    à la fin de la période déjà payée, le{" "}
-                    <strong className="text-foreground">{renewsAt}</strong>. Jusque-là, ton plan{" "}
-                    {planLabel} reste actif.
+                    {t("subscription.cancel_dialog.body_with_renewal_middle")}
+                    <strong className="text-foreground">{renewsAt}</strong>
+                    {t("subscription.cancel_dialog.body_with_renewal_suffix", { plan: planLabel })}
                   </>
                 ) : (
-                  <> à la fin de la période déjà payée.</>
-                )}{" "}
-                Si tu te réabonnes ensuite, le paiement de {planPrice}/mois repart de zéro. Pour
-                confirmer, écris <strong>{CANCEL_PHRASE}</strong> ci-dessous.
+                  t("subscription.cancel_dialog.body_without_renewal")
+                )}
+                {t("subscription.cancel_dialog.body_tail_prefix", { price: planPrice })}
+                <strong>{CANCEL_PHRASE}</strong>
+                {t("subscription.cancel_dialog.body_tail_suffix")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <Input
@@ -197,7 +209,7 @@ export function SubscriptionSection() {
             />
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setConfirmText("")}>
-                Rester en {planLabel}
+                {t("subscription.cancel_dialog.stay_cta", { plan: planLabel })}
               </AlertDialogCancel>
               <AlertDialogAction
                 disabled={confirmText.trim().toLowerCase() !== CANCEL_PHRASE || cancel.isPending}
@@ -206,7 +218,9 @@ export function SubscriptionSection() {
                   void handleCancel();
                 }}
               >
-                {cancel.isPending ? "Résiliation…" : "Confirmer la résiliation"}
+                {cancel.isPending
+                  ? t("subscription.cancel_dialog.cancelling")
+                  : t("subscription.cancel_dialog.confirm_cta")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

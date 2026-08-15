@@ -1,5 +1,6 @@
 import { format, isSameDay } from "date-fns";
-import { fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import { CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/agenda/status-badge";
@@ -14,6 +15,8 @@ export function TodayPanel({
   contacts: Contact[];
   onCreate: (day: Date) => void;
 }) {
+  const dateFnsLocale = useDateFnsLocale();
+  const { t } = useTranslation("agenda");
   const today = new Date();
   const contactById = new Map(contacts.map((c) => [c.id, c] as const));
   const todays = appointments
@@ -29,28 +32,26 @@ export function TodayPanel({
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Aujourd'hui
+            <Sparkles className="h-3.5 w-3.5" /> {t("today.title")}
           </p>
           <h2 className="font-display text-xl font-bold sm:text-2xl">
-            {format(today, "EEEE d MMMM", { locale: fr })}
+            {format(today, "EEEE d MMMM", { locale: dateFnsLocale })}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {todays.length === 0
-              ? "Aucun rendez-vous prévu"
-              : `${todays.length} rendez-vous · ${accepted} confirmés · ${pending} en attente`}
+              ? t("today.no_appointments")
+              : t("today.summary", { count: todays.length, accepted, pending })}
           </p>
         </div>
         <Button onClick={() => onCreate(today)} className="gap-2">
           <CalendarPlus className="h-4 w-4" />
-          Créer un rendez-vous
+          {t("today.create")}
         </Button>
       </header>
 
       {todays.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-border/70 px-4 py-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Ta journée est libre. Profites-en pour caler un rendez-vous dès maintenant.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("today.free_day")}</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -87,7 +88,7 @@ export function TodayPanel({
                 )}
                 {isNext && (
                   <p className="mt-2 text-[11px] font-medium uppercase tracking-wider text-primary">
-                    Prochain
+                    {t("today.next")}
                   </p>
                 )}
               </article>

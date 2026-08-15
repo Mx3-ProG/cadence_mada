@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, History, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatDayMonth } from "@/lib/format";
@@ -27,6 +28,7 @@ async function fetchWeekly(): Promise<WeekRow[]> {
 
 export function WeeklyHistory() {
   const locale = useLocale();
+  const { t } = useTranslation("settings");
   const formatWeek = (iso: string) => {
     const start = new Date(`${iso}T00:00:00`);
     const end = new Date(start);
@@ -58,12 +60,9 @@ export function WeeklyHistory() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-            <History className="h-4 w-4 text-primary" /> Historique semaine par semaine
+            <History className="h-4 w-4 text-primary" /> {t("history.title")}
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Toutes tes semaines depuis la création du compte, recalculées et triées de la plus
-            récente à la plus ancienne.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("history.subtitle")}</p>
         </div>
         <Button
           variant="outline"
@@ -77,23 +76,23 @@ export function WeeklyHistory() {
           ) : (
             <RefreshCw className="h-4 w-4" />
           )}
-          Recalculer
+          {t("history.refresh")}
         </Button>
       </div>
 
       {query.isLoading ? (
-        <p className="mt-4 text-sm text-muted-foreground">Calcul de l'historique…</p>
+        <p className="mt-4 text-sm text-muted-foreground">{t("history.loading")}</p>
       ) : rows.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">Aucune donnée pour le moment.</p>
+        <p className="mt-4 text-sm text-muted-foreground">{t("history.empty")}</p>
       ) : (
         <>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
             {[
-              ["Rendez-vous", totals.total],
-              ["Acceptés", totals.accepted],
-              ["Refusés", totals.declined],
-              ["Liens envoyés", totals.invites],
-              ["Contacts créés", totals.contacts],
+              [t("history.totals.appointments"), totals.total],
+              [t("history.totals.accepted"), totals.accepted],
+              [t("history.totals.declined"), totals.declined],
+              [t("history.totals.invites"), totals.invites],
+              [t("history.totals.contacts"), totals.contacts],
             ].map(([label, value]) => (
               <div key={label as string} className="rounded-xl border border-border/70 px-3 py-2">
                 <p className="text-xs text-muted-foreground">{label}</p>
@@ -106,15 +105,15 @@ export function WeeklyHistory() {
             <table className="w-full min-w-[620px] text-sm">
               <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="py-2 pr-3">Semaine</th>
-                  <th className="py-2 pr-3">RDV</th>
-                  <th className="py-2 pr-3">Acceptés</th>
-                  <th className="py-2 pr-3">Refusés</th>
-                  <th className="py-2 pr-3">En attente</th>
-                  <th className="py-2 pr-3">Annulés</th>
-                  <th className="py-2 pr-3">Liens</th>
-                  <th className="py-2 pr-3">Contacts</th>
-                  <th className="py-2">Taux</th>
+                  <th className="py-2 pr-3">{t("history.table.week")}</th>
+                  <th className="py-2 pr-3">{t("history.table.appointments")}</th>
+                  <th className="py-2 pr-3">{t("history.table.accepted")}</th>
+                  <th className="py-2 pr-3">{t("history.table.declined")}</th>
+                  <th className="py-2 pr-3">{t("history.table.pending")}</th>
+                  <th className="py-2 pr-3">{t("history.table.cancelled")}</th>
+                  <th className="py-2 pr-3">{t("history.table.invites")}</th>
+                  <th className="py-2 pr-3">{t("history.table.contacts")}</th>
+                  <th className="py-2">{t("history.table.rate")}</th>
                 </tr>
               </thead>
               <tbody>

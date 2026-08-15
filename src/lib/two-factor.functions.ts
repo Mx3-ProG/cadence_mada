@@ -1,14 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseUser } from "@/integrations/supabase/auth-middleware";
-import { buildLoginCodeEmail } from "../../supabase/emails/login-code";
-import { buildWelcomeCodeEmail } from "../../supabase/emails/welcome-code";
-
-const CHALLENGE_DURATION_MS = 30 * 60 * 1000;
 const INACTIVITY_DURATION_MS = 600 * 60 * 1000;
-/** En dessous de ce délai depuis la création du profil, on considère l'envoi comme un
- * premier accueil (inscription) plutôt qu'une connexion classique. */
-const SIGNUP_WELCOME_WINDOW_MS = 5 * 60 * 1000;
 
 const credentialsSchema = z.object({
   email: z.string().trim().email().max(320),
@@ -23,92 +16,6 @@ const completeSchema = challengeSchema.extend({
   referralCode: z.string().trim().min(1).max(20).optional(),
 });
 
-async function hmac(value: string) {
-  const { createHmac } = await import("node:crypto");
-  const pepper = process.env["TWO_FACTOR_PEPPER"] ?? process.env["SUPABASE_SERVICE_ROLE_KEY"];
-  if (!pepper) throw new Error("Configuration de sécurité 2FA absente.");
-  return createHmac("sha256", pepper).update(value).digest("hex");
-}
-
-async function newCode() {
-  const { randomInt } = await import("node:crypto");
-  return randomInt(0, 1_000_000).toString().padStart(6, "0");
-}
-
-async function newCompletionToken() {
-  const { randomBytes } = await import("node:crypto");
-  return randomBytes(32).toString("base64url");
-}
-
-function maskEmail(email: string) {
-  const [local = "", domain = ""] = email.split("@");
-  const visible = local.slice(0, Math.min(2, local.length));
-  return `${visible}${"•".repeat(Math.max(3, local.length - visible.length))}@${domain}`;
-}
-
-/**
- * Choisit l'email d'accueil (inscription) ou de code de connexion classique selon
- * l'ancienneté du profil, et l'envoie. Utilisé au premier envoi comme au renvoi, pour que
- * les deux emails d'un même parcours d'inscription restent cohérents.
- */
-async function sendChallengeEmail(
-  supabaseAdmin: typeof import("@/integrations/supabase/client.server").supabaseAdmin,
-  userId: string,
-  email: string,
-  code: string,
-) {
-  const { data: profile } = await supabaseAdmin
-    .from("profiles")
-    .select("full_name, created_at")
-    .eq("id", userId)
-    .maybeSingle();
-
-  const isFreshSignup =
-    !!profile?.created_at &&
-    Date.now() - new Date(profile.created_at).getTime() < SIGNUP_WELCOME_WINDOW_MS;
-
-  const { subject, html } = isFreshSignup
-    ? buildWelcomeCodeEmail(code, profile?.full_name)
-    : buildLoginCodeEmail(code);
-
-  const { sendEmail } = await import("@/lib/resend.server");
-  return sendEmail({ to: email, subject, html });
-}
-
-async function createAndSendChallenge(userId: string, email: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-  const { count } = await supabaseAdmin
-    .from("login_challenges")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .gte("created_at", since);
-
-  if ((count ?? 0) >= 5) return { ok: false as const, reason: "RATE_LIMITED" as const };
-
-  const code = await newCode();
-  const { data: challenge, error } = await supabaseAdmin
-    .from("login_challenges")
-    .insert({
-      user_id: userId,
-      email,
-      code_hash: await hmac(code),
-      expires_at: new Date(Date.now() + CHALLENGE_DURATION_MS).toISOString(),
-    })
-    .select("id")
-    .single();
-
-  if (error || !challenge) throw new Error("Impossible de créer le code de connexion.");
-
-  const result = await sendChallengeEmail(supabaseAdmin, userId, email, code);
-  if (!result.sent) {
-    await supabaseAdmin.from("login_challenges").delete().eq("id", challenge.id);
-    return { ok: false as const, reason: "EMAIL_UNAVAILABLE" as const };
-  }
-
-  return { ok: true as const, challengeId: challenge.id, maskedEmail: maskEmail(email) };
-}
-
 export const startPasswordLoginChallenge = createServerFn({ method: "POST" })
   .validator((input: unknown) => credentialsSchema.parse(input))
   .handler(async ({ data }) => {
@@ -121,7 +28,8 @@ export const startPasswordLoginChallenge = createServerFn({ method: "POST" })
 
     // Révoque uniquement la session éphémère créée pour vérifier le mot de passe.
     await authClient.auth.signOut({ scope: "local" });
-    return createAndSendChallenge(signIn.user.id, signIn.user.email);
+    const { createLoginChallengeForUser } = await import("@/lib/two-factor.server");
+    return createLoginChallengeForUser(signIn.user.id, signIn.user.email);
   });
 
 /** Première étape Google ou inscription auto-confirmée : la session existe déjà. */
@@ -130,7 +38,8 @@ export const startAuthenticatedLoginChallenge = createServerFn({ method: "POST" 
   .handler(async ({ context }) => {
     const email = typeof context.claims.email === "string" ? context.claims.email : null;
     if (!email) return { ok: false as const, reason: "NO_EMAIL" as const };
-    return createAndSendChallenge(context.userId, email);
+    const { createLoginChallengeForUser } = await import("@/lib/two-factor.server");
+    return createLoginChallengeForUser(context.userId, email);
   });
 
 export const resendLoginChallenge = createServerFn({ method: "POST" })
@@ -150,6 +59,8 @@ export const resendLoginChallenge = createServerFn({ method: "POST" })
       return { ok: false as const, reason: "TOO_SOON" as const };
     }
 
+    const { CHALLENGE_DURATION_MS, hmac, newCode, sendChallengeEmail } =
+      await import("@/lib/two-factor.server");
     const code = await newCode();
     const { error } = await supabaseAdmin
       .from("login_challenges")
@@ -171,6 +82,7 @@ export const resendLoginChallenge = createServerFn({ method: "POST" })
 export const verifyLoginCode = createServerFn({ method: "POST" })
   .validator((input: unknown) => verifySchema.parse(input))
   .handler(async ({ data }) => {
+    const { hmac, newCompletionToken } = await import("@/lib/two-factor.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin.rpc("consume_login_challenge", {
       _challenge_id: data.challengeId,
@@ -204,6 +116,7 @@ export const verifyLoginCode = createServerFn({ method: "POST" })
 export const completeLoginChallenge = createServerFn({ method: "POST" })
   .validator((input: unknown) => completeSchema.parse(input))
   .handler(async ({ data }) => {
+    const { hmac } = await import("@/lib/two-factor.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // The OTP creates a brand-new Supabase session. Validate that exact token
     // instead of relying on the global middleware to observe browser storage

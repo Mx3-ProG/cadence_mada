@@ -59,9 +59,12 @@ l'environnement d'exécution) :
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | Facturation Stripe                                                                                                                |
 | `RESEND_API_KEY`                                                | Clé API [Resend](https://resend.com/api-keys) pour les codes de connexion et autres emails                                        |
 | `RESEND_FROM`                                                   | Adresse d'expédition, ex. `Cadence Mada <rdv@cadencemada.com>` — le domaine doit être vérifié (DKIM/SPF) dans le dashboard Resend |
+| `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`          | Client OAuth Web Google utilisé par Supabase Auth ; le secret ne doit jamais être exposé au client                                |
+| `APP_URL`, `REMINDER_CRON_SECRET`                               | URL publique Cadence et secret partagé entre Supabase Cron et la fonction Edge de rappels                                         |
 
-> Pour que le bouton de connexion Google fonctionne, activer le provider **Google** dans
-> Authentication → Providers du dashboard Supabase du projet.
+> Google doit autoriser le callback
+> `https://ecdpfhacuwrfihyulqzf.supabase.co/auth/v1/callback`. Le provider est décrit dans
+> `supabase/config.toml` et ne peut être publié qu'une fois les deux secrets Google définis.
 
 ## Scripts
 

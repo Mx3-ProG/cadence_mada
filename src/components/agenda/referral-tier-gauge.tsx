@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { Progress } from "@/components/ui/progress";
 import { getTierProgress } from "@/lib/referral";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ export function ReferralTierGauge({
   formatValue: (value: number) => string;
   accentClassName?: string;
 }) {
+  const { t } = useTranslation("settings");
   const tier = getTierProgress(value, boundaries, labels);
 
   return (
@@ -42,8 +44,8 @@ export function ReferralTierGauge({
 
       <p className="mt-2 text-xs text-muted-foreground">
         {tier.ceiling === null
-          ? "Palier maximum atteint 🎉"
-          : `Prochain palier : ${formatValue(tier.ceiling)}`}
+          ? t("referral.gauge.max_tier_reached")
+          : t("referral.gauge.next_tier", { value: formatValue(tier.ceiling) })}
       </p>
     </div>
   );

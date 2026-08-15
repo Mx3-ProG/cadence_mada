@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Check, Copy, ExternalLink, Link2, Lock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,6 +16,7 @@ import { useLocale } from "@/i18n/use-locale";
  */
 export function BookingLinkQuickAccess() {
   const locale = useLocale();
+  const { t } = useTranslation("app");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const planQuery = usePlanUsage();
@@ -53,45 +55,45 @@ export function BookingLinkQuickAccess() {
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Mon lien de réservation"
+          aria-label={t("booking_quick_access.trigger_aria")}
           className="rounded-full border border-border/60"
         >
           <Link2 className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80">
-        <p className="text-sm font-semibold">Lien de réservation</p>
+        <p className="text-sm font-semibold">{t("booking_quick_access.title")}</p>
 
         {!isPro && (
           <div className="mt-2 flex items-start gap-2 text-xs text-muted-foreground">
             <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
-              Réservé au plan Standard et plus.{" "}
+              {t("booking_quick_access.upsell_prefix")}{" "}
               <Link
                 to="/$locale/tarifs"
                 params={{ locale }}
                 hash="offre-standard"
                 className="font-medium text-primary underline-offset-2 hover:underline"
               >
-                Voir l’offre Standard
+                {t("booking_quick_access.upsell_cta")}
               </Link>
             </span>
           </div>
         )}
 
         {isPro && settingsQuery.isLoading && (
-          <p className="mt-2 text-xs text-muted-foreground">Chargement…</p>
+          <p className="mt-2 text-xs text-muted-foreground">{t("booking_quick_access.loading")}</p>
         )}
 
         {isPro && !settingsQuery.isLoading && (!settings?.enabled || !url) && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Pas encore activé.{" "}
+            {t("booking_quick_access.not_enabled_prefix")}{" "}
             <Link
               to="/$locale/settings"
               params={{ locale }}
               className="font-medium text-primary underline-offset-2 hover:underline"
             >
-              Configurer mon lien
+              {t("booking_quick_access.not_enabled_cta")}
             </Link>
           </p>
         )}
@@ -102,7 +104,7 @@ export function BookingLinkQuickAccess() {
             <div className="flex gap-2">
               <Button size="sm" variant="secondary" className="flex-1 gap-2" onClick={copy}>
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? "Copié" : "Copier"}
+                {copied ? t("booking_quick_access.copied") : t("booking_quick_access.copy")}
               </Button>
               <Button asChild size="sm" variant="ghost" className="gap-2">
                 <a href={url} target="_blank" rel="noreferrer">
