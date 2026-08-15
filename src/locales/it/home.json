@@ -1,0 +1,114 @@
+{
+  "nav.pricing": "Prezzi",
+  "hero.badge": "Calendario + conferme in tempo reale",
+  "hero.title_prefix": "Tutta la tua settimana di appuntamenti,",
+  "hero.title_highlight": "confermata senza un solo sollecito",
+  "hero.subtitle": "Crea uno slot, invia un link, guarda la risposta arrivare sulla tua dashboard. Con le schede contatto e le tue note di preparazione nello stesso posto.",
+  "hero.cta_primary": "Crea il mio calendario",
+  "hero.cta_secondary": "Vedi la mia dashboard",
+  "preview.status.accepted": "Accettato",
+  "preview.status.pending": "In attesa",
+  "preview.items": [
+    { "day": "Lunedì", "time": "09:30", "title": "Kickoff Nova", "status": "accepted" },
+    { "day": "Mercoledì", "time": "15:00", "title": "Punto investitori", "status": "pending" },
+    { "day": "Venerdì", "time": "11:00", "title": "Caffè con Camille", "status": "accepted" }
+  ],
+  "how.badge": "Come funziona",
+  "how.title": "Dal primo slot alla conferma, in tre passaggi",
+  "how.subtitle": "Nessuna configurazione complicata: Cadence subentra non appena proponi un appuntamento.",
+  "how.steps": [
+    {
+      "title": "Crea il tuo calendario",
+      "text": "Aggiungi i tuoi contatti e imposta un primo slot in pochi secondi, senza configurazione."
+    },
+    {
+      "title": "Condividi il tuo link",
+      "text": "Invia un invito via email o diffondi il tuo link di prenotazione pubblico per lasciare che i tuoi contatti scelgano uno slot."
+    },
+    {
+      "title": "Guarda le risposte arrivare",
+      "text": "Ogni conferma o rifiuto appare in diretta sulla tua dashboard, in vista settimanale o mensile."
+    }
+  ],
+  "audiences.badge": "Per chi",
+  "audiences.title": "Pensato per chi vive al ritmo degli appuntamenti",
+  "audiences.subtitle": "Se la tua attività ruota attorno agli appuntamenti con i clienti, Cadence è fatto per te.",
+  "audiences.items": [
+    {
+      "title": "Freelance e liberi professionisti",
+      "text": "Gestisci gli appuntamenti con i clienti senza perdere una giornata in andirivieni."
+    },
+    {
+      "title": "Coach e consulenti",
+      "text": "Organizza le sessioni e tieni traccia di ogni cliente."
+    },
+    {
+      "title": "Terapeuti e professionisti sanitari",
+      "text": "Riempi il calendario delle consultazioni senza solleciti telefonici."
+    },
+    {
+      "title": "Agenti immobiliari",
+      "text": "Pianifica visite e appuntamenti con i clienti senza doppie prenotazioni."
+    },
+    {
+      "title": "Avvocati e professioni legali",
+      "text": "Appuntamenti con i clienti organizzati e conferme tracciate."
+    },
+    {
+      "title": "Artigiani e prestatori di servizi a domicilio",
+      "text": "Pianifica gli interventi ed evita gli slot mancati."
+    },
+    {
+      "title": "Formatori e professionisti della formazione",
+      "text": "Organizza sessioni individuali e appuntamenti di follow-up."
+    },
+    {
+      "title": "Piccoli team e PMI",
+      "text": "Più contatti, più appuntamenti, un'unica visione d'insieme."
+    },
+    {
+      "title": "Qualsiasi attività su appuntamento",
+      "text": "Non appena i no-show costano tempo, Cadence li evita."
+    }
+  ],
+  "features.title": "Tutto ciò che serve, niente di superfluo",
+  "features.items": [
+    {
+      "title": "La tua settimana in un'unica schermata",
+      "text": "Sette colonne, zero attrito. Crea uno slot con un clic e vedi subito a che punto sei."
+    },
+    {
+      "title": "Calendario completo settimanale e mensile",
+      "text": "Passa dalla vista settimanale a quella mensile, naviga con un clic e apri la scheda completa di ogni appuntamento."
+    },
+    {
+      "title": "Prenotazione self-service",
+      "text": "Condividi il tuo link pubblico: i tuoi contatti scelgono da soli uno slot libero, tu devi solo confermare."
+    },
+    {
+      "title": "Conferma tramite link",
+      "text": "Ogni appuntamento genera un link unico. Il tuo invitato accetta o rifiuta, tu lo vedi in diretta."
+    },
+    {
+      "title": "Inviti via email",
+      "text": "Invia l'invito al tuo contatto con un pulsante, con tutti i dettagli e il link di risposta."
+    },
+    {
+      "title": "Schede contatto",
+      "text": "Azienda, ruolo, telefono, storico: il contesto è lì ancora prima di dire ciao."
+    },
+    {
+      "title": "Note di preparazione",
+      "text": "Annota di cosa vuoi parlare. Privato, sempre a portata di mano appena prima dell'appuntamento."
+    },
+    {
+      "title": "Giorno e notte",
+      "text": "Un tema inchiostro e smeraldo pensato per entrambe le modalità, fluido su mobile come su desktop."
+    }
+  ],
+  "final.title": "Pronto a riprendere il controllo della tua settimana?",
+  "final.subtitle": "Pochi secondi per creare il tuo account, e il tuo primo appuntamento parte con il suo link di conferma.",
+  "final.cta": "Inizia gratis",
+  "footer.tagline": "Cadence — il calendario appuntamenti che si conferma da solo.",
+  "footer.cookie_prefs": "Preferenze cookie"
+}

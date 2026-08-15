@@ -1,0 +1,114 @@
+{
+  "nav.pricing": "Preise",
+  "hero.badge": "Kalender + Echtzeit-Bestätigungen",
+  "hero.title_prefix": "Deine ganze Terminwoche,",
+  "hero.title_highlight": "ohne eine einzige Nachfrage bestätigt",
+  "hero.subtitle": "Erstelle einen Termin, sende einen Link und sieh die Antwort direkt auf deinem Dashboard eintreffen. Kontaktkarten und Vorbereitungsnotizen sind gleich daneben.",
+  "hero.cta_primary": "Meinen Kalender erstellen",
+  "hero.cta_secondary": "Mein Dashboard ansehen",
+  "preview.status.accepted": "Angenommen",
+  "preview.status.pending": "Ausstehend",
+  "preview.items": [
+    { "day": "Montag", "time": "09:30", "title": "Nova-Kickoff", "status": "accepted" },
+    { "day": "Mittwoch", "time": "15:00", "title": "Investoren-Update", "status": "pending" },
+    { "day": "Freitag", "time": "11:00", "title": "Kaffee mit Camille", "status": "accepted" }
+  ],
+  "how.badge": "So funktioniert's",
+  "how.title": "Vom ersten Termin zur Bestätigung, in drei Schritten",
+  "how.subtitle": "Keine komplizierte Einrichtung: Cadence übernimmt, sobald du einen Termin vorschlägst.",
+  "how.steps": [
+    {
+      "title": "Erstelle deinen Kalender",
+      "text": "Füge deine Kontakte hinzu und lege in wenigen Sekunden einen ersten Termin an, ganz ohne Konfiguration."
+    },
+    {
+      "title": "Teile deinen Link",
+      "text": "Sende eine Einladung per E-Mail oder verbreite deinen öffentlichen Buchungslink, damit Kontakte selbst einen Termin wählen können."
+    },
+    {
+      "title": "Sieh Antworten eintreffen",
+      "text": "Jede Bestätigung oder Absage erscheint live auf deinem Dashboard, in der Wochen- oder Monatsansicht."
+    }
+  ],
+  "audiences.badge": "Für wen",
+  "audiences.title": "Gemacht für alle, die im Rhythmus von Terminen leben",
+  "audiences.subtitle": "Wenn dein Geschäft sich um Kundentermine dreht, ist Cadence für dich gemacht.",
+  "audiences.items": [
+    {
+      "title": "Freiberufler & Selbstständige",
+      "text": "Kundentermine verwalten, ohne einen ganzen Tag mit Hin und Her zu verlieren."
+    },
+    {
+      "title": "Coaches & Berater",
+      "text": "Sitzungen organisieren und den Überblick über jeden Kunden behalten."
+    },
+    {
+      "title": "Therapeuten & Praktiker",
+      "text": "Den Terminkalender füllen, ohne telefonisch nachfassen zu müssen."
+    },
+    {
+      "title": "Immobilienmakler",
+      "text": "Besichtigungen und Kundentermine ohne Doppelbuchungen planen."
+    },
+    {
+      "title": "Anwälte & juristische Berufe",
+      "text": "Organisierte Mandantentermine mit nachverfolgten Bestätigungen."
+    },
+    {
+      "title": "Handwerker & Dienstleister vor Ort",
+      "text": "Einsätze planen und verpasste Termine vermeiden."
+    },
+    {
+      "title": "Trainer & Bildungsfachkräfte",
+      "text": "Einzelsitzungen und Folgetermine organisieren."
+    },
+    {
+      "title": "Kleine Teams & Unternehmen",
+      "text": "Mehrere Kontakte, mehrere Termine, ein einziger Überblick."
+    },
+    {
+      "title": "Jedes terminbasierte Geschäft",
+      "text": "Sobald No-Shows Zeit kosten, verhindert Cadence sie."
+    }
+  ],
+  "features.title": "Alles, was du brauchst, nichts Überflüssiges",
+  "features.items": [
+    {
+      "title": "Deine Woche auf einen Blick",
+      "text": "Sieben Spalten, null Reibung. Erstelle einen Termin mit einem Klick und sieh sofort, wo du stehst."
+    },
+    {
+      "title": "Vollständiger Wochen- & Monatskalender",
+      "text": "Wechsle zwischen Wochen- und Monatsansicht, navigiere mit einem Klick und öffne die vollständige Übersicht jedes Termins."
+    },
+    {
+      "title": "Selbstbedienungsbuchung",
+      "text": "Teile deinen öffentlichen Link: Kontakte wählen selbst einen freien Termin, du musst nur noch bestätigen."
+    },
+    {
+      "title": "Bestätigung per Link",
+      "text": "Jeder Termin erzeugt einen eindeutigen Link. Dein Gast nimmt an oder lehnt ab, du siehst es live."
+    },
+    {
+      "title": "Einladungen per E-Mail",
+      "text": "Sende die Einladung an deinen Kontakt mit einem Klick, mit allen Details und dem Antwortlink."
+    },
+    {
+      "title": "Kontaktkarten",
+      "text": "Firma, Position, Telefon, Verlauf: der Kontext ist da, noch bevor du Hallo sagst."
+    },
+    {
+      "title": "Vorbereitungsnotizen",
+      "text": "Notiere, worüber du sprechen möchtest. Privat, immer griffbereit kurz vor dem Termin."
+    },
+    {
+      "title": "Tag & Nacht",
+      "text": "Ein Tinten-Smaragd-Theme für beide Modi, flüssig auf Mobilgeräten wie auf dem Desktop."
+    }
+  ],
+  "final.title": "Bereit, die Kontrolle über deine Woche zu übernehmen?",
+  "final.subtitle": "Wenige Sekunden, um dein Konto zu erstellen, und dein erster Termin geht mit seinem Bestätigungslink hinaus.",
+  "final.cta": "Kostenlos starten",
+  "footer.tagline": "Cadence — der Terminkalender, der sich von selbst bestätigt.",
+  "footer.cookie_prefs": "Cookie-Einstellungen"
+}

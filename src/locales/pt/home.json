@@ -1,0 +1,114 @@
+{
+  "nav.pricing": "Preços",
+  "hero.badge": "Calendário + confirmações em tempo real",
+  "hero.title_prefix": "Toda a tua semana de compromissos,",
+  "hero.title_highlight": "confirmada sem um único lembrete",
+  "hero.subtitle": "Cria um horário, envia um link, vê a resposta chegar ao teu painel. Com as fichas de contacto e as tuas notas de preparação no mesmo sítio.",
+  "hero.cta_primary": "Criar o meu calendário",
+  "hero.cta_secondary": "Ver o meu painel",
+  "preview.status.accepted": "Aceite",
+  "preview.status.pending": "Pendente",
+  "preview.items": [
+    { "day": "Segunda", "time": "09:30", "title": "Kickoff Nova", "status": "accepted" },
+    { "day": "Quarta", "time": "15:00", "title": "Reunião de investidores", "status": "pending" },
+    { "day": "Sexta", "time": "11:00", "title": "Café com a Camille", "status": "accepted" }
+  ],
+  "how.badge": "Como funciona",
+  "how.title": "Do primeiro horário à confirmação, em três passos",
+  "how.subtitle": "Sem configuração complicada: a Cadence assume assim que propões um compromisso.",
+  "how.steps": [
+    {
+      "title": "Cria o teu calendário",
+      "text": "Adiciona os teus contactos e define um primeiro horário em segundos, sem configuração."
+    },
+    {
+      "title": "Partilha o teu link",
+      "text": "Envia um convite por email ou divulga o teu link de marcação público para deixar os teus contactos escolherem um horário."
+    },
+    {
+      "title": "Vê as respostas a chegar",
+      "text": "Cada confirmação ou recusa aparece em direto no teu painel, em vista semanal ou mensal."
+    }
+  ],
+  "audiences.badge": "Para quem",
+  "audiences.title": "Feito para quem vive ao ritmo dos compromissos",
+  "audiences.subtitle": "Se a tua atividade gira em torno de compromissos com clientes, a Cadence é feita para ti.",
+  "audiences.items": [
+    {
+      "title": "Freelancers e independentes",
+      "text": "Gere os compromissos com clientes sem perder um dia em idas e vindas."
+    },
+    {
+      "title": "Coaches e consultores",
+      "text": "Organiza as sessões e acompanha cada cliente."
+    },
+    {
+      "title": "Terapeutas e profissionais de saúde",
+      "text": "Preenche a agenda de consultas sem lembretes telefónicos."
+    },
+    {
+      "title": "Agentes imobiliários",
+      "text": "Marca visitas e compromissos com clientes sem reservas duplicadas."
+    },
+    {
+      "title": "Advogados e profissões jurídicas",
+      "text": "Compromissos com clientes organizados e confirmações registadas."
+    },
+    {
+      "title": "Artesãos e prestadores de serviços ao domicílio",
+      "text": "Planeia as intervenções e evita horários perdidos."
+    },
+    {
+      "title": "Formadores e profissionais de formação",
+      "text": "Organiza sessões individuais e compromissos de acompanhamento."
+    },
+    {
+      "title": "Pequenas equipas e empresas",
+      "text": "Vários contactos, vários compromissos, uma única visão de conjunto."
+    },
+    {
+      "title": "Qualquer atividade com marcação",
+      "text": "Assim que as faltas custam tempo, a Cadence evita-as."
+    }
+  ],
+  "features.title": "Tudo o que é preciso, nada de supérfluo",
+  "features.items": [
+    {
+      "title": "A tua semana num só ecrã",
+      "text": "Sete colunas, zero fricção. Cria um horário num clique e vê imediatamente onde estás."
+    },
+    {
+      "title": "Calendário completo semanal e mensal",
+      "text": "Alterna entre vista semanal e mensal, navega num clique e abre a ficha completa de cada compromisso."
+    },
+    {
+      "title": "Marcação em autoatendimento",
+      "text": "Partilha o teu link público: os teus contactos escolhem eles mesmos um horário livre, só tens de confirmar."
+    },
+    {
+      "title": "Confirmação por link",
+      "text": "Cada compromisso gera um link único. O teu convidado aceita ou recusa, tu vês em direto."
+    },
+    {
+      "title": "Convites por email",
+      "text": "Envia o convite ao teu contacto com um botão, com todos os detalhes e o link de resposta."
+    },
+    {
+      "title": "Fichas de contacto",
+      "text": "Empresa, cargo, telefone, histórico: o contexto está ali antes mesmo de dizeres olá."
+    },
+    {
+      "title": "Notas de preparação",
+      "text": "Anota o que queres abordar. Privado, sempre à mão mesmo antes do compromisso."
+    },
+    {
+      "title": "Dia e noite",
+      "text": "Um tema tinta e esmeralda pensado para os dois modos, fluido tanto em telemóvel como em desktop."
+    }
+  ],
+  "final.title": "Pronto para retomar o controlo da tua semana?",
+  "final.subtitle": "Uns segundos para criares a tua conta, e o teu primeiro compromisso sai com o seu link de confirmação.",
+  "final.cta": "Começar gratuitamente",
+  "footer.tagline": "Cadence — o calendário de compromissos que se confirma sozinho.",
+  "footer.cookie_prefs": "Preferências de cookies"
+}

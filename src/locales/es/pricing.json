@@ -1,0 +1,78 @@
+{
+  "seo.title": "Precios — Cadence",
+  "seo.description": "5 niveles, de Free-mium (0 €) a Business (199,99 €/mes): contactos y citas, calendario completo, reservas de autoservicio, marca personalizada. Programa de referidos incluido desde el plan Free-mium.",
+  "page.badge": "Sin compromiso · Cambia cuando quieras",
+  "page.title": "Elige simplemente el ritmo que te va.",
+  "page.subtitle": "Empieza gratis y evoluciona a medida que se llena tu calendario. Cada plan mantiene Cadence simple, rápida y agradable de usar.",
+  "page.trust.stripe": "✓ Pago seguro con Stripe",
+  "page.trust.cancel": "✓ Cancela cuando quieras",
+  "page.trust.instant": "✓ Activación instantánea",
+  "intro.badge": "Precios sencillos",
+  "intro.title": "5 niveles, una sola regla: pagas por lo que necesitas",
+  "intro.subtitle": "No se pide tarjeta para el plan {{freeLabel}}. Cambia de nivel cuando quieras, sin compromiso.",
+  "period.monthly": "al mes",
+  "period.forever": "para siempre",
+  "recommended": "Recomendado",
+  "view_offer": "Ver la oferta {{name}}",
+  "plans": {
+    "free": {
+      "tagline": "Perfecto para organizar tu semana y probar las confirmaciones por enlace.",
+      "cta": "Empezar gratis",
+      "features": [
+        "Hasta {{contacts}} contactos",
+        "{{appointments}} citas enviadas al mes",
+        "Enlaces de confirmación ilimitados",
+        "Calendario simple (vista semanal)",
+        "Programa de referidos (30% de por vida)",
+        "Modo día / noche"
+      ]
+    },
+    "basic": {
+      "tagline": "Un poco más de margen para un calendario que empieza a llenarse.",
+      "cta": "Pasar a {{label}}",
+      "features": [
+        "Hasta {{contacts}} contactos",
+        "{{appointments}} citas al mes",
+        "Enlaces de confirmación ilimitados",
+        "Calendario simple (vista semanal)",
+        "Programa de referidos (30% de por vida)",
+        "Modo día / noche"
+      ]
+    },
+    "standard": {
+      "tagline": "Para quienes encadenan citas cada semana.",
+      "cta": "Pasar a Standard",
+      "features": [
+        "Hasta {{contacts}} contactos",
+        "{{appointments}} citas al mes",
+        "Calendario completo: vista semanal y mensual, creación en un clic",
+        "Estadísticas de la semana",
+        "Reservas de autoservicio a través de tu enlace público",
+        "Programa de referidos (30% de por vida)"
+      ]
+    },
+    "economic": {
+      "tagline": "Para una actividad que funciona a pleno rendimiento todo el año.",
+      "cta": "Pasar a {{label}}",
+      "features": [
+        "Hasta {{contacts}} contactos",
+        "{{appointments}} citas al mes",
+        "Todo Standard: calendario completo, reservas",
+        "Tendencia del mes",
+        "Programa de referidos (30% de por vida)"
+      ]
+    },
+    "business": {
+      "tagline": "Para equipos y marcas que lo quieren todo, sin límites.",
+      "cta": "Pasar a Business",
+      "features": [
+        "Contactos y citas ilimitados",
+        "Todo {{economicLabel}}: calendario completo, reservas, tendencia del mes",
+        "Enlace de invitación personalizado (marca + mensaje)",
+        "Reseñas de Google: puntuación, enlace a Google My Business y Maps",
+        "Enlace al sitio web en tus invitaciones",
+        "Soporte prioritario"
+      ]
+    }
+  }
+}

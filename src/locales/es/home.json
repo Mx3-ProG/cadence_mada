@@ -1,0 +1,114 @@
+{
+  "nav.pricing": "Precios",
+  "hero.badge": "Calendario + confirmaciones en tiempo real",
+  "hero.title_prefix": "Toda tu semana de citas,",
+  "hero.title_highlight": "confirmada sin un solo recordatorio",
+  "hero.subtitle": "Crea un horario, envía un enlace y observa cómo llega la respuesta a tu panel. Con las fichas de contacto y tus notas de preparación en el mismo lugar.",
+  "hero.cta_primary": "Crear mi calendario",
+  "hero.cta_secondary": "Ver mi panel",
+  "preview.status.accepted": "Aceptado",
+  "preview.status.pending": "Pendiente",
+  "preview.items": [
+    { "day": "Lunes", "time": "09:30", "title": "Kickoff Nova", "status": "accepted" },
+    { "day": "Miércoles", "time": "15:00", "title": "Reunión con inversores", "status": "pending" },
+    { "day": "Viernes", "time": "11:00", "title": "Café con Camille", "status": "accepted" }
+  ],
+  "how.badge": "Cómo funciona",
+  "how.title": "Del primer horario a la confirmación, en tres pasos",
+  "how.subtitle": "Sin configuración complicada: Cadence se encarga en cuanto propones una cita.",
+  "how.steps": [
+    {
+      "title": "Crea tu calendario",
+      "text": "Añade tus contactos y define un primer horario en segundos, sin configuración."
+    },
+    {
+      "title": "Comparte tu enlace",
+      "text": "Envía una invitación por email o difunde tu enlace de reserva público para que tus contactos elijan un horario."
+    },
+    {
+      "title": "Observa cómo llegan las respuestas",
+      "text": "Cada confirmación o rechazo aparece en directo en tu panel, en vista semanal o mensual."
+    }
+  ],
+  "audiences.badge": "Para quién",
+  "audiences.title": "Diseñado para quienes viven al ritmo de las citas",
+  "audiences.subtitle": "Si tu actividad gira en torno a citas con clientes, Cadence es para ti.",
+  "audiences.items": [
+    {
+      "title": "Autónomos y freelancers",
+      "text": "Gestiona las citas con clientes sin perder un día en idas y venidas."
+    },
+    {
+      "title": "Coaches y consultores",
+      "text": "Organiza las sesiones y mantén el hilo de cada cliente."
+    },
+    {
+      "title": "Terapeutas y profesionales sanitarios",
+      "text": "Llena la agenda de consultas sin llamadas de recordatorio."
+    },
+    {
+      "title": "Agentes inmobiliarios",
+      "text": "Programa visitas y citas con clientes sin dobles reservas."
+    },
+    {
+      "title": "Abogados y profesiones jurídicas",
+      "text": "Citas con clientes organizadas y confirmaciones registradas."
+    },
+    {
+      "title": "Artesanos y prestadores de servicios a domicilio",
+      "text": "Planifica intervenciones y evita horarios perdidos."
+    },
+    {
+      "title": "Formadores y profesionales de la formación",
+      "text": "Organiza sesiones individuales y citas de seguimiento."
+    },
+    {
+      "title": "Pequeños equipos y empresas",
+      "text": "Varios contactos, varias citas, una sola vista de conjunto."
+    },
+    {
+      "title": "Cualquier actividad basada en citas",
+      "text": "En cuanto las ausencias cuestan tiempo, Cadence las evita."
+    }
+  ],
+  "features.title": "Todo lo que necesitas, nada superfluo",
+  "features.items": [
+    {
+      "title": "Tu semana en una sola pantalla",
+      "text": "Siete columnas, cero fricción. Crea un horario con un clic y ve al instante en qué punto estás."
+    },
+    {
+      "title": "Calendario completo semanal y mensual",
+      "text": "Alterna entre vista semanal y mensual, navega con un clic y abre la ficha completa de cada cita."
+    },
+    {
+      "title": "Reservas de autoservicio",
+      "text": "Comparte tu enlace público: tus contactos eligen ellos mismos un horario libre, tú solo tienes que confirmar."
+    },
+    {
+      "title": "Confirmación por enlace",
+      "text": "Cada cita genera un enlace único. Tu invitado acepta o declina, y tú lo ves en directo."
+    },
+    {
+      "title": "Invitaciones por email",
+      "text": "Envía la invitación a tu contacto con un botón, con todos los detalles y el enlace de respuesta."
+    },
+    {
+      "title": "Fichas de contacto",
+      "text": "Empresa, cargo, teléfono, historial: el contexto está ahí antes incluso de decir hola."
+    },
+    {
+      "title": "Notas de preparación",
+      "text": "Anota de qué quieres hablar. Privado, siempre a mano justo antes de la cita."
+    },
+    {
+      "title": "Día y noche",
+      "text": "Un tema tinta y esmeralda pensado para ambos modos, fluido tanto en móvil como en escritorio."
+    }
+  ],
+  "final.title": "¿Listo para retomar el control de tu semana?",
+  "final.subtitle": "Unos segundos para crear tu cuenta, y tu primera cita sale con su enlace de confirmación.",
+  "final.cta": "Empezar gratis",
+  "footer.tagline": "Cadence — el calendario de citas que se confirma solo.",
+  "footer.cookie_prefs": "Preferencias de cookies"
+}

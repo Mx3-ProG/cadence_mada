@@ -1,0 +1,78 @@
+{
+  "seo.title": "Preise — Cadence",
+  "seo.description": "5 Stufen, von Free-mium (0 €) bis Business (199,99 €/Monat): Kontakte und Termine, vollständiger Kalender, Selbstbedienungsbuchung, individuelles Branding. Empfehlungsprogramm bereits ab dem Free-mium-Plan enthalten.",
+  "page.badge": "Keine Verpflichtung · Jederzeit wechselbar",
+  "page.title": "Wähle einfach den Rhythmus, der zu dir passt.",
+  "page.subtitle": "Starte kostenlos und wachse, wenn dein Kalender voller wird. Jeder Plan hält Cadence einfach, schnell und angenehm in der Nutzung.",
+  "page.trust.stripe": "✓ Sichere Zahlung mit Stripe",
+  "page.trust.cancel": "✓ Jederzeit kündbar",
+  "page.trust.instant": "✓ Sofortige Aktivierung",
+  "intro.badge": "Einfache Preise",
+  "intro.title": "5 Stufen, eine Regel: du zahlst nur für das, was du brauchst",
+  "intro.subtitle": "Keine Kreditkarte für den {{freeLabel}}-Plan nötig. Wechsle jederzeit die Stufe, ohne Verpflichtung.",
+  "period.monthly": "pro Monat",
+  "period.forever": "für immer",
+  "recommended": "Empfohlen",
+  "view_offer": "Angebot {{name}} ansehen",
+  "plans": {
+    "free": {
+      "tagline": "Perfekt, um deine Woche zu organisieren und Link-Bestätigungen auszuprobieren.",
+      "cta": "Kostenlos starten",
+      "features": [
+        "Bis zu {{contacts}} Kontakte",
+        "{{appointments}} versendete Termine pro Monat",
+        "Unbegrenzte Bestätigungslinks",
+        "Einfacher Kalender (Wochenansicht)",
+        "Empfehlungsprogramm (30% lebenslang)",
+        "Tag-/Nachtmodus"
+      ]
+    },
+    "basic": {
+      "tagline": "Etwas mehr Spielraum für einen Kalender, der sich langsam füllt.",
+      "cta": "Auf {{label}} upgraden",
+      "features": [
+        "Bis zu {{contacts}} Kontakte",
+        "{{appointments}} Termine pro Monat",
+        "Unbegrenzte Bestätigungslinks",
+        "Einfacher Kalender (Wochenansicht)",
+        "Empfehlungsprogramm (30% lebenslang)",
+        "Tag-/Nachtmodus"
+      ]
+    },
+    "standard": {
+      "tagline": "Für alle, die jede Woche Termin an Termin reihen.",
+      "cta": "Auf Standard upgraden",
+      "features": [
+        "Bis zu {{contacts}} Kontakte",
+        "{{appointments}} Termine pro Monat",
+        "Vollständiger Kalender: Wochen- & Monatsansicht, Erstellung mit einem Klick",
+        "Wochenstatistiken",
+        "Selbstbedienungsbuchung über deinen öffentlichen Link",
+        "Empfehlungsprogramm (30% lebenslang)"
+      ]
+    },
+    "economic": {
+      "tagline": "Für ein Geschäft, das das ganze Jahr über auf Hochtouren läuft.",
+      "cta": "Auf {{label}} upgraden",
+      "features": [
+        "Bis zu {{contacts}} Kontakte",
+        "{{appointments}} Termine pro Monat",
+        "Alles aus Standard: vollständiger Kalender, Buchung",
+        "Monatstrend",
+        "Empfehlungsprogramm (30% lebenslang)"
+      ]
+    },
+    "business": {
+      "tagline": "Für Teams und Marken, die alles wollen, ohne Grenzen.",
+      "cta": "Auf Business upgraden",
+      "features": [
+        "Unbegrenzte Kontakte und Termine",
+        "Alles aus {{economicLabel}}: vollständiger Kalender, Buchung, Monatstrend",
+        "Individueller Einladungslink (Branding + Nachricht)",
+        "Google-Bewertungen: Sternebewertung, Google My Business- und Maps-Link",
+        "Website-Link auf deinen Einladungen",
+        "Priorisierter Support"
+      ]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "seo.title": "Prezzi — Cadence",
+  "seo.description": "5 livelli, da Free-mium (0 €) a Business (199,99 €/mese): contatti e appuntamenti, calendario completo, prenotazione self-service, branding personalizzato. Programma di referral incluso già dal piano Free-mium.",
+  "page.badge": "Nessun vincolo · Cambia in qualsiasi momento",
+  "page.title": "Scegli semplicemente il ritmo che ti somiglia.",
+  "page.subtitle": "Inizia gratis, poi evolvi man mano che il tuo calendario si riempie. Ogni piano mantiene Cadence semplice, veloce e piacevole da usare.",
+  "page.trust.stripe": "✓ Pagamento sicuro con Stripe",
+  "page.trust.cancel": "✓ Disdici in qualsiasi momento",
+  "page.trust.instant": "✓ Attivazione immediata",
+  "intro.badge": "Prezzi semplici",
+  "intro.title": "5 livelli, una sola regola: paghi solo per ciò di cui hai bisogno",
+  "intro.subtitle": "Nessuna carta richiesta per il piano {{freeLabel}}. Cambia livello in qualsiasi momento, senza vincoli.",
+  "period.monthly": "al mese",
+  "period.forever": "per sempre",
+  "recommended": "Consigliato",
+  "view_offer": "Vedi l'offerta {{name}}",
+  "plans": {
+    "free": {
+      "tagline": "Perfetto per organizzare la tua settimana e provare le conferme via link.",
+      "cta": "Inizia gratis",
+      "features": [
+        "Fino a {{contacts}} contatti",
+        "{{appointments}} appuntamenti inviati al mese",
+        "Link di conferma illimitati",
+        "Calendario semplice (vista settimanale)",
+        "Programma di referral (30% a vita)",
+        "Modalità giorno / notte"
+      ]
+    },
+    "basic": {
+      "tagline": "Un po' più di margine per un calendario che inizia a riempirsi.",
+      "cta": "Passa a {{label}}",
+      "features": [
+        "Fino a {{contacts}} contatti",
+        "{{appointments}} appuntamenti al mese",
+        "Link di conferma illimitati",
+        "Calendario semplice (vista settimanale)",
+        "Programma di referral (30% a vita)",
+        "Modalità giorno / notte"
+      ]
+    },
+    "standard": {
+      "tagline": "Per chi concatena appuntamenti ogni settimana.",
+      "cta": "Passa a Standard",
+      "features": [
+        "Fino a {{contacts}} contatti",
+        "{{appointments}} appuntamenti al mese",
+        "Calendario completo: vista settimanale e mensile, creazione con un clic",
+        "Statistiche della settimana",
+        "Prenotazione self-service tramite il tuo link pubblico",
+        "Programma di referral (30% a vita)"
+      ]
+    },
+    "economic": {
+      "tagline": "Per un'attività che gira a pieno regime tutto l'anno.",
+      "cta": "Passa a {{label}}",
+      "features": [
+        "Fino a {{contacts}} contatti",
+        "{{appointments}} appuntamenti al mese",
+        "Tutto Standard: calendario completo, prenotazione",
+        "Tendenza del mese",
+        "Programma di referral (30% a vita)"
+      ]
+    },
+    "business": {
+      "tagline": "Per team e brand che vogliono tutto, senza limiti.",
+      "cta": "Passa a Business",
+      "features": [
+        "Contatti e appuntamenti illimitati",
+        "Tutto {{economicLabel}}: calendario completo, prenotazione, tendenza del mese",
+        "Link di invito personalizzato (branding + messaggio)",
+        "Recensioni Google: valutazione, link Google My Business e Maps",
+        "Link al sito web sui tuoi inviti",
+        "Assistenza prioritaria"
+      ]
+    }
+  }
+}
