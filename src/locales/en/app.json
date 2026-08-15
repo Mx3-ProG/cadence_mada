@@ -16,6 +16,7 @@
   "locked_feature.reserved_suffix": " is reserved for the ",
   "locked_feature.reserved_and_above": " plan and above.",
   "locked_feature.cta": "See the {{tier}} plan",
+  "paywall.back_home": "Back to home",
   "booking_quick_access.trigger_aria": "My booking link",
   "booking_quick_access.title": "Booking link",
   "booking_quick_access.upsell_prefix": "Reserved for the Standard plan and above.",

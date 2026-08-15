@@ -14,7 +14,7 @@ import { AgendaMonthGrid } from "@/components/agenda/agenda-month-grid";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { AppointmentDetailsSheet } from "@/components/agenda/appointment-details-sheet";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
-import { FeatureTeaser } from "@/components/agenda/locked-feature-card";
+import { PlanPaywallDialog } from "@/components/agenda/plan-paywall-dialog";
 import { useAppointmentActions } from "@/lib/use-appointment-actions";
 import { useDateFnsLocale } from "@/i18n/date-fns-locales";
 import {
@@ -64,6 +64,7 @@ function AgendaPage() {
   const [quickDefaultDate, setQuickDefaultDate] = useState<Date | null>(null);
   const [editing, setEditing] = useState<Appointment | null>(null);
   const [detailsAppointment, setDetailsAppointment] = useState<Appointment | null>(null);
+  const [paywallOpen, setPaywallOpen] = useState(false);
 
   const days = useMemo(() => weekDays(anchor), [anchor]);
   const weekRangeStart = days[0]!;
@@ -149,6 +150,31 @@ function AgendaPage() {
     setDialogOpen(true);
   };
 
+  const handleSlotClick = (date: Date) => {
+    if (!isPro) {
+      setPaywallOpen(true);
+      return;
+    }
+    openNew(date);
+  };
+
+  const handleAppointmentClick = (appointment: Appointment) => {
+    if (!isPro && appointment.status !== "pending") {
+      setPaywallOpen(true);
+      return;
+    }
+    setDetailsAppointment(appointment);
+  };
+
+  const handleNewAppointmentClick = () => {
+    if (!isPro) {
+      setPaywallOpen(true);
+      return;
+    }
+    setQuickDefaultDate(null);
+    setQuickOpen(true);
+  };
+
   const goPrev = () =>
     setAnchor(view === "week" ? addDays(weekStart(anchor), -7) : addMonths(anchor, -1));
   const goNext = () =>
@@ -193,13 +219,7 @@ function AgendaPage() {
               <TabsTrigger value="month">{t("view.month")}</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Button
-            onClick={() => {
-              setQuickDefaultDate(null);
-              setQuickOpen(true);
-            }}
-            className="gap-2"
-          >
+          <Button onClick={handleNewAppointmentClick} className="gap-2">
             <CalendarPlus className="h-4 w-4" />
             <span className="hidden sm:inline">{t("new_appointment")}</span>
           </Button>
@@ -212,8 +232,8 @@ function AgendaPage() {
             days={days}
             appointments={appointments}
             contactById={contactById}
-            onSlotClick={openNew}
-            onAppointmentClick={setDetailsAppointment}
+            onSlotClick={handleSlotClick}
+            onAppointmentClick={handleAppointmentClick}
           />
         ) : (
           <AgendaMonthGrid
@@ -224,8 +244,8 @@ function AgendaPage() {
               setAnchor(date);
               setView("week");
             }}
-            onSlotClick={openNew}
-            onAppointmentClick={setDetailsAppointment}
+            onSlotClick={handleSlotClick}
+            onAppointmentClick={handleAppointmentClick}
           />
         )}
       </div>
@@ -246,13 +266,7 @@ function AgendaPage() {
           <p className="mt-1 text-sm text-muted-foreground">{t("page.subtitle")}</p>
         </div>
 
-        {isPro ? (
-          agendaContent
-        ) : (
-          <FeatureTeaser title={t("page.title")} minTier="standard">
-            {agendaContent}
-          </FeatureTeaser>
-        )}
+        {agendaContent}
       </main>
 
       <AppointmentDialog
@@ -279,6 +293,8 @@ function AgendaPage() {
         onEmail={email}
         onDecide={decide}
       />
+
+      <PlanPaywallDialog open={paywallOpen} onOpenChange={setPaywallOpen} minTier="standard" />
     </div>
   );
 }

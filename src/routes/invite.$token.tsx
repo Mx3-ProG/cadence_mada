@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyInviteResponse } from "@/lib/invites.functions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { StatusBadge } from "@/components/agenda/status-badge";
@@ -36,10 +38,18 @@ export const Route = createFileRoute("/invite/$token")({
   component: InvitePage,
 });
 
+const INVITE_EMAIL_STORAGE_KEY = "cadence:invite-email";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function InvitePage() {
   const { token } = Route.useParams();
   const [message, setMessage] = useState("");
+  const [email, setEmail] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem(INVITE_EMAIL_STORAGE_KEY) ?? "";
+  });
   const [busy, setBusy] = useState(false);
+  const isEmailValid = EMAIL_PATTERN.test(email.trim());
 
   const inviteQuery = useQuery({
     queryKey: ["invite", token],
@@ -51,17 +61,24 @@ function InvitePage() {
   });
 
   const respond = async (accept: boolean) => {
+    if (!isEmailValid) {
+      toast.error("Merci de renseigner un email valide.");
+      return;
+    }
     setBusy(true);
+    const trimmedEmail = email.trim();
     const { error } = await supabase.rpc("respond_to_invite", {
       _token: token,
       _accept: accept,
       _message: message.trim().slice(0, 500),
+      _email: trimmedEmail,
     });
     setBusy(false);
     if (error) {
       toast.error(error.message);
       return;
     }
+    window.localStorage.setItem(INVITE_EMAIL_STORAGE_KEY, trimmedEmail);
     toast.success(accept ? "Rendez-vous confirmé !" : "Réponse envoyée.");
     void inviteQuery.refetch();
     notifyInviteResponse({ data: { token, origin: window.location.origin } }).catch(() => {
@@ -138,6 +155,19 @@ function InvitePage() {
 
               {invite.status === "pending" ? (
                 <div className="mt-6 grid gap-3">
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="invite-email">Votre email</Label>
+                    <Input
+                      id="invite-email"
+                      type="email"
+                      placeholder="vous@exemple.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Requis pour envoyer votre réponse à l'organisateur.
+                    </p>
+                  </div>
                   <Textarea
                     rows={3}
                     placeholder="Un message pour l'organisateur (optionnel)"
@@ -145,11 +175,15 @@ function InvitePage() {
                     onChange={(e) => setMessage(e.target.value)}
                   />
                   <div className="grid gap-2 sm:grid-cols-2">
-                    <Button disabled={busy} className="gap-2" onClick={() => respond(true)}>
+                    <Button
+                      disabled={busy || !isEmailValid}
+                      className="gap-2"
+                      onClick={() => respond(true)}
+                    >
                       <Check className="h-4 w-4" /> J'accepte
                     </Button>
                     <Button
-                      disabled={busy}
+                      disabled={busy || !isEmailValid}
                       variant="outline"
                       className="gap-2"
                       onClick={() => respond(false)}

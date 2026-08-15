@@ -22,6 +22,7 @@ export type Database = {
           owner_notified_at: string | null;
           prep_notes: string | null;
           responded_at: string | null;
+          response_email: string | null;
           response_message: string | null;
           source: string;
           starts_at: string;
@@ -42,6 +43,7 @@ export type Database = {
           owner_notified_at?: string | null;
           prep_notes?: string | null;
           responded_at?: string | null;
+          response_email?: string | null;
           response_message?: string | null;
           source?: string;
           starts_at: string;
@@ -62,6 +64,7 @@ export type Database = {
           owner_notified_at?: string | null;
           prep_notes?: string | null;
           responded_at?: string | null;
+          response_email?: string | null;
           response_message?: string | null;
           source?: string;
           starts_at?: string;
@@ -89,6 +92,7 @@ export type Database = {
           invite_token: string;
           owner_notified_at: string | null;
           responded_at: string | null;
+          response_email: string | null;
           response_message: string | null;
           status: Database["public"]["Enums"]["appointment_status"];
           updated_at: string;
@@ -102,6 +106,7 @@ export type Database = {
           invite_token?: string;
           owner_notified_at?: string | null;
           responded_at?: string | null;
+          response_email?: string | null;
           response_message?: string | null;
           status?: Database["public"]["Enums"]["appointment_status"];
           updated_at?: string;
@@ -115,6 +120,7 @@ export type Database = {
           invite_token?: string;
           owner_notified_at?: string | null;
           responded_at?: string | null;
+          response_email?: string | null;
           response_message?: string | null;
           status?: Database["public"]["Enums"]["appointment_status"];
           updated_at?: string;
@@ -729,7 +735,7 @@ export type Database = {
         }[];
       };
       respond_to_invite: {
-        Args: { _accept: boolean; _message?: string; _token: string };
+        Args: { _accept: boolean; _email?: string; _message?: string; _token: string };
         Returns: boolean;
       };
     };
