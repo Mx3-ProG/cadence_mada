@@ -719,6 +719,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      get_avatar_urls: {
+        Args: { _ids: string[] };
+        Returns: { id: string; avatar_url: string | null }[];
+      };
       has_active_login_session: { Args: never; Returns: boolean };
       rebuild_weekly_stats: {
         Args: never;

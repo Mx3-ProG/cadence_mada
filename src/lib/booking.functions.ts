@@ -213,7 +213,7 @@ export const notifyBookingDecision = createServerFn({ method: "POST" })
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, email")
+      .select("full_name, email, avatar_url")
       .eq("id", userId)
       .maybeSingle();
     const hostName = profile?.full_name ?? profile?.email ?? "votre hôte";
@@ -232,6 +232,7 @@ export const notifyBookingDecision = createServerFn({ method: "POST" })
     const { subject, html } = build({
       guestName: contact.name || "",
       hostName,
+      hostAvatarUrl: profile?.avatar_url,
       appointment: {
         title: appointment.title,
         location: appointment.location,

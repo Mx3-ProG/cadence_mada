@@ -3,6 +3,7 @@ import { brand, emailLayout, escapeHtml, formatDateRange } from "./shared";
 export type BookingDecisionEmailProps = {
   guestName: string;
   hostName: string;
+  hostAvatarUrl?: string | null | undefined;
   appointment: {
     title: string;
     location: string | null;
@@ -16,6 +17,7 @@ export type BookingDecisionEmailProps = {
 export function buildBookingConfirmedEmail({
   guestName,
   hostName,
+  hostAvatarUrl,
   appointment,
   bookingLink,
 }: BookingDecisionEmailProps) {
@@ -31,6 +33,6 @@ export function buildBookingConfirmedEmail({
 
   return {
     subject: `Rendez-vous confirmé : ${appointment.title}`,
-    html: emailLayout(body),
+    html: emailLayout(body, { name: hostName, avatarUrl: hostAvatarUrl }),
   };
 }

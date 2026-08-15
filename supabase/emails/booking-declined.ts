@@ -5,6 +5,7 @@ import type { BookingDecisionEmailProps } from "./booking-confirmed";
 export function buildBookingDeclinedEmail({
   guestName,
   hostName,
+  hostAvatarUrl,
   appointment,
   bookingLink,
 }: BookingDecisionEmailProps) {
@@ -23,6 +24,6 @@ export function buildBookingDeclinedEmail({
 
   return {
     subject: `Créneau indisponible : ${appointment.title}`,
-    html: emailLayout(body),
+    html: emailLayout(body, { name: hostName, avatarUrl: hostAvatarUrl }),
   };
 }

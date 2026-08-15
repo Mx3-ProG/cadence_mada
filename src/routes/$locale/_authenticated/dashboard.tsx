@@ -90,7 +90,16 @@ function Dashboard() {
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
     queryFn: async (): Promise<Contact[]> => {
-      const { data, error } = await supabase.from("contacts").select("*").order("name");
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      if (!uid) return [];
+      // Filtre explicite : la policy RLS laisse aussi passer un admin (pour la console
+      // /admin), donc sans ce filtre un admin verrait les contacts de tout le monde ici.
+      const { data, error } = await supabase
+        .from("contacts")
+        .select("*")
+        .eq("owner_id", uid)
+        .order("name");
       if (error) throw error;
       return data ?? [];
     },

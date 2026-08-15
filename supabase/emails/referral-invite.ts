@@ -2,11 +2,16 @@ import { brand, emailLayout, escapeHtml } from "./shared";
 
 export type ReferralInviteEmailProps = {
   referrerName: string;
+  referrerAvatarUrl?: string | null | undefined;
   link: string;
 };
 
 /** Email envoyé à un contact invité à rejoindre Cadence via un lien de parrainage. */
-export function buildReferralInviteEmail({ referrerName, link }: ReferralInviteEmailProps) {
+export function buildReferralInviteEmail({
+  referrerName,
+  referrerAvatarUrl,
+  link,
+}: ReferralInviteEmailProps) {
   const body = `
     <h2 style="margin:0 0 8px">${escapeHtml(referrerName)} t'invite sur Cadence Mada</h2>
     <p style="margin:0 0 16px">
@@ -22,6 +27,6 @@ export function buildReferralInviteEmail({ referrerName, link }: ReferralInviteE
 
   return {
     subject: `${referrerName} t'invite à essayer Cadence Mada`,
-    html: emailLayout(body),
+    html: emailLayout(body, { name: referrerName, avatarUrl: referrerAvatarUrl }),
   };
 }

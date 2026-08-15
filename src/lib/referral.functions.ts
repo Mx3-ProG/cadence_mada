@@ -21,7 +21,7 @@ export const sendReferralInviteEmail = createServerFn({ method: "POST" })
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("referral_code, business_name, full_name")
+      .select("referral_code, business_name, full_name, avatar_url")
       .eq("id", userId)
       .maybeSingle();
 
@@ -41,7 +41,11 @@ export const sendReferralInviteEmail = createServerFn({ method: "POST" })
     const referrerName = profile.business_name || profile.full_name || "Un utilisateur de Cadence";
     const link = `${data.origin.replace(/\/$/, "")}/${data.locale}/auth?ref=${profile.referral_code}`;
 
-    const { subject, html } = buildReferralInviteEmail({ referrerName, link });
+    const { subject, html } = buildReferralInviteEmail({
+      referrerName,
+      referrerAvatarUrl: profile.avatar_url,
+      link,
+    });
 
     const { sendEmail } = await import("@/lib/resend.server");
     const result = await sendEmail({ to: data.email, subject, html });

@@ -25,9 +25,15 @@ import { planUsageQueryKey } from "@/lib/plan";
 import type { Contact } from "@/lib/agenda";
 
 async function fetchContacts() {
+  const { data: auth } = await supabase.auth.getUser();
+  const uid = auth.user?.id;
+  if (!uid) return [];
+  // Filtre explicite : la policy RLS laisse aussi passer un admin (pour la console
+  // /admin), donc sans ce filtre un admin verrait les contacts de tout le monde ici.
   const { data, error } = await supabase
     .from("contacts")
     .select("*")
+    .eq("owner_id", uid)
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as Contact[];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,6 +6,7 @@ import { BellRing, KeyRound, Loader2, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { deleteMyAccount } from "@/lib/account.functions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -24,6 +25,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+
+function initials(name: string) {
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "?"
+  );
+}
+
 export function AccountProfileSection() {
   const { t } = useTranslation("auth");
   const queryClient = useQueryClient();
@@ -36,7 +51,7 @@ export function AccountProfileSection() {
       if (!user) return null;
       const { data } = await supabase
         .from("profiles")
-        .select("full_name, email, automatic_reminders_enabled")
+        .select("full_name, email, automatic_reminders_enabled, avatar_url")
         .eq("id", user.id)
         .maybeSingle();
       return {
@@ -44,6 +59,7 @@ export function AccountProfileSection() {
         email: user.email ?? "",
         fullName: data?.full_name ?? "",
         automaticRemindersEnabled: data?.automatic_reminders_enabled ?? true,
+        avatarUrl: data?.avatar_url ?? null,
       };
     },
   });
@@ -52,6 +68,8 @@ export function AccountProfileSection() {
   const [email, setEmail] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [automaticRemindersEnabled, setAutomaticRemindersEnabled] = useState(true);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!accountQuery.data) return;
@@ -59,6 +77,59 @@ export function AccountProfileSection() {
     setEmail(accountQuery.data.email);
     setAutomaticRemindersEnabled(accountQuery.data.automaticRemindersEnabled);
   }, [accountQuery.data]);
+
+  const uploadAvatar = async (file: File) => {
+    const id = accountQuery.data?.id;
+    if (!id) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error(t("account.avatar.errors.invalid_type"));
+      return;
+    }
+    if (file.size > MAX_AVATAR_BYTES) {
+      toast.error(t("account.avatar.errors.too_large"));
+      return;
+    }
+    setUploadingAvatar(true);
+    const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
+    const path = `${id}/avatar.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true, cacheControl: "3600" });
+    if (uploadError) {
+      setUploadingAvatar(false);
+      toast.error(t("account.avatar.errors.upload_failed"));
+      return;
+    }
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("avatars").getPublicUrl(path);
+    const avatarUrl = `${publicUrl}?v=${Date.now()}`;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_url: avatarUrl })
+      .eq("id", id);
+    setUploadingAvatar(false);
+    if (error) {
+      toast.error(t("account.avatar.errors.upload_failed"));
+      return;
+    }
+    toast.success(t("account.avatar.updated"));
+    void queryClient.invalidateQueries({ queryKey: ["account-profile"] });
+  };
+
+  const removeAvatar = async () => {
+    const id = accountQuery.data?.id;
+    if (!id) return;
+    setUploadingAvatar(true);
+    const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", id);
+    setUploadingAvatar(false);
+    if (error) {
+      toast.error(t("account.avatar.errors.upload_failed"));
+      return;
+    }
+    toast.success(t("account.avatar.removed"));
+    void queryClient.invalidateQueries({ queryKey: ["account-profile"] });
+  };
 
   const saveProfile = async () => {
     const id = accountQuery.data?.id;
@@ -100,6 +171,49 @@ export function AccountProfileSection() {
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
         <UserRound className="h-4 w-4 text-primary" /> {t("account.title")}
       </h2>
+
+      <div className="mt-4 flex items-center gap-4">
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={accountQuery.data?.avatarUrl ?? undefined} alt="" />
+          <AvatarFallback className="text-lg">{initials(fullName || email)}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (file) void uploadAvatar(file);
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={uploadingAvatar}
+            onClick={() => avatarInputRef.current?.click()}
+            className="gap-2"
+          >
+            {uploadingAvatar && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {t("account.avatar.change")}
+          </Button>
+          {accountQuery.data?.avatarUrl && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={uploadingAvatar}
+              onClick={() => void removeAvatar()}
+            >
+              {t("account.avatar.remove")}
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="account_name">{t("account.name_label")}</Label>

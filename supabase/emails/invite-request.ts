@@ -2,6 +2,8 @@ import { brand, emailLayout, escapeHtml, formatDateRange } from "./shared";
 
 export type InviteRequestEmailProps = {
   guestName: string;
+  hostName: string;
+  hostAvatarUrl?: string | null | undefined;
   appointment: {
     title: string;
     description: string | null;
@@ -26,6 +28,8 @@ export type InviteRequestEmailProps = {
 /** Email envoyé à l'invité pour lui proposer un rendez-vous. */
 export function buildInviteRequestEmail({
   guestName,
+  hostName,
+  hostAvatarUrl,
   appointment,
   link,
   branding,
@@ -84,6 +88,6 @@ export function buildInviteRequestEmail({
 
   return {
     subject: `Rendez-vous : ${appointment.title}`,
-    html: emailLayout(body),
+    html: emailLayout(body, { name: hostName, avatarUrl: hostAvatarUrl }),
   };
 }

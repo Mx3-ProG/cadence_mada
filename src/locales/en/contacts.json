@@ -29,6 +29,7 @@
   "booking.share.copy_success_toast": "Message copied — paste it in the app of your choice",
   "delete.success": "Contact deleted",
   "empty.title": "No contacts yet. Add the people you meet to find their details before every appointment.",
+  "empty.cta": "Create my first contact",
   "empty_filtered.title": "No contact matches these criteria.",
   "empty_filtered.subtitle": "Adjust the filters or reset the search to see your whole address book again.",
   "empty_filtered.reset": "Reset filters",

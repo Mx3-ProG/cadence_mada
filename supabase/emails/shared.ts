@@ -33,8 +33,30 @@ export function formatDateRange(startsAt: string, endsAt: string) {
   return `${fmt.format(new Date(startsAt))} → ${end.format(new Date(endsAt))}`;
 }
 
+export type EmailSender = {
+  name: string;
+  avatarUrl?: string | null | undefined;
+};
+
+/** Petit bandeau "Envoyé par [avatar] Nom", affiché sous le logo Cadence quand fourni. */
+function senderBlock(sender?: EmailSender) {
+  if (!sender) return "";
+  const avatar = sender.avatarUrl
+    ? `<img src="${escapeHtml(sender.avatarUrl)}" width="28" height="28" alt="" style="display:block;width:28px;height:28px;border-radius:999px;object-fit:cover;border:0" />`
+    : "";
+  return `
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px">
+      <tr>
+        ${avatar ? `<td style="padding-right:8px">${avatar}</td>` : ""}
+        <td style="font-size:13px;color:${brand.muted}">
+          Envoyé par <strong style="color:${brand.ink}">${escapeHtml(sender.name)}</strong>
+        </td>
+      </tr>
+    </table>`;
+}
+
 /** Enveloppe commune compatible email : logo, conteneur, footer. */
-export function emailLayout(bodyHtml: string) {
+export function emailLayout(bodyHtml: string, sender?: EmailSender) {
   return `
     <div style="font-family:Helvetica,Arial,sans-serif;background:#ffffff;padding:32px 24px;color:${brand.ink};max-width:600px;margin:0 auto">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 32px">
@@ -47,6 +69,7 @@ export function emailLayout(bodyHtml: string) {
           </td>
         </tr>
       </table>
+      ${senderBlock(sender)}
       ${bodyHtml}
       <p style="margin:40px 0 0;padding-top:20px;border-top:1px solid ${brand.border};font-size:12px;line-height:18px;color:${brand.muted}">
         Cet email a été envoyé automatiquement par Cadence Mada.

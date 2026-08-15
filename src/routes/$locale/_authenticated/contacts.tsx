@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AppHeader } from "@/components/agenda/app-header";
 import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
@@ -241,22 +242,59 @@ function ContactsPage() {
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
     queryFn: async (): Promise<Contact[]> => {
-      const { data, error } = await supabase.from("contacts").select("*").order("name");
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      if (!uid) return [];
+      // Filtre explicite : la policy RLS laisse aussi passer un admin (pour la console
+      // /admin), donc sans ce filtre un admin verrait les contacts de tout le monde ici.
+      const { data, error } = await supabase
+        .from("contacts")
+        .select("*")
+        .eq("owner_id", uid)
+        .order("name");
       if (error) throw error;
       return data ?? [];
     },
   });
 
   const contacts = useMemo(() => contactsQuery.data ?? [], [contactsQuery.data]);
+
+  const linkedUserIds = useMemo(
+    () => [...new Set(contacts.map((c) => c.linked_user_id).filter((id): id is string => !!id))],
+    [contacts],
+  );
+  const linkedAvatarsQuery = useQuery({
+    queryKey: ["linked-avatars", linkedUserIds],
+    enabled: linkedUserIds.length > 0,
+    queryFn: async (): Promise<Map<string, string | null>> => {
+      const { data, error } = await supabase.rpc("get_avatar_urls", { _ids: linkedUserIds });
+      if (error) throw error;
+      return new Map((data ?? []).map((row) => [row.id, row.avatar_url]));
+    },
+  });
+  const linkedAvatars = linkedAvatarsQuery.data ?? new Map<string, string | null>();
+
   const contactAppointmentsQuery = useQuery({
     queryKey: ["contact-appointments"],
     enabled: contacts.length > 0,
     queryFn: async (): Promise<ContactAppointmentLink[]> => {
-      const [appointmentsResult, invitationsResult] = await Promise.all([
-        supabase.from("appointments").select("id, contact_id, starts_at, status"),
-        supabase.from("appointment_invites").select("appointment_id, contact_id"),
-      ]);
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      if (!uid) return [];
+
+      const appointmentsResult = await supabase
+        .from("appointments")
+        .select("id, contact_id, starts_at, status")
+        .eq("owner_id", uid);
       if (appointmentsResult.error) throw appointmentsResult.error;
+
+      const appointmentIds = (appointmentsResult.data ?? []).map((a) => a.id);
+      const invitationsResult = appointmentIds.length
+        ? await supabase
+            .from("appointment_invites")
+            .select("appointment_id, contact_id")
+            .in("appointment_id", appointmentIds)
+        : { data: [], error: null };
       if (invitationsResult.error) throw invitationsResult.error;
 
       const activeAppointments = (appointmentsResult.data ?? []).filter(
@@ -319,6 +357,21 @@ function ContactsPage() {
     refresh();
   };
 
+  const openNewContact = () => {
+    if (isContactLimitReached(planQuery.data)) {
+      const plan = planQuery.data?.plan ?? "free";
+      const limit = TIER_LIMITS[plan].contacts;
+      const upsell = nextTier(plan);
+      toast.error(
+        t("plan_limit_error", { plan: TIER_LABELS[plan], limit }) +
+          (upsell ? t("plan_limit_upsell", { plan: TIER_LABELS[upsell] }) : ""),
+      );
+      return;
+    }
+    setEditing(null);
+    setOpen(true);
+  };
+
   // Clique sur la carte : direct vers le prochain rdv à venir avec ce contact (sur l'agenda
   // complet, "snip"), sinon ouvre simplement sa fiche.
   const openContact = (c: Contact) => {
@@ -375,23 +428,7 @@ function ContactsPage() {
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">{t("import")}</span>
             </Button>
-            <Button
-              className="shrink-0 gap-2"
-              onClick={() => {
-                if (isContactLimitReached(planQuery.data)) {
-                  const plan = planQuery.data?.plan ?? "free";
-                  const limit = TIER_LIMITS[plan].contacts;
-                  const upsell = nextTier(plan);
-                  toast.error(
-                    t("plan_limit_error", { plan: TIER_LABELS[plan], limit }) +
-                      (upsell ? t("plan_limit_upsell", { plan: TIER_LABELS[upsell] }) : ""),
-                  );
-                  return;
-                }
-                setEditing(null);
-                setOpen(true);
-              }}
-            >
+            <Button className="shrink-0 gap-2" onClick={openNewContact}>
               <UserPlus className="h-4 w-4" />
               <span className="hidden sm:inline">{t("new_contact")}</span>
             </Button>
@@ -402,9 +439,15 @@ function ContactsPage() {
         <BookingLinkCard />
 
         {contacts.length === 0 ? (
-          <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">
+          <button
+            type="button"
+            onClick={openNewContact}
+            className="glass-panel mt-8 flex w-full flex-col items-center gap-3 rounded-2xl px-6 py-16 text-center transition-colors hover:border-primary/50 hover:bg-primary/5"
+          >
+            <UserPlus className="h-6 w-6 text-primary" />
             <p className="text-sm text-muted-foreground">{t("empty.title")}</p>
-          </div>
+            <span className="text-sm font-medium text-primary">{t("empty.cta")}</span>
+          </button>
         ) : visibleContacts.length === 0 ? (
           <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">
             <p className="text-sm font-medium">{t("empty_filtered.title")}</p>
@@ -434,21 +477,36 @@ function ContactsPage() {
                   className="glass-panel h-full min-w-0 cursor-pointer overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow sm:p-5"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h2 className="truncate font-display text-lg font-bold">{c.name}</h2>
-                        {c.relationship && (
-                          <Badge variant="secondary" className="shrink-0 gap-1">
-                            <Gift className="h-3 w-3" />
-                            {c.relationship === "parrain"
-                              ? t("card.relationship.parrain")
-                              : t("card.relationship.filleul")}
-                          </Badge>
+                    <div className="flex min-w-0 items-center gap-3">
+                      {c.relationship && (
+                        <Avatar className="h-9 w-9 shrink-0">
+                          <AvatarImage
+                            src={
+                              (c.linked_user_id && linkedAvatars.get(c.linked_user_id)) || undefined
+                            }
+                            alt=""
+                          />
+                          <AvatarFallback className="text-xs">
+                            {c.name.trim().slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h2 className="truncate font-display text-lg font-bold">{c.name}</h2>
+                          {c.relationship && (
+                            <Badge variant="secondary" className="shrink-0 gap-1">
+                              <Gift className="h-3 w-3" />
+                              {c.relationship === "parrain"
+                                ? t("card.relationship.parrain")
+                                : t("card.relationship.filleul")}
+                            </Badge>
+                          )}
+                        </div>
+                        {c.role_title && (
+                          <p className="truncate text-xs text-muted-foreground">{c.role_title}</p>
                         )}
                       </div>
-                      {c.role_title && (
-                        <p className="truncate text-xs text-muted-foreground">{c.role_title}</p>
-                      )}
                     </div>
                     <div className="flex shrink-0 gap-1">
                       <Button
