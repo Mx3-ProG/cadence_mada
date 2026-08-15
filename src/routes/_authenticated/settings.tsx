@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BookOpen, ExternalLink, Loader2, Lock, Sparkles, Star } from "lucide-react";
+import { BookOpen, ExternalLink, Loader2, Lock, MessageCircle, Sparkles, Star } from "lucide-react";
 import { WeeklyHistory } from "@/components/agenda/weekly-history";
 import { AccountSettings } from "@/components/agenda/account-settings";
 import { ReferralSection } from "@/components/agenda/referral-section";
@@ -357,6 +357,28 @@ function SettingsPage() {
           <div className="mt-6">
             <BookingSettingsSection />
           </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <section className="glass-panel mt-6 flex min-w-0 flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex min-w-0 items-start gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10">
+                <MessageCircle className="h-5 w-5 text-primary" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-display text-lg font-semibold">Besoin d'aide ?</h2>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Une question ou une idée ? Contacte directement l'équipe Cadence.
+                </p>
+              </div>
+            </div>
+            <Button asChild variant="outline" className="shrink-0 rounded-xl">
+              <Link to="/contact">
+                Nous contacter
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </Button>
+          </section>
         </Reveal>
 
         <Reveal delay={0.05}>

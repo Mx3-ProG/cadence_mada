@@ -1,5 +1,5 @@
 import { ContactsSkeleton } from "@/components/loading/page-skeletons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -16,6 +16,7 @@ import {
   MapPin,
   Pencil,
   Phone,
+  Search,
   Settings,
   Trash2,
   UserPlus,
@@ -28,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { AppHeader } from "@/components/agenda/app-header";
 import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
+import { ContactSearchDialog } from "@/components/agenda/contact-search-dialog";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
@@ -41,6 +43,13 @@ import {
   TIER_LIMITS,
   usePlanUsage,
 } from "@/lib/plan";
+import {
+  activeContactFilterCount,
+  buildContactAppointmentDates,
+  EMPTY_CONTACT_SEARCH_FILTERS,
+  filterAndSortContacts,
+  type ContactAppointmentLink,
+} from "@/lib/contact-search";
 
 const GENDER_LABEL: Record<string, string> = {
   female: "Femme",
@@ -216,6 +225,8 @@ function ContactsPage() {
   const [editing, setEditing] = useState<Contact | null>(null);
   const [apptOpen, setApptOpen] = useState(false);
   const [apptContactId, setApptContactId] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchFilters, setSearchFilters] = useState({ ...EMPTY_CONTACT_SEARCH_FILTERS });
 
   const contactsQuery = useQuery({
     queryKey: ["contacts"],
@@ -226,13 +237,65 @@ function ContactsPage() {
     },
   });
 
-  const contacts = contactsQuery.data ?? [];
+  const contacts = useMemo(() => contactsQuery.data ?? [], [contactsQuery.data]);
+  const contactAppointmentsQuery = useQuery({
+    queryKey: ["contact-appointments"],
+    enabled: contacts.length > 0,
+    queryFn: async (): Promise<ContactAppointmentLink[]> => {
+      const [appointmentsResult, invitationsResult] = await Promise.all([
+        supabase.from("appointments").select("id, contact_id, starts_at, status"),
+        supabase.from("appointment_invites").select("appointment_id, contact_id"),
+      ]);
+      if (appointmentsResult.error) throw appointmentsResult.error;
+      if (invitationsResult.error) throw invitationsResult.error;
+
+      const activeAppointments = (appointmentsResult.data ?? []).filter(
+        (appointment) => appointment.status !== "cancelled",
+      );
+      const startsAtByAppointment = new Map(
+        activeAppointments.map((appointment) => [appointment.id, appointment.starts_at]),
+      );
+      const links = new Map<string, ContactAppointmentLink>();
+
+      for (const appointment of activeAppointments) {
+        if (!appointment.contact_id) continue;
+        const link = {
+          appointmentId: appointment.id,
+          contactId: appointment.contact_id,
+          startsAt: appointment.starts_at,
+        };
+        links.set(`${link.appointmentId}:${link.contactId}`, link);
+      }
+      for (const invitation of invitationsResult.data ?? []) {
+        const startsAt = startsAtByAppointment.get(invitation.appointment_id);
+        if (!startsAt) continue;
+        const link = {
+          appointmentId: invitation.appointment_id,
+          contactId: invitation.contact_id,
+          startsAt,
+        };
+        links.set(`${link.appointmentId}:${link.contactId}`, link);
+      }
+      return [...links.values()];
+    },
+  });
+
+  const appointmentDates = useMemo(
+    () => buildContactAppointmentDates(contactAppointmentsQuery.data ?? []),
+    [contactAppointmentsQuery.data],
+  );
+  const visibleContacts = useMemo(
+    () => filterAndSortContacts(contacts, searchFilters, appointmentDates),
+    [contacts, searchFilters, appointmentDates],
+  );
+  const activeFilters = activeContactFilterCount(searchFilters);
   const planQuery = usePlanUsage();
 
   if (contactsQuery.isLoading && !contactsQuery.data) return <ContactsSkeleton />;
 
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    void queryClient.invalidateQueries({ queryKey: ["contact-appointments"] });
     void queryClient.invalidateQueries({ queryKey: planUsageQueryKey });
   };
 
@@ -258,29 +321,47 @@ function ContactsPage() {
               Contacts
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {contacts.length} personne{contacts.length > 1 ? "s" : ""} dans ton carnet
+              {activeFilters > 0
+                ? `${visibleContacts.length} résultat${visibleContacts.length > 1 ? "s" : ""} sur ${contacts.length}`
+                : `${contacts.length} personne${contacts.length > 1 ? "s" : ""} dans ton carnet`}
             </p>
           </div>
-          <Button
-            className="shrink-0 gap-2"
-            onClick={() => {
-              if (isContactLimitReached(planQuery.data)) {
-                const plan = planQuery.data?.plan ?? "free";
-                const limit = TIER_LIMITS[plan].contacts;
-                const upsell = nextTier(plan);
-                toast.error(
-                  `Plan ${TIER_LABELS[plan]} : ${limit} contacts maximum.` +
-                    (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
-                );
-                return;
-              }
-              setEditing(null);
-              setOpen(true);
-            }}
-          >
-            <UserPlus className="h-4 w-4" />
-            <span className="hidden sm:inline">Nouveau contact</span>
-          </Button>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="relative rounded-full"
+              aria-label="Rechercher un contact"
+              onClick={() => setSearchOpen(true)}
+            >
+              <Search className="h-4 w-4" />
+              {activeFilters > 0 && (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                  {activeFilters}
+                </span>
+              )}
+            </Button>
+            <Button
+              className="shrink-0 gap-2"
+              onClick={() => {
+                if (isContactLimitReached(planQuery.data)) {
+                  const plan = planQuery.data?.plan ?? "free";
+                  const limit = TIER_LIMITS[plan].contacts;
+                  const upsell = nextTier(plan);
+                  toast.error(
+                    `Plan ${TIER_LABELS[plan]} : ${limit} contacts maximum.` +
+                      (upsell ? ` Passe au plan ${TIER_LABELS[upsell]} pour continuer.` : ""),
+                  );
+                  return;
+                }
+                setEditing(null);
+                setOpen(true);
+              }}
+            >
+              <UserPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Nouveau contact</span>
+            </Button>
+          </div>
         </div>
 
         <PlanBanner usage={planQuery.data} />
@@ -293,9 +374,23 @@ function ContactsPage() {
               leurs infos avant chaque rendez-vous.
             </p>
           </div>
+        ) : visibleContacts.length === 0 ? (
+          <div className="glass-panel mt-8 rounded-2xl px-6 py-16 text-center">
+            <p className="text-sm font-medium">Aucun contact ne correspond à ces critères.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Modifie les filtres ou réinitialise la recherche pour retrouver tout ton carnet.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-5"
+              onClick={() => setSearchFilters({ ...EMPTY_CONTACT_SEARCH_FILTERS })}
+            >
+              Réinitialiser les filtres
+            </Button>
+          </div>
         ) : (
           <div className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {contacts.map((c, i) => (
+            {visibleContacts.map((c, i) => (
               <Reveal key={c.id} delay={i * 0.04}>
                 <article className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow sm:p-5">
                   <div className="flex items-start justify-between gap-3">
@@ -433,6 +528,13 @@ function ContactsPage() {
         )}
       </main>
 
+      <ContactSearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        filters={searchFilters}
+        onFiltersChange={setSearchFilters}
+        resultsCount={visibleContacts.length}
+      />
       <ContactDialog open={open} onOpenChange={setOpen} contact={editing} onSaved={refresh} />
       <AppointmentDialog
         open={apptOpen}

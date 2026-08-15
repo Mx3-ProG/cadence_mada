@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, CalendarPlus, LogOut, Settings, ShieldCheck, Users } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarPlus,
+  LogOut,
+  MessageCircle,
+  Settings,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -119,6 +127,15 @@ export function AppHeader() {
     navigate({ to: "/auth", replace: true });
   };
 
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, to: string) => {
+    if (to !== pathname) return;
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
@@ -133,6 +150,7 @@ export function AppHeader() {
                 <Link
                   key={item.to}
                   to={item.to}
+                  onClick={(event) => handleNavClick(event, item.to)}
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
                     pathname === item.to
@@ -145,6 +163,18 @@ export function AppHeader() {
                 </Link>
               ))}
             </nav>
+            {pathname === "/dashboard" && (
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full border border-border/60"
+              >
+                <Link to="/contact" aria-label="Contacter Cadence">
+                  <MessageCircle className="h-4 w-4" />
+                </Link>
+              </Button>
+            )}
             <Button
               onClick={() => setQuickOpen(true)}
               className="hidden rounded-full lg:inline-flex"
@@ -184,6 +214,7 @@ export function AppHeader() {
               <li key={item.to} className="min-w-0 flex-1">
                 <Link
                   to={item.to}
+                  onClick={(event) => handleNavClick(event, item.to)}
                   className={cn(
                     "flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[11px] font-medium transition-colors",
                     active
