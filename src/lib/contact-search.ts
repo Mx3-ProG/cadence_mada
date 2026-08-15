@@ -59,11 +59,15 @@ export const EMPTY_CONTACT_SEARCH_FILTERS: ContactSearchFilters = {
   sort: "name",
 };
 
+// Diacritic-insensitive matching only makes sense for Latin-script accents
+// (\u00e9, \u00f1, \u00fc\u2026); stripping combining marks from CJK/Arabic/Devanagari text
+// would corrupt it, so this intentionally isn't locale-parameterized \u2014
+// non-Latin contact names just skip the accent-stripping step harmlessly.
 function normalize(value: string | null | undefined) {
   return (value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLocaleLowerCase("fr-FR")
+    .toLocaleLowerCase()
     .trim();
 }
 
