@@ -1,114 +1,114 @@
 {
   "nav.pricing": "Tarifs",
-  "hero.badge": "Agenda + confirmations en temps réel",
-  "hero.title_prefix": "Toute ta semaine de rendez-vous,",
-  "hero.title_highlight": "confirmée sans relance",
-  "hero.subtitle": "Crée un créneau, envoie un lien, vois la réponse arriver sur ton tableau de bord. Avec les fiches contacts et tes notes de préparation au même endroit.",
-  "hero.cta_primary": "Créer mon agenda",
-  "hero.cta_secondary": "Voir mon tableau de bord",
-  "preview.status.accepted": "Accepté",
-  "preview.status.pending": "En attente",
+  "hero.badge": "Moins de relances · Plus de temps pour toi",
+  "hero.title_prefix": "Imagine une semaine où chaque rendez-vous",
+  "hero.title_highlight": "trouve naturellement sa place.",
+  "hero.subtitle": "Tu ouvres Cadence le matin : ta journée est claire, tes clients ont confirmé et tout ce qu’il faut savoir est déjà sous tes yeux. Plus besoin de courir après les réponses.",
+  "hero.cta_primary": "Alléger ma semaine",
+  "hero.cta_secondary": "Voir Cadence en action",
+  "preview.status.accepted": "Confirmé",
+  "preview.status.pending": "Réponse attendue",
   "preview.items": [
     { "day": "Lundi", "time": "09:30", "title": "Kickoff Nova", "status": "accepted" },
     { "day": "Mercredi", "time": "15:00", "title": "Point investisseurs", "status": "pending" },
     { "day": "Vendredi", "time": "11:00", "title": "Café Camille", "status": "accepted" }
   ],
-  "how.badge": "Comment ça marche",
-  "how.title": "Du premier créneau à la confirmation, en trois étapes",
-  "how.subtitle": "Pas de configuration compliquée : Cadence prend le relais dès que tu proposes un rendez-vous.",
+  "how.badge": "Une nouvelle façon de respirer",
+  "how.title": "Tu proposes. Ils choisissent. Ta semaine respire.",
+  "how.subtitle": "Quelques gestes suffisent pour remplacer les messages dispersés par une organisation qui avance toute seule.",
   "how.steps": [
     {
-      "title": "Crée ton agenda",
-      "text": "Ajoute tes contacts et pose un premier créneau en quelques secondes, sans configuration."
+      "title": "Pose ton prochain rendez-vous",
+      "text": "Choisis un créneau et retrouve immédiatement la personne, le contexte et ce que tu veux préparer."
     },
     {
-      "title": "Partage ton lien",
-      "text": "Envoie une invitation par email ou diffuse ton lien de réservation public pour laisser tes contacts choisir un créneau."
+      "title": "Laisse ton client répondre",
+      "text": "Il confirme depuis son invitation ou choisit lui-même un moment libre grâce à ton lien de réservation."
     },
     {
-      "title": "Regarde les réponses arriver",
-      "text": "Chaque confirmation ou refus apparaît en direct sur ton tableau de bord, vue semaine ou vue mois."
+      "title": "Commence l’esprit clair",
+      "text": "Les réponses arrivent dans ton agenda. Tu sais qui vient, quand et pourquoi, sans relance de dernière minute."
     }
   ],
-  "audiences.badge": "Pour qui",
-  "audiences.title": "Conçu pour celles et ceux qui vivent au rythme des rendez-vous",
-  "audiences.subtitle": "Si ton activité tourne autour de rendez-vous clients, Cadence est fait pour toi.",
+  "audiences.badge": "Ton métier mérite ton attention",
+  "audiences.title": "Passe plus de temps avec tes clients. Moins avec ton agenda.",
+  "audiences.subtitle": "Cadence s’efface derrière ton métier pour que chaque rendez-vous commence déjà dans de bonnes conditions.",
   "audiences.items": [
     {
       "title": "Freelances & indépendants",
-      "text": "Gérer les rendez-vous clients sans perdre une journée en allers-retours."
+      "text": "Termine ta journée avec le sentiment d’avoir créé, conseillé ou livré, pas seulement répondu à des messages."
     },
     {
       "title": "Coachs & consultants",
-      "text": "Organiser les séances et garder le fil de chaque client."
+      "text": "Retrouve le fil de chaque accompagnement avant même que ton client entre dans la conversation."
     },
     {
       "title": "Thérapeutes & praticiens",
-      "text": "Remplir l'agenda de consultations sans relances téléphoniques."
+      "text": "Accueille chaque personne avec présence, dans un agenda rempli sans relances téléphoniques."
     },
     {
       "title": "Agents immobiliers",
-      "text": "Caler visites et rendez-vous clients sans double réservation."
+      "text": "Enchaîne les visites avec confiance : chacun connaît son heure et aucun créneau ne se chevauche."
     },
     {
       "title": "Avocats & professions juridiques",
-      "text": "Rendez-vous clients organisés et confirmations tracées."
+      "text": "Prépare chaque échange avec le bon contexte et la certitude que le rendez-vous est bien confirmé."
     },
     {
       "title": "Artisans & prestataires à domicile",
-      "text": "Planifier les interventions et éviter les créneaux ratés."
+      "text": "Pars sur la route en sachant exactement où aller, qui rencontrer et pourquoi."
     },
     {
       "title": "Formateurs & professionnels de la formation",
-      "text": "Organiser sessions individuelles et rendez-vous de suivi."
+      "text": "Garde chaque apprenant dans le bon rythme, de la première session au rendez-vous de suivi."
     },
     {
       "title": "Petites équipes & TPE",
-      "text": "Plusieurs contacts, plusieurs rendez-vous, une seule vue d'ensemble."
+      "text": "Toute l’activité devient lisible : plusieurs contacts et rendez-vous, mais une seule vision partagée."
     },
     {
       "title": "Toute activité sur rendez-vous",
-      "text": "Dès que les no-shows coûtent du temps, Cadence les évite."
+      "text": "Chaque rendez-vous confirmé protège ton temps, ton énergie et le chiffre d’affaires de ta journée."
     }
   ],
-  "features.title": "Tout ce qu'il faut, rien de superflu",
+  "features.title": "Tout ce qui disparaît de ta tête retrouve sa place.",
   "features.items": [
     {
-      "title": "Ta semaine en un écran",
-      "text": "Sept colonnes, zéro friction. Crée un créneau d'un clic et vois immédiatement où tu en es."
+      "title": "Ta semaine redevient évidente",
+      "text": "Un seul regard suffit pour voir tes sept jours, repérer l’espace disponible et ajouter un rendez-vous."
     },
     {
-      "title": "Agenda complet semaine & mois",
-      "text": "Bascule entre vue semaine et vue mois, navigue d'un clic et ouvre la fiche complète de chaque rendez-vous."
+      "title": "Aujourd’hui clair, demain maîtrisé",
+      "text": "Passe de la semaine au mois pour gérer l’urgence sans perdre la direction des prochaines semaines."
     },
     {
-      "title": "Réservation en libre-service",
-      "text": "Partage ton lien public : tes contacts choisissent eux-mêmes un créneau libre, tu n'as plus qu'à confirmer."
+      "title": "Ton agenda se remplit pendant que tu travailles",
+      "text": "Partage ton lien public et laisse tes contacts choisir seuls un créneau réellement disponible."
     },
     {
-      "title": "Confirmation par lien",
-      "text": "Chaque rendez-vous génère un lien unique. Ton invité accepte ou décline, tu le vois en direct."
+      "title": "Fini le doute avant un rendez-vous",
+      "text": "Ton invité confirme ou décline depuis son lien personnel. La réponse apparaît immédiatement dans ton agenda."
     },
     {
-      "title": "Invitations par email",
-      "text": "Envoie l'invitation à ton contact en un bouton, avec tous les détails et le lien de réponse."
+      "title": "Une invitation nette et rassurante",
+      "text": "En un clic, ton contact reçoit l’heure, le lieu et tout ce dont il a besoin pour être présent."
     },
     {
-      "title": "Fiches contacts",
-      "text": "Société, poste, téléphone, historique : le contexte est là avant même de dire bonjour."
+      "title": "Chaque personne compte vraiment",
+      "text": "Société, poste, téléphone et historique te remettent le bon contexte en tête avant de dire bonjour."
     },
     {
-      "title": "Notes de préparation",
-      "text": "Note ce dont tu veux parler. Privé, toujours à portée de main juste avant le rendez-vous."
+      "title": "Arrive préparé, jamais pris de court",
+      "text": "Tes notes privées t’attendent au bon endroit, juste avant la conversation qui compte."
     },
     {
-      "title": "Jour & nuit",
-      "text": "Un thème encre et émeraude pensé pour les deux modes, fluide sur mobile comme sur desktop."
+      "title": "Un espace calme, à toute heure",
+      "text": "De jour comme de nuit, sur téléphone ou ordinateur, Cadence reste lisible, fluide et agréable."
     }
   ],
-  "final.title": "Prêt à reprendre le contrôle de ta semaine ?",
-  "final.subtitle": "Quelques secondes pour créer ton compte, et ton premier rendez-vous part avec son lien de confirmation.",
-  "final.cta": "Commencer gratuitement",
-  "footer.tagline": "Cadence — l'agenda de rendez-vous qui se confirme tout seul.",
+  "final.title": "Ta prochaine semaine peut déjà être plus légère.",
+  "final.subtitle": "Crée ton agenda gratuitement. Dans quelques instants, ton premier rendez-vous sera envoyé, clair et prêt à être confirmé.",
+  "final.cta": "Retrouver une semaine claire",
+  "footer.tagline": "Cadence — l’agenda qui libère ton esprit avant chaque rendez-vous.",
   "footer.cookie_prefs": "Préférences cookies"
 }

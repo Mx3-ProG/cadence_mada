@@ -45,17 +45,17 @@ export const Route = createFileRoute("/$locale/")({
   // follow-up work (needs hreflang/canonical wiring alongside it).
   head: () => ({
     meta: [
-      { title: "Cadence — L'agenda de rendez-vous qui se confirme tout seul" },
+      { title: "Cadence — L’agenda qui libère ton esprit" },
       {
         name: "description",
         content:
-          "Planifie ta semaine, garde tes notes de préparation et laisse tes invités confirmer par lien ou par email. Agenda moderne, fluide et responsive.",
+          "Retrouve une semaine claire : tes clients réservent et confirment, tes contacts et tes notes restent à portée de main, ton activité avance sans relances.",
       },
-      { property: "og:title", content: "Cadence — L'agenda qui se confirme tout seul" },
+      { property: "og:title", content: "Cadence — Ta semaine claire, enfin" },
       {
         property: "og:description",
         content:
-          "Rendez-vous, contacts, notes et confirmations par lien : toute ta semaine dans une seule interface.",
+          "Imagine tes rendez-vous organisés, tes clients rassurés et ta journée plus légère. Cadence s’occupe du reste.",
       },
     ],
   }),
