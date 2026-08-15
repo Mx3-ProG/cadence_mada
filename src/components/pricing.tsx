@@ -87,7 +87,9 @@ export function Pricing({
                   </span>
                 )}
                 <h3 className="font-display text-lg font-bold">{plan.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
+                <p className="mt-2 min-h-16 text-[15px] font-medium leading-relaxed text-foreground/80">
+                  {plan.tagline}
+                </p>
                 <p className="mt-6 flex items-baseline gap-2">
                   <span className="font-display text-3xl font-black tracking-tight">
                     {TIER_PRICES[plan.tier]}
@@ -95,7 +97,7 @@ export function Pricing({
                   <span className="text-sm text-muted-foreground">{plan.period}</span>
                 </p>
 
-                <ul className="mt-6 flex-1 space-y-2.5 text-sm">
+                <ul className="mt-6 flex-1 space-y-3 text-sm leading-relaxed">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

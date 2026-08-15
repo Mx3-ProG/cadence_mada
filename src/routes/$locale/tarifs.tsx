@@ -17,12 +17,13 @@ export const Route = createFileRoute("/$locale/tarifs")({
       {
         name: "description",
         content:
-          "5 paliers, de Free-mium (0 €) à Business (199,99 €/mois) : contacts et rendez-vous, agenda complet, réservation en libre-service, branding personnalisé. Programme de parrainage inclus dès le plan Free-mium.",
+          "Choisis la formule Cadence qui libère ton esprit et accompagne ton activité, de Free-mium à Business : agenda, réservations, contacts et image de marque.",
       },
       { property: "og:title", content: "Tarifs — Cadence" },
       {
         property: "og:description",
-        content: "Compare les 5 paliers de Cadence et choisis en un clic.",
+        content:
+          "Moins de charge mentale, plus de rendez-vous qui avancent. Découvre la formule Cadence faite pour ton rythme.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/tarifs" },

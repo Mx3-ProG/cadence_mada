@@ -1,77 +1,77 @@
 {
   "seo.title": "Tarifs — Cadence",
-  "seo.description": "5 paliers, de Free-mium (0 €) à Business (199,99 €/mois) : contacts et rendez-vous, agenda complet, réservation en libre-service, branding personnalisé. Programme de parrainage inclus dès le plan Free-mium.",
-  "page.badge": "Sans engagement · Changement à tout moment",
-  "page.title": "Choisis simplement le rythme qui te ressemble.",
-  "page.subtitle": "Commence gratuitement, puis évolue quand ton agenda se remplit. Chaque formule garde Cadence simple, rapide et agréable à utiliser.",
+  "seo.description": "Choisis la formule Cadence qui libère ton esprit et accompagne ton activité, de Free-mium à Business : agenda, réservations, contacts et image de marque.",
+  "page.badge": "Ton activité · Ton rythme · Sans engagement",
+  "page.title": "Le calme d’un agenda qui travaille avec toi.",
+  "page.subtitle": "Imagine tes rendez-vous organisés, tes clients rassurés et ta journée enfin plus légère. Choisis simplement le niveau d’accompagnement qui correspond à ton activité aujourd’hui.",
   "page.trust.stripe": "✓ Paiement sécurisé par Stripe",
   "page.trust.cancel": "✓ Résiliation à tout moment",
   "page.trust.instant": "✓ Activation immédiate",
-  "intro.badge": "Tarifs simples",
-  "intro.title": "5 paliers, une seule règle : tu paies pour ce dont tu as besoin",
-  "intro.subtitle": "Aucune carte demandée pour le plan {{freeLabel}}. Change de palier à tout moment, sans engagement.",
+  "intro.badge": "Grandis sans perdre le fil",
+  "intro.title": "Moins de charge mentale. Plus de rendez-vous qui avancent.",
+  "intro.subtitle": "Commence avec {{freeLabel}}, puis laisse Cadence grandir au même rythme que ton activité. Sans carte bancaire et sans engagement.",
   "period.monthly": "par mois",
   "period.forever": "pour toujours",
   "recommended": "Recommandé",
   "view_offer": "Voir l'offre {{name}}",
   "plans": {
     "free": {
-      "tagline": "Parfait pour organiser ta semaine et tester les confirmations par lien.",
+      "tagline": "Retrouve une semaine claire, sans changer tes habitudes.",
       "cta": "Commencer gratuitement",
       "features": [
-        "Jusqu'à {{contacts}} contacts",
-        "{{appointments}} rendez-vous envoyés par mois",
-        "Liens de confirmation illimités",
-        "Agenda simple (vue semaine)",
-        "Programme de parrainage (30% à vie)",
-        "Mode jour / nuit"
+        "Tes {{contacts}} contacts essentiels toujours à portée de main",
+        "{{appointments}} rendez-vous par mois, sans message oublié",
+        "Chaque invité confirme sa présence en un clic",
+        "Toute ta semaine visible d’un seul regard",
+        "30 % à vie sur chaque personne que tu parraines",
+        "Un confort parfait, de jour comme de nuit"
       ]
     },
     "basic": {
-      "tagline": "Un peu plus de marge pour un agenda qui commence à se remplir.",
+      "tagline": "Ton activité accélère. Ton agenda reste léger.",
       "cta": "Passer en {{label}}",
       "features": [
-        "Jusqu'à {{contacts}} contacts",
-        "{{appointments}} rendez-vous par mois",
-        "Liens de confirmation illimités",
-        "Agenda simple (vue semaine)",
-        "Programme de parrainage (30% à vie)",
-        "Mode jour / nuit"
+        "Garde jusqu’à {{contacts}} relations importantes bien organisées",
+        "Planifie {{appointments}} rendez-vous par mois sans te sentir débordé",
+        "Tes invités confirment simplement, sans échange interminable",
+        "Visualise ta semaine et protège ton temps",
+        "Transforme chaque recommandation en revenu avec 30 % à vie",
+        "Travaille confortablement à toute heure"
       ]
     },
     "standard": {
-      "tagline": "Pour celles et ceux qui enchaînent les rendez-vous chaque semaine.",
+      "tagline": "Pendant que tu travailles, ton agenda continue de se remplir.",
       "cta": "Passer en Standard",
       "features": [
-        "Jusqu'à {{contacts}} contacts",
-        "{{appointments}} rendez-vous par mois",
-        "Agenda complet : vue semaine & mois, création en un clic",
-        "Statistiques de la semaine",
-        "Réservation en libre-service via ton lien public",
-        "Programme de parrainage (30% à vie)"
+        "Retrouve instantanément le contexte de {{contacts}} contacts",
+        "Accompagne jusqu’à {{appointments}} rendez-vous chaque mois",
+        "Passe de ta semaine à ton mois et crée un rendez-vous en un clic",
+        "Sache chaque semaine où part vraiment ton temps",
+        "Tes clients réservent seuls depuis ton lien public",
+        "Gagne 30 % à vie sur chaque personne parrainée"
       ]
     },
     "economic": {
-      "tagline": "Pour une activité qui tourne à plein régime toute l'année.",
+      "tagline": "Prends de la hauteur sur une activité qui ne ralentit plus.",
       "cta": "Passer en {{label}}",
       "features": [
-        "Jusqu'à {{contacts}} contacts",
-        "{{appointments}} rendez-vous par mois",
-        "Tout Standard : agenda complet, réservation",
-        "Tendance du mois",
-        "Programme de parrainage (30% à vie)"
+        "Entretiens jusqu’à {{contacts}} relations sans perdre le fil",
+        "Absorbe jusqu’à {{appointments}} rendez-vous par mois avec sérénité",
+        "Profite de tout Standard : agenda complet et réservation autonome",
+        "Vois la dynamique de ton mois avant de prendre tes décisions",
+        "Crée un revenu durable avec 30 % à vie sur tes filleuls"
       ]
     },
     "business": {
-      "tagline": "Pour les équipes et les marques qui veulent tout, sans limite.",
+      "tagline": "Chaque invitation porte ta marque. Aucune limite ne freine ton équipe.",
       "cta": "Passer en Business",
       "features": [
-        "Contacts et rendez-vous illimités",
-        "Tout {{economicLabel}} : agenda complet, réservation, tendance du mois",
-        "Lien d'invitation personnalisé (branding + message)",
-        "Avis Google : note, lien Google My Business et Maps",
-        "Lien site internet sur tes invitations",
-        "Support prioritaire"
+        "Accueille autant de contacts et de rendez-vous que nécessaire",
+        "Garde toute la puissance d’{{economicLabel}} : agenda, réservations et tendances",
+        "Offre une expérience à ton image avec ton branding et ton message",
+        "Transforme la confiance en avis grâce à Google et Maps",
+        "Guide chaque invité vers ton site au bon moment",
+        "Avance sereinement avec un support prioritaire"
       ]
     }
   }
