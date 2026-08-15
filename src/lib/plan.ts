@@ -11,8 +11,8 @@ export const TIER_LIMITS: Record<
 > = {
   free: { contacts: 10, appointments: 15 },
   basic: { contacts: 30, appointments: 50 },
-  standard: { contacts: 50, appointments: 100 },
-  economic: { contacts: 250, appointments: 500 },
+  standard: { contacts: 100, appointments: 250 },
+  economic: { contacts: 250, appointments: 1000 },
   business: { contacts: null, appointments: null },
 };
 

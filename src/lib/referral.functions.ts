@@ -5,6 +5,7 @@ import { buildReferralInviteEmail } from "../../supabase/emails/referral-invite"
 
 const sendReferralInviteSchema = z.object({
   email: z.string().email().max(300),
+  locale: z.string().trim().min(2).max(10),
   origin: z.string().url().max(300),
 });
 
@@ -38,7 +39,7 @@ export const sendReferralInviteEmail = createServerFn({ method: "POST" })
     }
 
     const referrerName = profile.business_name || profile.full_name || "Un utilisateur de Cadence";
-    const link = `${data.origin.replace(/\/$/, "")}/auth?ref=${profile.referral_code}`;
+    const link = `${data.origin.replace(/\/$/, "")}/${data.locale}/auth?ref=${profile.referral_code}`;
 
     const { subject, html } = buildReferralInviteEmail({ referrerName, link });
 

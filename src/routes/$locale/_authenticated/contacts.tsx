@@ -1,6 +1,6 @@
 import { ContactsSkeleton } from "@/components/loading/page-skeletons";
 import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
@@ -34,6 +34,7 @@ import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { ContactSearchDialog } from "@/components/agenda/contact-search-dialog";
 import { ContactImportDialog } from "@/components/agenda/contact-import-dialog";
 import { FeatureTeaser } from "@/components/agenda/locked-feature-card";
+import { BookingLinkShareMenu } from "@/components/agenda/booking-link-share-menu";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
@@ -54,6 +55,7 @@ import {
   buildContactAppointmentDates,
   EMPTY_CONTACT_SEARCH_FILTERS,
   filterAndSortContacts,
+  nextAppointmentLinkForContact,
   type ContactAppointmentLink,
 } from "@/lib/contact-search";
 
@@ -178,7 +180,7 @@ function BookingLinkCard() {
         <code className="min-w-0 max-w-full truncate rounded-lg bg-surface/70 px-3 py-1.5 text-xs">
           {bookingUrl(settings.slug)}
         </code>
-        <div className="flex shrink-0 gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2">
           <Button
             size="sm"
             variant="secondary"
@@ -188,6 +190,7 @@ function BookingLinkCard() {
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             {copied ? t("booking.copied") : t("booking.copy")}
           </Button>
+          <BookingLinkShareMenu url={bookingUrl(settings.slug)} />
           <Button asChild size="sm" variant="ghost" className="gap-2">
             <Link to="/$locale/settings" params={{ locale }}>
               <Settings className="h-4 w-4" />
@@ -209,7 +212,7 @@ function BookingLinkCard() {
         bookingBody
       ) : (
         <FeatureTeaser title={t("booking.title")} minTier="standard">
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-3 flex min-h-40 flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">{t("booking.share_text")}</p>
             <Button size="sm" className="shrink-0 gap-2">
               <Link2 className="h-4 w-4" />
@@ -224,6 +227,7 @@ function BookingLinkCard() {
 
 function ContactsPage() {
   const locale = useLocale();
+  const navigate = useNavigate();
   const { t } = useTranslation("contacts");
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -315,6 +319,22 @@ function ContactsPage() {
     refresh();
   };
 
+  // Clique sur la carte : direct vers le prochain rdv à venir avec ce contact (sur l'agenda
+  // complet, "snip"), sinon ouvre simplement sa fiche.
+  const openContact = (c: Contact) => {
+    const nextLink = nextAppointmentLinkForContact(contactAppointmentsQuery.data ?? [], c.id);
+    if (nextLink) {
+      void navigate({
+        to: "/$locale/agenda",
+        params: { locale },
+        search: { appointmentId: nextLink.appointmentId },
+      });
+      return;
+    }
+    setEditing(c);
+    setOpen(true);
+  };
+
   return (
     <div className="min-h-screen">
       <AppHeader />
@@ -401,7 +421,18 @@ function ContactsPage() {
           <div className="mt-8 grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {visibleContacts.map((c, i) => (
               <Reveal key={c.id} delay={i * 0.04}>
-                <article className="glass-panel h-full min-w-0 overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow sm:p-5">
+                <article
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openContact(c)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openContact(c);
+                    }
+                  }}
+                  className="glass-panel h-full min-w-0 cursor-pointer overflow-hidden rounded-2xl p-4 transition-shadow hover:shadow-glow sm:p-5"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -425,7 +456,8 @@ function ContactsPage() {
                         size="icon"
                         aria-label={t("card.edit_aria")}
                         className="h-8 w-8"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setEditing(c);
                           setOpen(true);
                         }}
@@ -437,7 +469,10 @@ function ContactsPage() {
                         size="icon"
                         aria-label={t("card.delete_aria")}
                         className="h-8 w-8 text-destructive"
-                        onClick={() => remove(c.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void remove(c.id);
+                        }}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -524,7 +559,8 @@ function ContactsPage() {
                   <Button
                     variant="secondary"
                     className="mt-4 w-full gap-2"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setApptContactId(c.id);
                       setApptOpen(true);
                     }}

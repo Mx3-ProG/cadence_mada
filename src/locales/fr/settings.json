@@ -157,5 +157,17 @@
   "history.table.cancelled": "Annulés",
   "history.table.invites": "Liens",
   "history.table.contacts": "Contacts",
-  "history.table.rate": "Taux"
+  "history.table.rate": "Taux",
+  "quick_nav.trigger_aria": "Navigation rapide dans les réglages",
+  "quick_nav.title": "Aller à…",
+  "quick_nav.items.account": "Mon compte",
+  "quick_nav.items.subscription": "Abonnement",
+  "quick_nav.items.history": "Historique semaine par semaine",
+  "quick_nav.items.referral": "Parrainage",
+  "quick_nav.items.help": "Besoin d'aide",
+  "quick_nav.items.booking": "Lien de réservation",
+  "quick_nav.items.branding": "Personnaliser le lien de réservation (aperçu)",
+  "quick_nav.items.docs": "Aide et documentation",
+  "quick_nav.items.password": "Mot de passe",
+  "quick_nav.items.delete": "Supprimer mon compte"
 }

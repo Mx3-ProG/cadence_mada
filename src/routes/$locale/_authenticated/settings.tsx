@@ -4,7 +4,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, ExternalLink, Loader2, MessageCircle, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { WeeklyHistory } from "@/components/agenda/weekly-history";
-import { AccountSettings } from "@/components/agenda/account-settings";
+import {
+  AccountProfileSection,
+  DeleteAccountSection,
+  PasswordSection,
+} from "@/components/agenda/account-settings";
 import { ReferralSection } from "@/components/agenda/referral-section";
 import { SubscriptionSection } from "@/components/agenda/subscription-section";
 import { BookingSettingsSection } from "@/components/agenda/booking-settings-section";
@@ -276,60 +280,33 @@ function SettingsPage() {
 
         <Reveal>
           <div className="mt-6">
+            <AccountProfileSection />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <div id="settings-subscription" className="mt-6 scroll-mt-24">
             <SubscriptionSection />
           </div>
         </Reveal>
 
-        <Reveal>
-          <section className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
-            {isBusiness ? (
-              brandingFieldset
-            ) : (
-              <FeatureTeaser title={t("header.title")} minTier={BRANDING_MIN_TIER}>
-                {brandingFieldset}
-              </FeatureTeaser>
-            )}
-          </section>
-        </Reveal>
-
         <Reveal delay={0.05}>
-          <section className="mt-6">
-            <p className="flex items-center gap-2 text-sm font-medium">
-              <Star className="h-4 w-4 text-primary" /> {t("preview.title")}
-            </p>
-            <div className="glass-panel mt-2 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
-              {form.invite_message && (
-                <p className="text-sm text-muted-foreground">{form.invite_message}</p>
-              )}
-              {form.review_prompt_enabled ? (
-                <GoogleReviewCard
-                  branding={{
-                    businessName: form.business_name,
-                    googleReviewUrl: form.google_review_url,
-                    googleMapsUrl: form.google_maps_url,
-                    googleRating: form.google_rating
-                      ? Number(form.google_rating.replace(",", "."))
-                      : null,
-                    googleReviewsCount: form.google_reviews_count
-                      ? Number(form.google_reviews_count)
-                      : null,
-                  }}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground">{t("preview.disabled")}</p>
-              )}
-            </div>
-          </section>
-        </Reveal>
-
-        <Reveal delay={0.05}>
-          <div className="mt-6">
-            <BookingSettingsSection />
+          <div id="settings-history" className="mt-6 scroll-mt-24">
+            <WeeklyHistory />
           </div>
         </Reveal>
 
         <Reveal delay={0.05}>
-          <section className="glass-panel mt-6 flex min-w-0 flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div id="settings-referral" className="mt-6 scroll-mt-24">
+            <ReferralSection />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <section
+            id="settings-help"
+            className="glass-panel mt-6 flex min-w-0 scroll-mt-24 flex-col gap-4 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+          >
             <div className="flex min-w-0 items-start gap-3">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10">
                 <MessageCircle className="h-5 w-5 text-primary" />
@@ -349,7 +326,58 @@ function SettingsPage() {
         </Reveal>
 
         <Reveal delay={0.05}>
-          <section className="glass-panel mt-6 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
+          <div id="settings-booking" className="mt-6 scroll-mt-24">
+            <BookingSettingsSection />
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <div id="settings-branding" className="mt-6 scroll-mt-24">
+            <section className="glass-panel min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
+              {isBusiness ? (
+                brandingFieldset
+              ) : (
+                <FeatureTeaser title={t("header.title")} minTier={BRANDING_MIN_TIER}>
+                  {brandingFieldset}
+                </FeatureTeaser>
+              )}
+            </section>
+
+            <section className="mt-6">
+              <p className="flex items-center gap-2 text-sm font-medium">
+                <Star className="h-4 w-4 text-primary" /> {t("preview.title")}
+              </p>
+              <div className="glass-panel mt-2 min-w-0 overflow-hidden rounded-2xl p-4 sm:p-5">
+                {form.invite_message && (
+                  <p className="text-sm text-muted-foreground">{form.invite_message}</p>
+                )}
+                {form.review_prompt_enabled ? (
+                  <GoogleReviewCard
+                    branding={{
+                      businessName: form.business_name,
+                      googleReviewUrl: form.google_review_url,
+                      googleMapsUrl: form.google_maps_url,
+                      googleRating: form.google_rating
+                        ? Number(form.google_rating.replace(",", "."))
+                        : null,
+                      googleReviewsCount: form.google_reviews_count
+                        ? Number(form.google_reviews_count)
+                        : null,
+                    }}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{t("preview.disabled")}</p>
+                )}
+              </div>
+            </section>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.05}>
+          <section
+            id="settings-docs"
+            className="glass-panel mt-6 min-w-0 scroll-mt-24 overflow-hidden rounded-2xl p-4 sm:p-5"
+          >
             <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
               <BookOpen className="h-4 w-4 text-primary" /> {t("docs.title")}
             </h2>
@@ -379,19 +407,13 @@ function SettingsPage() {
 
         <Reveal delay={0.05}>
           <div className="mt-6">
-            <WeeklyHistory />
+            <PasswordSection />
           </div>
         </Reveal>
 
         <Reveal delay={0.05}>
           <div className="mt-6">
-            <ReferralSection />
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.05}>
-          <div className="mt-6">
-            <AccountSettings />
+            <DeleteAccountSection />
           </div>
         </Reveal>
       </main>

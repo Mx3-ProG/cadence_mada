@@ -1,6 +1,8 @@
 import { format, isSameDay } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { Link } from "@tanstack/react-router";
 import { useDateFnsLocale } from "@/i18n/date-fns-locales";
+import { useLocale } from "@/i18n/use-locale";
 import { CalendarPlus, Clock, MapPin, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/agenda/status-badge";
@@ -16,6 +18,7 @@ export function TodayPanel({
   onCreate: (day: Date) => void;
 }) {
   const dateFnsLocale = useDateFnsLocale();
+  const locale = useLocale();
   const { t } = useTranslation("agenda");
   const today = new Date();
   const contactById = new Map(contacts.map((c) => [c.id, c] as const));
@@ -59,9 +62,12 @@ export function TodayPanel({
             const contact = a.contact_id ? contactById.get(a.contact_id) : null;
             const isNext = next?.id === a.id;
             return (
-              <article
+              <Link
                 key={a.id}
-                className={`rounded-xl border p-3 ${
+                to="/$locale/agenda"
+                params={{ locale }}
+                search={{ appointmentId: a.id }}
+                className={`block rounded-xl border p-3 text-left transition-colors hover:border-primary/50 ${
                   isNext ? "border-primary/60 bg-primary/5" : "border-border/70 bg-surface/70"
                 }`}
               >
@@ -91,7 +97,7 @@ export function TodayPanel({
                     {t("today.next")}
                   </p>
                 )}
-              </article>
+              </Link>
             );
           })}
         </div>

@@ -24,10 +24,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export function AccountSettings() {
+export function AccountProfileSection() {
   const { t } = useTranslation("auth");
-  const locale = useLocale();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const accountQuery = useQuery({
@@ -54,13 +52,6 @@ export function AccountSettings() {
   const [email, setEmail] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [automaticRemindersEnabled, setAutomaticRemindersEnabled] = useState(true);
-
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [savingPassword, setSavingPassword] = useState(false);
-
-  const [deleting, setDeleting] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
 
   useEffect(() => {
     if (!accountQuery.data) return;
@@ -104,6 +95,62 @@ export function AccountSettings() {
     void queryClient.invalidateQueries({ queryKey: ["account-profile"] });
   };
 
+  return (
+    <section id="settings-account" className="glass-panel scroll-mt-24 rounded-2xl p-5">
+      <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+        <UserRound className="h-4 w-4 text-primary" /> {t("account.title")}
+      </h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-2">
+          <Label htmlFor="account_name">{t("account.name_label")}</Label>
+          <Input
+            id="account_name"
+            value={fullName}
+            placeholder={t("account.name_placeholder")}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="account_email">{t("account.email_label")}</Label>
+          <Input
+            id="account_email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+      </div>
+      <Button className="mt-4 gap-2" onClick={saveProfile} disabled={savingProfile}>
+        {savingProfile && <Loader2 className="h-4 w-4 animate-spin" />}
+        {t("account.save")}
+      </Button>
+      <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-border/70 p-4">
+        <div>
+          <Label htmlFor="automatic-reminders" className="flex items-center gap-2">
+            <BellRing className="h-4 w-4 text-primary" /> {t("reminders.title")}
+          </Label>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            {t("reminders.description")}
+          </p>
+        </div>
+        <Switch
+          id="automatic-reminders"
+          checked={automaticRemindersEnabled}
+          onCheckedChange={setAutomaticRemindersEnabled}
+          aria-label={t("reminders.toggle_label")}
+        />
+      </div>
+    </section>
+  );
+}
+
+export function PasswordSection() {
+  const { t } = useTranslation("auth");
+
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+
   const changePassword = async () => {
     if (password.length < 8) {
       toast.error(t("password.errors.too_short"));
@@ -125,6 +172,54 @@ export function AccountSettings() {
     toast.success(t("password.success"));
   };
 
+  return (
+    <section id="settings-password" className="glass-panel scroll-mt-24 rounded-2xl p-5">
+      <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+        <KeyRound className="h-4 w-4 text-primary" /> {t("password.title")}
+      </h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-2">
+          <Label htmlFor="new_password">{t("password.new_label")}</Label>
+          <PasswordInput
+            id="new_password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="confirm_password">{t("password.confirm_label")}</Label>
+          <PasswordInput
+            id="confirm_password"
+            autoComplete="new-password"
+            visibilityLabel={t("password.confirm_visibility_label")}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+        </div>
+      </div>
+      <Button
+        variant="outline"
+        className="mt-4 gap-2"
+        onClick={changePassword}
+        disabled={savingPassword}
+      >
+        {savingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
+        {t("password.submit")}
+      </Button>
+    </section>
+  );
+}
+
+export function DeleteAccountSection() {
+  const { t } = useTranslation("auth");
+  const locale = useLocale();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [deleting, setDeleting] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+
   const removeAccount = async () => {
     setDeleting(true);
     try {
@@ -141,131 +236,50 @@ export function AccountSettings() {
   };
 
   return (
-    <div className="grid gap-6">
-      <section className="glass-panel rounded-2xl p-5">
-        <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-          <UserRound className="h-4 w-4 text-primary" /> {t("account.title")}
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="account_name">{t("account.name_label")}</Label>
-            <Input
-              id="account_name"
-              value={fullName}
-              placeholder={t("account.name_placeholder")}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="account_email">{t("account.email_label")}</Label>
-            <Input
-              id="account_email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-        </div>
-        <Button className="mt-4 gap-2" onClick={saveProfile} disabled={savingProfile}>
-          {savingProfile && <Loader2 className="h-4 w-4 animate-spin" />}
-          {t("account.save")}
-        </Button>
-        <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-border/70 p-4">
-          <div>
-            <Label htmlFor="automatic-reminders" className="flex items-center gap-2">
-              <BellRing className="h-4 w-4 text-primary" /> {t("reminders.title")}
-            </Label>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              {t("reminders.description")}
-            </p>
-          </div>
-          <Switch
-            id="automatic-reminders"
-            checked={automaticRemindersEnabled}
-            onCheckedChange={setAutomaticRemindersEnabled}
-            aria-label={t("reminders.toggle_label")}
+    <section
+      id="settings-delete"
+      className="scroll-mt-24 rounded-2xl border border-destructive/40 bg-destructive/5 p-5"
+    >
+      <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-destructive">
+        <Trash2 className="h-4 w-4" /> {t("delete.title")}
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground">{t("delete.description")}</p>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" className="mt-4 gap-2">
+            <Trash2 className="h-4 w-4" /> {t("delete.cta")}
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("delete.dialog_title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("delete.dialog_description_prefix")}
+              <strong>{t("delete.confirm_word")}</strong>
+              {t("delete.dialog_description_suffix")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            value={confirmText}
+            placeholder={t("delete.confirm_word")}
+            onChange={(e) => setConfirmText(e.target.value)}
           />
-        </div>
-      </section>
-
-      <section className="glass-panel rounded-2xl p-5">
-        <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-          <KeyRound className="h-4 w-4 text-primary" /> {t("password.title")}
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="new_password">{t("password.new_label")}</Label>
-            <PasswordInput
-              id="new_password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="confirm_password">{t("password.confirm_label")}</Label>
-            <PasswordInput
-              id="confirm_password"
-              autoComplete="new-password"
-              visibilityLabel={t("password.confirm_visibility_label")}
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-            />
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          className="mt-4 gap-2"
-          onClick={changePassword}
-          disabled={savingPassword}
-        >
-          {savingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
-          {t("password.submit")}
-        </Button>
-      </section>
-
-      <section className="rounded-2xl border border-destructive/40 bg-destructive/5 p-5">
-        <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-destructive">
-          <Trash2 className="h-4 w-4" /> {t("delete.title")}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">{t("delete.description")}</p>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="mt-4 gap-2">
-              <Trash2 className="h-4 w-4" /> {t("delete.cta")}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t("delete.dialog_title")}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t("delete.dialog_description_prefix")}
-                <strong>{t("delete.confirm_word")}</strong>
-                {t("delete.dialog_description_suffix")}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <Input
-              value={confirmText}
-              placeholder={t("delete.confirm_word")}
-              onChange={(e) => setConfirmText(e.target.value)}
-            />
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setConfirmText("")}>
-                {t("delete.cancel")}
-              </AlertDialogCancel>
-              <AlertDialogAction
-                disabled={confirmText !== t("delete.confirm_word") || deleting}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void removeAccount();
-                }}
-              >
-                {deleting ? t("delete.deleting") : t("delete.confirm")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </section>
-    </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmText("")}>
+              {t("delete.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={confirmText !== t("delete.confirm_word") || deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                void removeAccount();
+              }}
+            >
+              {deleting ? t("delete.deleting") : t("delete.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </section>
   );
 }

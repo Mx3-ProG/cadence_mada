@@ -20,6 +20,19 @@ export function shareBySms(payload: SharePayload) {
   window.location.href = `sms:?body=${encodeURIComponent(completeMessage(payload))}`;
 }
 
+export function shareByEmail(payload: SharePayload) {
+  const url = `mailto:?subject=${encodeURIComponent(payload.title)}&body=${encodeURIComponent(completeMessage(payload))}`;
+  window.location.href = url;
+}
+
+export function shareOnTwitter(payload: SharePayload) {
+  window.open(
+    `https://twitter.com/intent/tweet?url=${encodeURIComponent(payload.url)}&text=${encodeURIComponent(payload.text)}`,
+    "_blank",
+    "noopener,noreferrer",
+  );
+}
+
 /** Ouvre la feuille de partage du téléphone, qui donne accès aux applications installées. */
 export async function shareNatively(payload: SharePayload) {
   if (!navigator.share) return false;

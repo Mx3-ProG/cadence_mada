@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addDays, addMonths, endOfMonth, format, startOfMonth } from "date-fns";
 import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,7 +35,12 @@ import {
   type Contact,
 } from "@/lib/agenda";
 
+const agendaSearchSchema = z.object({
+  appointmentId: z.string().uuid().optional(),
+});
+
 export const Route = createFileRoute("/$locale/_authenticated/agenda")({
+  validateSearch: agendaSearchSchema,
   head: () => ({
     meta: [
       { title: "Agenda complet — Cadence" },
@@ -54,6 +60,8 @@ function AgendaPage() {
   const dateFnsLocale = useDateFnsLocale();
   const { t } = useTranslation("agenda");
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const search = Route.useSearch();
   const planQuery = usePlanUsage();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
 
@@ -121,6 +129,37 @@ function AgendaPage() {
   const detailsContact = detailsAppointment?.contact_id
     ? (contactById.get(detailsAppointment.contact_id) ?? null)
     : null;
+
+  // Rdv ciblé par un lien externe (panneau "Aujourd'hui" du dashboard, carte contact) : on le
+  // récupère directement par id, quelle que soit la semaine affichée par défaut.
+  const targetAppointmentQuery = useQuery({
+    queryKey: ["appointment", search.appointmentId],
+    enabled: !!search.appointmentId,
+    queryFn: async (): Promise<Appointment | null> => {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("*, invitations:appointment_invites(*, contact:contacts(*))")
+        .eq("id", search.appointmentId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Ouvre directement le rdv visé, en sautant sur sa semaine, sans passer par le paywall
+  // (l'utilisateur le voyait déjà librement ailleurs dans l'app).
+  useEffect(() => {
+    const target = targetAppointmentQuery.data;
+    if (!search.appointmentId || !target) return;
+    setAnchor(new Date(target.starts_at));
+    setView("week");
+    setDetailsAppointment(target);
+    void navigate({
+      from: Route.fullPath,
+      search: (prev) => ({ ...prev, appointmentId: undefined }),
+      replace: true,
+    });
+  }, [navigate, search.appointmentId, targetAppointmentQuery.data]);
 
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: ["appointments"] });

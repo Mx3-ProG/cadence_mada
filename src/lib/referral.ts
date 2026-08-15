@@ -83,9 +83,9 @@ export function useRequestPayout() {
 /** Envoie une invitation de parrainage par email à l'adresse saisie. */
 export function useSendReferralInvite() {
   return useMutation({
-    mutationFn: async (email: string) =>
+    mutationFn: async ({ email, locale }: { email: string; locale: string }) =>
       sendReferralInviteEmail({
-        data: { email, origin: window.location.origin },
+        data: { email, locale, origin: window.location.origin },
       }),
   });
 }
@@ -101,8 +101,8 @@ export function referralPayoutErrorMessage(error: unknown, t: (key: string) => s
   return t("referral.payout_errors.generic");
 }
 
-export function referralLink(code: string) {
-  return `${window.location.origin}/auth?ref=${code}`;
+export function referralLink(code: string, locale: string) {
+  return `${window.location.origin}/${locale}/auth?ref=${code}`;
 }
 
 export function formatCents(cents: number) {

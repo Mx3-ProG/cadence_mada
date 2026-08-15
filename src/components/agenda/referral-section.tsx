@@ -60,7 +60,7 @@ export function ReferralSection() {
 
   const copyLink = async () => {
     if (!summary) return;
-    await navigator.clipboard.writeText(referralLink(summary.referralCode));
+    await navigator.clipboard.writeText(referralLink(summary.referralCode, locale));
     setCopied(true);
     toast.success(t("referral.copied_toast"));
     setTimeout(() => setCopied(false), 2000);
@@ -69,24 +69,27 @@ export function ReferralSection() {
   const submitInvite = () => {
     const email = inviteEmail.trim();
     if (!email || sendInvite.isPending) return;
-    sendInvite.mutate(email, {
-      onSuccess: (result) => {
-        if (result.sent) {
-          toast.success(t("referral.invite_success", { email: result.to }));
-          setInviteEmail("");
-        } else if (result.reason === "already_member") {
-          toast.error(t("referral.invite_already_member"));
-        } else {
-          toast.error(t("referral.invite_failed"));
-        }
+    sendInvite.mutate(
+      { email, locale },
+      {
+        onSuccess: (result) => {
+          if (result.sent) {
+            toast.success(t("referral.invite_success", { email: result.to }));
+            setInviteEmail("");
+          } else if (result.reason === "already_member") {
+            toast.error(t("referral.invite_already_member"));
+          } else {
+            toast.error(t("referral.invite_failed"));
+          }
+        },
+        onError: () => toast.error(t("referral.invite_failed")),
       },
-      onError: () => toast.error(t("referral.invite_failed")),
-    });
+    );
   };
 
   const shareViaClipboard = async (network: string) => {
     if (!summary) return;
-    await navigator.clipboard.writeText(referralLink(summary.referralCode));
+    await navigator.clipboard.writeText(referralLink(summary.referralCode, locale));
     toast.success(t("referral.share_copied_toast", { network }));
   };
 
@@ -95,7 +98,7 @@ export function ReferralSection() {
     ? {
         title: t("referral.share_payload.title"),
         text: shareText,
-        url: referralLink(summary.referralCode),
+        url: referralLink(summary.referralCode, locale),
       }
     : null;
 
@@ -111,7 +114,7 @@ export function ReferralSection() {
           icon: Facebook,
           onClick: () =>
             window.open(
-              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink(summary.referralCode))}`,
+              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink(summary.referralCode, locale))}`,
               "_blank",
               "noopener,noreferrer",
             ),
@@ -121,7 +124,7 @@ export function ReferralSection() {
           icon: Twitter,
           onClick: () =>
             window.open(
-              `https://twitter.com/intent/tweet?url=${encodeURIComponent(referralLink(summary.referralCode))}&text=${encodeURIComponent(shareText)}`,
+              `https://twitter.com/intent/tweet?url=${encodeURIComponent(referralLink(summary.referralCode, locale))}&text=${encodeURIComponent(shareText)}`,
               "_blank",
               "noopener,noreferrer",
             ),
@@ -131,7 +134,7 @@ export function ReferralSection() {
           icon: Linkedin,
           onClick: () =>
             window.open(
-              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(referralLink(summary.referralCode))}`,
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(referralLink(summary.referralCode, locale))}`,
               "_blank",
               "noopener,noreferrer",
             ),
@@ -175,7 +178,11 @@ export function ReferralSection() {
       <p className="mt-1 text-sm text-muted-foreground">{t("referral.description")}</p>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <Input readOnly value={referralLink(summary.referralCode)} className="font-mono text-xs" />
+        <Input
+          readOnly
+          value={referralLink(summary.referralCode, locale)}
+          className="font-mono text-xs"
+        />
         <Button variant="outline" className="shrink-0 gap-2" onClick={() => void copyLink()}>
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? t("referral.copied") : t("referral.copy")}

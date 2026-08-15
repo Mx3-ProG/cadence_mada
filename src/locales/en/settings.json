@@ -157,5 +157,17 @@
   "history.table.cancelled": "Cancelled",
   "history.table.invites": "Links",
   "history.table.contacts": "Contacts",
-  "history.table.rate": "Rate"
+  "history.table.rate": "Rate",
+  "quick_nav.trigger_aria": "Quick navigation in settings",
+  "quick_nav.title": "Go to…",
+  "quick_nav.items.account": "My account",
+  "quick_nav.items.subscription": "Subscription",
+  "quick_nav.items.history": "Week-by-week history",
+  "quick_nav.items.referral": "Referral",
+  "quick_nav.items.help": "Need help",
+  "quick_nav.items.booking": "Booking link",
+  "quick_nav.items.branding": "Customize the booking link (preview)",
+  "quick_nav.items.docs": "Help and documentation",
+  "quick_nav.items.password": "Password",
+  "quick_nav.items.delete": "Delete my account"
 }

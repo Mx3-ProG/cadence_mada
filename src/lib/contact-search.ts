@@ -100,6 +100,29 @@ export function buildContactAppointmentDates(
   return result;
 }
 
+/** Le prochain rendez-vous à venir avec ce contact (hors annulés), le plus proche d'abord. */
+export function nextAppointmentLinkForContact(
+  links: ContactAppointmentLink[],
+  contactId: string,
+  now = new Date(),
+): ContactAppointmentLink | null {
+  const nowTime = now.getTime();
+  let best: ContactAppointmentLink | null = null;
+  let bestTime = Infinity;
+
+  for (const link of links) {
+    if (link.contactId !== contactId) continue;
+    const time = new Date(link.startsAt).getTime();
+    if (Number.isNaN(time) || time < nowTime) continue;
+    if (time < bestTime) {
+      best = link;
+      bestTime = time;
+    }
+  }
+
+  return best;
+}
+
 export function activeContactFilterCount(filters: ContactSearchFilters) {
   return Object.entries(filters).filter(([key, value]) => {
     if (key === "sort") return value !== "name";
