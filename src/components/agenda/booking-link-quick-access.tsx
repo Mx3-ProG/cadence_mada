@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { bookingUrl } from "@/lib/agenda";
 import { hasFeatureAccess, usePlanUsage } from "@/lib/plan";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Bouton d'accès rapide au lien de réservation, disponible depuis n'importe quelle page
  * authentifiée (header) pour éviter d'avoir à naviguer jusqu'aux réglages pour le retrouver.
  */
 export function BookingLinkQuickAccess() {
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const planQuery = usePlanUsage();
@@ -66,7 +68,8 @@ export function BookingLinkQuickAccess() {
             <span>
               Réservé au plan Standard et plus.{" "}
               <Link
-                to="/tarifs"
+                to="/$locale/tarifs"
+                params={{ locale }}
                 hash="offre-standard"
                 className="font-medium text-primary underline-offset-2 hover:underline"
               >
@@ -84,7 +87,8 @@ export function BookingLinkQuickAccess() {
           <p className="mt-2 text-xs text-muted-foreground">
             Pas encore activé.{" "}
             <Link
-              to="/settings"
+              to="/$locale/settings"
+              params={{ locale }}
               className="font-medium text-primary underline-offset-2 hover:underline"
             >
               Configurer mon lien

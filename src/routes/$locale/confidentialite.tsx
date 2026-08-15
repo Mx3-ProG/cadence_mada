@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/legal-page";
 
-export const Route = createFileRoute("/confidentialite")({
+export const Route = createFileRoute("/$locale/confidentialite")({
   head: () => ({
     meta: [
       { title: "Politique de confidentialité (RGPD) — Cadence" },

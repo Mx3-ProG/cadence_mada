@@ -10,24 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as CguRouteImport } from './routes/cgu'
-import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as DocumentationRouteImport } from './routes/documentation'
-import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as TarifsRouteImport } from './routes/tarifs'
-import { Route as VerificationRouteImport } from './routes/verification'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedAgendaRouteImport } from './routes/_authenticated/agenda'
-import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
+import { Route as LocaleIndexRouteImport } from './routes/$locale/index'
+import { Route as LocaleAuthenticatedRouteRouteImport } from './routes/$locale/_authenticated/route'
+import { Route as LocaleAuthRouteImport } from './routes/$locale/auth'
+import { Route as LocaleCguRouteImport } from './routes/$locale/cgu'
+import { Route as LocaleConfidentialiteRouteImport } from './routes/$locale/confidentialite'
+import { Route as LocaleContactRouteImport } from './routes/$locale/contact'
+import { Route as LocaleCookiesRouteImport } from './routes/$locale/cookies'
+import { Route as LocaleDocumentationRouteImport } from './routes/$locale/documentation'
+import { Route as LocaleMentionsLegalesRouteImport } from './routes/$locale/mentions-legales'
+import { Route as LocaleResetPasswordRouteImport } from './routes/$locale/reset-password'
+import { Route as LocaleTarifsRouteImport } from './routes/$locale/tarifs'
+import { Route as LocaleVerificationRouteImport } from './routes/$locale/verification'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as LocaleAuthenticatedAdminRouteImport } from './routes/$locale/_authenticated/admin'
+import { Route as LocaleAuthenticatedAgendaRouteImport } from './routes/$locale/_authenticated/agenda'
+import { Route as LocaleAuthenticatedContactsRouteImport } from './routes/$locale/_authenticated/contacts'
+import { Route as LocaleAuthenticatedDashboardRouteImport } from './routes/$locale/_authenticated/dashboard'
+import { Route as LocaleAuthenticatedSettingsRouteImport } from './routes/$locale/_authenticated/settings'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,84 +37,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const LocaleRouteRoute = LocaleRouteRouteImport.update({
+  id: '/$locale',
+  path: '/$locale',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
+const LocaleIndexRoute = LocaleIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAuthenticatedRouteRoute =
+  LocaleAuthenticatedRouteRouteImport.update({
+    id: '/_authenticated',
+    getParentRoute: () => LocaleRouteRoute,
+  } as any)
+const LocaleAuthRoute = LocaleAuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const CguRoute = CguRouteImport.update({
+const LocaleCguRoute = LocaleCguRouteImport.update({
   id: '/cgu',
   path: '/cgu',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+const LocaleConfidentialiteRoute = LocaleConfidentialiteRouteImport.update({
   id: '/confidentialite',
   path: '/confidentialite',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const ContactRoute = ContactRouteImport.update({
+const LocaleContactRoute = LocaleContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const CookiesRoute = CookiesRouteImport.update({
+const LocaleCookiesRoute = LocaleCookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const DocumentationRoute = DocumentationRouteImport.update({
+const LocaleDocumentationRoute = LocaleDocumentationRouteImport.update({
   id: '/documentation',
   path: '/documentation',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+const LocaleMentionsLegalesRoute = LocaleMentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
+const LocaleResetPasswordRoute = LocaleResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const TarifsRoute = TarifsRouteImport.update({
+const LocaleTarifsRoute = LocaleTarifsRouteImport.update({
   id: '/tarifs',
   path: '/tarifs',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
-const VerificationRoute = VerificationRouteImport.update({
+const LocaleVerificationRoute = LocaleVerificationRouteImport.update({
   id: '/verification',
   path: '/verification',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAgendaRoute = AuthenticatedAgendaRouteImport.update({
-  id: '/agenda',
-  path: '/agenda',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
 const BookSlugRoute = BookSlugRouteImport.update({
   id: '/book/$slug',
@@ -124,6 +112,36 @@ const InviteTokenRoute = InviteTokenRouteImport.update({
   path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LocaleAuthenticatedAdminRoute =
+  LocaleAuthenticatedAdminRouteImport.update({
+    id: '/admin',
+    path: '/admin',
+    getParentRoute: () => LocaleAuthenticatedRouteRoute,
+  } as any)
+const LocaleAuthenticatedAgendaRoute =
+  LocaleAuthenticatedAgendaRouteImport.update({
+    id: '/agenda',
+    path: '/agenda',
+    getParentRoute: () => LocaleAuthenticatedRouteRoute,
+  } as any)
+const LocaleAuthenticatedContactsRoute =
+  LocaleAuthenticatedContactsRouteImport.update({
+    id: '/contacts',
+    path: '/contacts',
+    getParentRoute: () => LocaleAuthenticatedRouteRoute,
+  } as any)
+const LocaleAuthenticatedDashboardRoute =
+  LocaleAuthenticatedDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => LocaleAuthenticatedRouteRoute,
+  } as any)
+const LocaleAuthenticatedSettingsRoute =
+  LocaleAuthenticatedSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => LocaleAuthenticatedRouteRoute,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe/webhook',
   path: '/api/public/stripe/webhook',
@@ -132,149 +150,149 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/cgu': typeof CguRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
-  '/documentation': typeof DocumentationRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/tarifs': typeof TarifsRoute
-  '/verification': typeof VerificationRoute
-  '/admin': typeof AuthenticatedAdminRoute
-  '/agenda': typeof AuthenticatedAgendaRoute
-  '/contacts': typeof AuthenticatedContactsRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/settings': typeof AuthenticatedSettingsRoute
+  '/$locale': typeof LocaleRouteRouteWithChildren
+  '/$locale/auth': typeof LocaleAuthRoute
+  '/$locale/cgu': typeof LocaleCguRoute
+  '/$locale/confidentialite': typeof LocaleConfidentialiteRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/cookies': typeof LocaleCookiesRoute
+  '/$locale/documentation': typeof LocaleDocumentationRoute
+  '/$locale/mentions-legales': typeof LocaleMentionsLegalesRoute
+  '/$locale/reset-password': typeof LocaleResetPasswordRoute
+  '/$locale/tarifs': typeof LocaleTarifsRoute
+  '/$locale/verification': typeof LocaleVerificationRoute
   '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/$locale/': typeof LocaleIndexRoute
+  '/$locale/admin': typeof LocaleAuthenticatedAdminRoute
+  '/$locale/agenda': typeof LocaleAuthenticatedAgendaRoute
+  '/$locale/contacts': typeof LocaleAuthenticatedContactsRoute
+  '/$locale/dashboard': typeof LocaleAuthenticatedDashboardRoute
+  '/$locale/settings': typeof LocaleAuthenticatedSettingsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/cgu': typeof CguRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
-  '/documentation': typeof DocumentationRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/tarifs': typeof TarifsRoute
-  '/verification': typeof VerificationRoute
-  '/admin': typeof AuthenticatedAdminRoute
-  '/agenda': typeof AuthenticatedAgendaRoute
-  '/contacts': typeof AuthenticatedContactsRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/settings': typeof AuthenticatedSettingsRoute
+  '/$locale': typeof LocaleIndexRoute
+  '/$locale/auth': typeof LocaleAuthRoute
+  '/$locale/cgu': typeof LocaleCguRoute
+  '/$locale/confidentialite': typeof LocaleConfidentialiteRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/cookies': typeof LocaleCookiesRoute
+  '/$locale/documentation': typeof LocaleDocumentationRoute
+  '/$locale/mentions-legales': typeof LocaleMentionsLegalesRoute
+  '/$locale/reset-password': typeof LocaleResetPasswordRoute
+  '/$locale/tarifs': typeof LocaleTarifsRoute
+  '/$locale/verification': typeof LocaleVerificationRoute
   '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/$locale/admin': typeof LocaleAuthenticatedAdminRoute
+  '/$locale/agenda': typeof LocaleAuthenticatedAgendaRoute
+  '/$locale/contacts': typeof LocaleAuthenticatedContactsRoute
+  '/$locale/dashboard': typeof LocaleAuthenticatedDashboardRoute
+  '/$locale/settings': typeof LocaleAuthenticatedSettingsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
-  '/cgu': typeof CguRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
-  '/documentation': typeof DocumentationRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/tarifs': typeof TarifsRoute
-  '/verification': typeof VerificationRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/_authenticated/agenda': typeof AuthenticatedAgendaRoute
-  '/_authenticated/contacts': typeof AuthenticatedContactsRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/$locale': typeof LocaleRouteRouteWithChildren
+  '/$locale/_authenticated': typeof LocaleAuthenticatedRouteRouteWithChildren
+  '/$locale/auth': typeof LocaleAuthRoute
+  '/$locale/cgu': typeof LocaleCguRoute
+  '/$locale/confidentialite': typeof LocaleConfidentialiteRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/cookies': typeof LocaleCookiesRoute
+  '/$locale/documentation': typeof LocaleDocumentationRoute
+  '/$locale/mentions-legales': typeof LocaleMentionsLegalesRoute
+  '/$locale/reset-password': typeof LocaleResetPasswordRoute
+  '/$locale/tarifs': typeof LocaleTarifsRoute
+  '/$locale/verification': typeof LocaleVerificationRoute
   '/book/$slug': typeof BookSlugRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/$locale/': typeof LocaleIndexRoute
+  '/$locale/_authenticated/admin': typeof LocaleAuthenticatedAdminRoute
+  '/$locale/_authenticated/agenda': typeof LocaleAuthenticatedAgendaRoute
+  '/$locale/_authenticated/contacts': typeof LocaleAuthenticatedContactsRoute
+  '/$locale/_authenticated/dashboard': typeof LocaleAuthenticatedDashboardRoute
+  '/$locale/_authenticated/settings': typeof LocaleAuthenticatedSettingsRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
-    | '/cgu'
-    | '/confidentialite'
-    | '/contact'
-    | '/cookies'
-    | '/documentation'
-    | '/mentions-legales'
-    | '/reset-password'
-    | '/tarifs'
-    | '/verification'
-    | '/admin'
-    | '/agenda'
-    | '/contacts'
-    | '/dashboard'
-    | '/settings'
+    | '/$locale'
+    | '/$locale/auth'
+    | '/$locale/cgu'
+    | '/$locale/confidentialite'
+    | '/$locale/contact'
+    | '/$locale/cookies'
+    | '/$locale/documentation'
+    | '/$locale/mentions-legales'
+    | '/$locale/reset-password'
+    | '/$locale/tarifs'
+    | '/$locale/verification'
     | '/book/$slug'
     | '/invite/$token'
+    | '/$locale/'
+    | '/$locale/admin'
+    | '/$locale/agenda'
+    | '/$locale/contacts'
+    | '/$locale/dashboard'
+    | '/$locale/settings'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
-    | '/cgu'
-    | '/confidentialite'
-    | '/contact'
-    | '/cookies'
-    | '/documentation'
-    | '/mentions-legales'
-    | '/reset-password'
-    | '/tarifs'
-    | '/verification'
-    | '/admin'
-    | '/agenda'
-    | '/contacts'
-    | '/dashboard'
-    | '/settings'
+    | '/$locale'
+    | '/$locale/auth'
+    | '/$locale/cgu'
+    | '/$locale/confidentialite'
+    | '/$locale/contact'
+    | '/$locale/cookies'
+    | '/$locale/documentation'
+    | '/$locale/mentions-legales'
+    | '/$locale/reset-password'
+    | '/$locale/tarifs'
+    | '/$locale/verification'
     | '/book/$slug'
     | '/invite/$token'
+    | '/$locale/admin'
+    | '/$locale/agenda'
+    | '/$locale/contacts'
+    | '/$locale/dashboard'
+    | '/$locale/settings'
     | '/api/public/stripe/webhook'
   id:
     | '__root__'
     | '/'
-    | '/_authenticated'
-    | '/auth'
-    | '/cgu'
-    | '/confidentialite'
-    | '/contact'
-    | '/cookies'
-    | '/documentation'
-    | '/mentions-legales'
-    | '/reset-password'
-    | '/tarifs'
-    | '/verification'
-    | '/_authenticated/admin'
-    | '/_authenticated/agenda'
-    | '/_authenticated/contacts'
-    | '/_authenticated/dashboard'
-    | '/_authenticated/settings'
+    | '/$locale'
+    | '/$locale/_authenticated'
+    | '/$locale/auth'
+    | '/$locale/cgu'
+    | '/$locale/confidentialite'
+    | '/$locale/contact'
+    | '/$locale/cookies'
+    | '/$locale/documentation'
+    | '/$locale/mentions-legales'
+    | '/$locale/reset-password'
+    | '/$locale/tarifs'
+    | '/$locale/verification'
     | '/book/$slug'
     | '/invite/$token'
+    | '/$locale/'
+    | '/$locale/_authenticated/admin'
+    | '/$locale/_authenticated/agenda'
+    | '/$locale/_authenticated/contacts'
+    | '/$locale/_authenticated/dashboard'
+    | '/$locale/_authenticated/settings'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
-  CguRoute: typeof CguRoute
-  ConfidentialiteRoute: typeof ConfidentialiteRoute
-  ContactRoute: typeof ContactRoute
-  CookiesRoute: typeof CookiesRoute
-  DocumentationRoute: typeof DocumentationRoute
-  MentionsLegalesRoute: typeof MentionsLegalesRoute
-  ResetPasswordRoute: typeof ResetPasswordRoute
-  TarifsRoute: typeof TarifsRoute
-  VerificationRoute: typeof VerificationRoute
+  LocaleRouteRoute: typeof LocaleRouteRouteWithChildren
   BookSlugRoute: typeof BookSlugRoute
   InviteTokenRoute: typeof InviteTokenRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
@@ -289,117 +307,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
+    '/$locale': {
+      id: '/$locale'
+      path: '/$locale'
+      fullPath: '/$locale'
+      preLoaderRoute: typeof LocaleRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$locale/': {
+      id: '/$locale/'
+      path: '/'
+      fullPath: '/$locale/'
+      preLoaderRoute: typeof LocaleIndexRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/_authenticated': {
+      id: '/$locale/_authenticated'
       path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale'
+      preLoaderRoute: typeof LocaleAuthenticatedRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/auth': {
-      id: '/auth'
+    '/$locale/auth': {
+      id: '/$locale/auth'
       path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/auth'
+      preLoaderRoute: typeof LocaleAuthRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/cgu': {
-      id: '/cgu'
+    '/$locale/cgu': {
+      id: '/$locale/cgu'
       path: '/cgu'
-      fullPath: '/cgu'
-      preLoaderRoute: typeof CguRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/cgu'
+      preLoaderRoute: typeof LocaleCguRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/confidentialite': {
-      id: '/confidentialite'
+    '/$locale/confidentialite': {
+      id: '/$locale/confidentialite'
       path: '/confidentialite'
-      fullPath: '/confidentialite'
-      preLoaderRoute: typeof ConfidentialiteRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/confidentialite'
+      preLoaderRoute: typeof LocaleConfidentialiteRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/contact': {
-      id: '/contact'
+    '/$locale/contact': {
+      id: '/$locale/contact'
       path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/contact'
+      preLoaderRoute: typeof LocaleContactRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/cookies': {
-      id: '/cookies'
+    '/$locale/cookies': {
+      id: '/$locale/cookies'
       path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/cookies'
+      preLoaderRoute: typeof LocaleCookiesRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/documentation': {
-      id: '/documentation'
+    '/$locale/documentation': {
+      id: '/$locale/documentation'
       path: '/documentation'
-      fullPath: '/documentation'
-      preLoaderRoute: typeof DocumentationRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/documentation'
+      preLoaderRoute: typeof LocaleDocumentationRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/mentions-legales': {
-      id: '/mentions-legales'
+    '/$locale/mentions-legales': {
+      id: '/$locale/mentions-legales'
       path: '/mentions-legales'
-      fullPath: '/mentions-legales'
-      preLoaderRoute: typeof MentionsLegalesRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/mentions-legales'
+      preLoaderRoute: typeof LocaleMentionsLegalesRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/reset-password': {
-      id: '/reset-password'
+    '/$locale/reset-password': {
+      id: '/$locale/reset-password'
       path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/reset-password'
+      preLoaderRoute: typeof LocaleResetPasswordRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/tarifs': {
-      id: '/tarifs'
+    '/$locale/tarifs': {
+      id: '/$locale/tarifs'
       path: '/tarifs'
-      fullPath: '/tarifs'
-      preLoaderRoute: typeof TarifsRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/$locale/tarifs'
+      preLoaderRoute: typeof LocaleTarifsRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
-    '/verification': {
-      id: '/verification'
+    '/$locale/verification': {
+      id: '/$locale/verification'
       path: '/verification'
-      fullPath: '/verification'
-      preLoaderRoute: typeof VerificationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/agenda': {
-      id: '/_authenticated/agenda'
-      path: '/agenda'
-      fullPath: '/agenda'
-      preLoaderRoute: typeof AuthenticatedAgendaRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/contacts': {
-      id: '/_authenticated/contacts'
-      path: '/contacts'
-      fullPath: '/contacts'
-      preLoaderRoute: typeof AuthenticatedContactsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      fullPath: '/$locale/verification'
+      preLoaderRoute: typeof LocaleVerificationRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
     '/book/$slug': {
       id: '/book/$slug'
@@ -415,6 +412,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$locale/_authenticated/admin': {
+      id: '/$locale/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/$locale/admin'
+      preLoaderRoute: typeof LocaleAuthenticatedAdminRouteImport
+      parentRoute: typeof LocaleAuthenticatedRouteRoute
+    }
+    '/$locale/_authenticated/agenda': {
+      id: '/$locale/_authenticated/agenda'
+      path: '/agenda'
+      fullPath: '/$locale/agenda'
+      preLoaderRoute: typeof LocaleAuthenticatedAgendaRouteImport
+      parentRoute: typeof LocaleAuthenticatedRouteRoute
+    }
+    '/$locale/_authenticated/contacts': {
+      id: '/$locale/_authenticated/contacts'
+      path: '/contacts'
+      fullPath: '/$locale/contacts'
+      preLoaderRoute: typeof LocaleAuthenticatedContactsRouteImport
+      parentRoute: typeof LocaleAuthenticatedRouteRoute
+    }
+    '/$locale/_authenticated/dashboard': {
+      id: '/$locale/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/$locale/dashboard'
+      preLoaderRoute: typeof LocaleAuthenticatedDashboardRouteImport
+      parentRoute: typeof LocaleAuthenticatedRouteRoute
+    }
+    '/$locale/_authenticated/settings': {
+      id: '/$locale/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/$locale/settings'
+      preLoaderRoute: typeof LocaleAuthenticatedSettingsRouteImport
+      parentRoute: typeof LocaleAuthenticatedRouteRoute
+    }
     '/api/public/stripe/webhook': {
       id: '/api/public/stripe/webhook'
       path: '/api/public/stripe/webhook'
@@ -425,38 +457,65 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedAgendaRoute: typeof AuthenticatedAgendaRoute
-  AuthenticatedContactsRoute: typeof AuthenticatedContactsRoute
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+interface LocaleAuthenticatedRouteRouteChildren {
+  LocaleAuthenticatedAdminRoute: typeof LocaleAuthenticatedAdminRoute
+  LocaleAuthenticatedAgendaRoute: typeof LocaleAuthenticatedAgendaRoute
+  LocaleAuthenticatedContactsRoute: typeof LocaleAuthenticatedContactsRoute
+  LocaleAuthenticatedDashboardRoute: typeof LocaleAuthenticatedDashboardRoute
+  LocaleAuthenticatedSettingsRoute: typeof LocaleAuthenticatedSettingsRoute
 }
 
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
-  AuthenticatedAgendaRoute: AuthenticatedAgendaRoute,
-  AuthenticatedContactsRoute: AuthenticatedContactsRoute,
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+const LocaleAuthenticatedRouteRouteChildren: LocaleAuthenticatedRouteRouteChildren =
+  {
+    LocaleAuthenticatedAdminRoute: LocaleAuthenticatedAdminRoute,
+    LocaleAuthenticatedAgendaRoute: LocaleAuthenticatedAgendaRoute,
+    LocaleAuthenticatedContactsRoute: LocaleAuthenticatedContactsRoute,
+    LocaleAuthenticatedDashboardRoute: LocaleAuthenticatedDashboardRoute,
+    LocaleAuthenticatedSettingsRoute: LocaleAuthenticatedSettingsRoute,
+  }
+
+const LocaleAuthenticatedRouteRouteWithChildren =
+  LocaleAuthenticatedRouteRoute._addFileChildren(
+    LocaleAuthenticatedRouteRouteChildren,
+  )
+
+interface LocaleRouteRouteChildren {
+  LocaleAuthenticatedRouteRoute: typeof LocaleAuthenticatedRouteRouteWithChildren
+  LocaleAuthRoute: typeof LocaleAuthRoute
+  LocaleCguRoute: typeof LocaleCguRoute
+  LocaleConfidentialiteRoute: typeof LocaleConfidentialiteRoute
+  LocaleContactRoute: typeof LocaleContactRoute
+  LocaleCookiesRoute: typeof LocaleCookiesRoute
+  LocaleDocumentationRoute: typeof LocaleDocumentationRoute
+  LocaleMentionsLegalesRoute: typeof LocaleMentionsLegalesRoute
+  LocaleResetPasswordRoute: typeof LocaleResetPasswordRoute
+  LocaleTarifsRoute: typeof LocaleTarifsRoute
+  LocaleVerificationRoute: typeof LocaleVerificationRoute
+  LocaleIndexRoute: typeof LocaleIndexRoute
 }
 
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
+  LocaleAuthenticatedRouteRoute: LocaleAuthenticatedRouteRouteWithChildren,
+  LocaleAuthRoute: LocaleAuthRoute,
+  LocaleCguRoute: LocaleCguRoute,
+  LocaleConfidentialiteRoute: LocaleConfidentialiteRoute,
+  LocaleContactRoute: LocaleContactRoute,
+  LocaleCookiesRoute: LocaleCookiesRoute,
+  LocaleDocumentationRoute: LocaleDocumentationRoute,
+  LocaleMentionsLegalesRoute: LocaleMentionsLegalesRoute,
+  LocaleResetPasswordRoute: LocaleResetPasswordRoute,
+  LocaleTarifsRoute: LocaleTarifsRoute,
+  LocaleVerificationRoute: LocaleVerificationRoute,
+  LocaleIndexRoute: LocaleIndexRoute,
+}
+
+const LocaleRouteRouteWithChildren = LocaleRouteRoute._addFileChildren(
+  LocaleRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
-  CguRoute: CguRoute,
-  ConfidentialiteRoute: ConfidentialiteRoute,
-  ContactRoute: ContactRoute,
-  CookiesRoute: CookiesRoute,
-  DocumentationRoute: DocumentationRoute,
-  MentionsLegalesRoute: MentionsLegalesRoute,
-  ResetPasswordRoute: ResetPasswordRoute,
-  TarifsRoute: TarifsRoute,
-  VerificationRoute: VerificationRoute,
+  LocaleRouteRoute: LocaleRouteRouteWithChildren,
   BookSlugRoute: BookSlugRoute,
   InviteTokenRoute: InviteTokenRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,

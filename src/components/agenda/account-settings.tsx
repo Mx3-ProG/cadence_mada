@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/i18n/use-locale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export function AccountSettings() {
+  const locale = useLocale();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -117,7 +119,7 @@ export function AccountSettings() {
       await supabase.auth.signOut();
       queryClient.clear();
       toast.success("Compte et données supprimés définitivement.");
-      void navigate({ to: "/" });
+      void navigate({ to: "/$locale", params: { locale } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Suppression impossible");
     } finally {

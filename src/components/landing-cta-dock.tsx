@@ -3,8 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/i18n/use-locale";
 
 export function LandingCtaDock() {
+  const locale = useLocale();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function LandingCtaDock() {
         size="lg"
         className="pointer-events-auto relative gap-2 rounded-full border border-border/60 bg-foreground/90 px-7 text-background shadow-[0_8px_30px_-8px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-transform hover:scale-[1.03] hover:bg-foreground active:scale-[0.98]"
       >
-        <Link to={signedIn ? "/dashboard" : "/auth"}>
+        <Link to={signedIn ? "/$locale/dashboard" : "/$locale/auth"} params={{ locale }}>
           {signedIn ? "Accès dashboard" : "Commencer"}
           <ArrowRight className="h-4 w-4" />
         </Link>

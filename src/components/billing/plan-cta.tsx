@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useChangePlan } from "@/lib/billing";
+import { useLocale } from "@/i18n/use-locale";
 import {
   fetchPlanUsage,
   planUsageQueryKey,
@@ -18,6 +19,7 @@ import {
  * si l'utilisateur n'est pas connecté, sinon lance/modifie l'abonnement Stripe.
  */
 export function PlanCta({ tier }: { tier: PaidPlanTier }) {
+  const locale = useLocale();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const changePlan = useChangePlan();
   const navigate = useNavigate();
@@ -66,7 +68,7 @@ export function PlanCta({ tier }: { tier: PaidPlanTier }) {
       onClick={() =>
         signedIn
           ? changePlan.mutate({ tier, hasActivePaidPlan: !!currentPlan && currentPlan !== "free" })
-          : navigate({ to: "/auth" })
+          : navigate({ to: "/$locale/auth", params: { locale } })
       }
     >
       {changePlan.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/legal-page";
 
-export const Route = createFileRoute("/cgu")({
+export const Route = createFileRoute("/$locale/cgu")({
   head: () => ({
     meta: [
       { title: "Conditions générales d'utilisation — Cadence" },

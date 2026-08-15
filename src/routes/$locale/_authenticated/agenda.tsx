@@ -15,6 +15,7 @@ import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { AppointmentDetailsSheet } from "@/components/agenda/appointment-details-sheet";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { useAppointmentActions } from "@/lib/use-appointment-actions";
+import { useLocale } from "@/i18n/use-locale";
 import {
   hasFeatureAccess,
   isAppointmentLimitReached,
@@ -34,7 +35,7 @@ import {
   type Contact,
 } from "@/lib/agenda";
 
-export const Route = createFileRoute("/_authenticated/agenda")({
+export const Route = createFileRoute("/$locale/_authenticated/agenda")({
   head: () => ({
     meta: [
       { title: "Agenda complet — Cadence" },
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/_authenticated/agenda")({
 type View = "week" | "month";
 
 function AgendaPage() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
@@ -180,7 +182,7 @@ function AgendaPage() {
               </span>
             </p>
             <Button asChild className="gap-2 sm:shrink-0">
-              <Link to="/tarifs" hash={tierPricingHash("standard")}>
+              <Link to="/$locale/tarifs" params={{ locale }} hash={tierPricingHash("standard")}>
                 <Sparkles className="h-4 w-4" />
                 Voir l’offre Standard
               </Link>

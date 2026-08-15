@@ -18,11 +18,12 @@ import { BookingLinkQuickAccess } from "@/components/agenda/booking-link-quick-a
 import { useIsAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/brand-logo";
+import { useLocale } from "@/i18n/use-locale";
 
 const nav = [
-  { to: "/dashboard", label: "Semaine", icon: CalendarDays },
-  { to: "/contacts", label: "Contacts", icon: Users },
-  { to: "/settings", label: "Réglages", icon: Settings },
+  { to: "/$locale/dashboard", path: "/dashboard", label: "Semaine", icon: CalendarDays },
+  { to: "/$locale/contacts", path: "/contacts", label: "Contacts", icon: Users },
+  { to: "/$locale/settings", path: "/settings", label: "Réglages", icon: Settings },
 ] as const;
 
 const MOBILE_KEYBOARD_MIN_HEIGHT = 120;
@@ -112,23 +113,24 @@ function useMobileKeyboardOpen() {
 export function AppHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const { data: isAdmin } = useIsAdmin();
   const [quickOpen, setQuickOpen] = useState(false);
   const mobileKeyboardOpen = useMobileKeyboardOpen();
   const items = isAdmin
-    ? [...nav, { to: "/admin", label: "Admin", icon: ShieldCheck } as const]
+    ? [...nav, { to: "/$locale/admin", path: "/admin", label: "Admin", icon: ShieldCheck } as const]
     : nav;
 
   const signOut = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/$locale/auth", params: { locale }, replace: true });
   };
 
-  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, to: string) => {
-    if (to !== pathname) return;
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, path: string) => {
+    if (`/${locale}${path}` !== pathname) return;
     event.preventDefault();
     window.scrollTo({
       top: 0,
@@ -140,7 +142,11 @@ export function AppHeader() {
     <>
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link to="/dashboard" className="flex min-w-0 items-center gap-2.5">
+          <Link
+            to="/$locale/dashboard"
+            params={{ locale }}
+            className="flex min-w-0 items-center gap-2.5"
+          >
             <BrandLogo />
           </Link>
 
@@ -150,10 +156,11 @@ export function AppHeader() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  onClick={(event) => handleNavClick(event, item.to)}
+                  params={{ locale }}
+                  onClick={(event) => handleNavClick(event, item.path)}
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-                    pathname === item.to
+                    pathname === `/${locale}${item.path}`
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   )}
@@ -163,14 +170,14 @@ export function AppHeader() {
                 </Link>
               ))}
             </nav>
-            {pathname === "/dashboard" && (
+            {pathname === `/${locale}/dashboard` && (
               <Button
                 asChild
                 variant="ghost"
                 size="icon"
                 className="rounded-full border border-border/60"
               >
-                <Link to="/contact" aria-label="Contacter Cadence">
+                <Link to="/$locale/contact" params={{ locale }} aria-label="Contacter Cadence">
                   <MessageCircle className="h-4 w-4" />
                 </Link>
               </Button>
@@ -209,12 +216,13 @@ export function AppHeader() {
       >
         <ul className="mx-auto flex max-w-lg items-stretch justify-around px-2 py-1.5">
           {items.map((item) => {
-            const active = pathname === item.to;
+            const active = pathname === `/${locale}${item.path}`;
             return (
               <li key={item.to} className="min-w-0 flex-1">
                 <Link
                   to={item.to}
-                  onClick={(event) => handleNavClick(event, item.to)}
+                  params={{ locale }}
+                  onClick={(event) => handleNavClick(event, item.path)}
                   className={cn(
                     "flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[11px] font-medium transition-colors",
                     active

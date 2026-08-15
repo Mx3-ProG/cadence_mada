@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal/legal-page";
 
-export const Route = createFileRoute("/mentions-legales")({
+export const Route = createFileRoute("/$locale/mentions-legales")({
   head: () => ({
     meta: [
       { title: "Mentions légales — Cadence" },
@@ -31,11 +31,14 @@ function MentionsLegales() {
         <h2>Éditeur du site</h2>
         <p>
           Le service <strong>Cadence</strong> (ci-après « le Service ») est édité par l'exploitant
-          du site <a href="https://www.wayne-web.com" target="_blank" rel="noopener noreferrer">
-            Wayne-Web</a>. <br />
-          Les coordonnées complètes de l'éditeur (dénomination sociale, forme
-          juridique, capital social, numéro RCS et numéro de TVA intracommunautaire) doivent être
-          renseignées ici avant toute mise en ligne publique.
+          du site{" "}
+          <a href="https://www.wayne-web.com" target="_blank" rel="noopener noreferrer">
+            Wayne-Web
+          </a>
+          . <br />
+          Les coordonnées complètes de l'éditeur (dénomination sociale, forme juridique, capital
+          social, numéro RCS et numéro de TVA intracommunautaire) doivent être renseignées ici avant
+          toute mise en ligne publique.
         </p>
         <ul>
           <li>Nom / raison sociale : Wayne-Web</li>

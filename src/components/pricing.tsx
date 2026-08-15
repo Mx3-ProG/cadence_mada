@@ -1,97 +1,21 @@
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { PlanCta } from "@/components/billing/plan-cta";
+import { useLocale } from "@/i18n/use-locale";
 import {
   tierPricingHash,
   TIER_LABELS,
   TIER_LIMITS,
   TIER_PRICES,
+  TIER_ORDER,
   type PaidPlanTier,
+  type PlanTier,
 } from "@/lib/plan";
 
-const plans = [
-  {
-    tier: "free" as const,
-    name: TIER_LABELS.free,
-    period: "pour toujours",
-    tagline: "Parfait pour organiser ta semaine et tester les confirmations par lien.",
-    features: [
-      `Jusqu'à ${TIER_LIMITS.free.contacts} contacts`,
-      `${TIER_LIMITS.free.appointments} rendez-vous envoyés par mois`,
-      "Liens de confirmation illimités",
-      "Agenda simple (vue semaine)",
-      "Programme de parrainage (30% à vie)",
-      "Mode jour / nuit",
-    ],
-    cta: "Commencer gratuitement",
-    highlighted: false,
-  },
-  {
-    tier: "basic" as const,
-    name: TIER_LABELS.basic,
-    period: "par mois",
-    tagline: "Un peu plus de marge pour un agenda qui commence à se remplir.",
-    features: [
-      `Jusqu'à ${TIER_LIMITS.basic.contacts} contacts`,
-      `${TIER_LIMITS.basic.appointments} rendez-vous par mois`,
-      "Liens de confirmation illimités",
-      "Agenda simple (vue semaine)",
-      "Programme de parrainage (30% à vie)",
-      "Mode jour / nuit",
-    ],
-    cta: `Passer en ${TIER_LABELS.basic}`,
-    highlighted: false,
-  },
-  {
-    tier: "standard" as const,
-    name: TIER_LABELS.standard,
-    period: "par mois",
-    tagline: "Pour celles et ceux qui enchaînent les rendez-vous chaque semaine.",
-    features: [
-      `Jusqu'à ${TIER_LIMITS.standard.contacts} contacts`,
-      `${TIER_LIMITS.standard.appointments} rendez-vous par mois`,
-      "Agenda complet : vue semaine & mois, création en un clic",
-      "Statistiques de la semaine",
-      "Réservation en libre-service via ton lien public",
-      "Programme de parrainage (30% à vie)",
-    ],
-    cta: "Passer en Standard",
-    highlighted: true,
-  },
-  {
-    tier: "economic" as const,
-    name: TIER_LABELS.economic,
-    period: "par mois",
-    tagline: "Pour une activité qui tourne à plein régime toute l'année.",
-    features: [
-      `Jusqu'à ${TIER_LIMITS.economic.contacts} contacts`,
-      `${TIER_LIMITS.economic.appointments} rendez-vous par mois`,
-      "Tout Standard : agenda complet, réservation",
-      "Tendance du mois",
-      "Programme de parrainage (30% à vie)",
-    ],
-    cta: `Passer en ${TIER_LABELS.economic}`,
-    highlighted: false,
-  },
-  {
-    tier: "business" as const,
-    name: TIER_LABELS.business,
-    period: "par mois",
-    tagline: "Pour les équipes et les marques qui veulent tout, sans limite.",
-    features: [
-      "Contacts et rendez-vous illimités",
-      `Tout ${TIER_LABELS.economic} : agenda complet, réservation, tendance du mois`,
-      "Lien d'invitation personnalisé (branding + message)",
-      "Avis Google : note, lien Google My Business et Maps",
-      "Lien site internet sur tes invitations",
-      "Support prioritaire",
-    ],
-    cta: "Passer en Business",
-    highlighted: false,
-  },
-];
+const highlightedTier: PlanTier = "standard";
 
 export function Pricing({
   checkout = false,
@@ -100,6 +24,27 @@ export function Pricing({
   checkout?: boolean;
   showIntro?: boolean;
 }) {
+  const locale = useLocale();
+  const { t } = useTranslation("pricing");
+
+  const plans = TIER_ORDER.map((tier) => {
+    const limits = TIER_LIMITS[tier];
+    return {
+      tier,
+      name: TIER_LABELS[tier],
+      period: tier === "free" ? t("period.forever") : t("period.monthly"),
+      tagline: t(`plans.${tier}.tagline`),
+      cta: t(`plans.${tier}.cta`, { label: TIER_LABELS[tier] }),
+      features: t(`plans.${tier}.features`, {
+        returnObjects: true,
+        contacts: limits.contacts,
+        appointments: limits.appointments,
+        economicLabel: TIER_LABELS.economic,
+      }) as string[],
+      highlighted: tier === highlightedTier,
+    };
+  });
+
   return (
     <section id="pricing" className="scroll-mt-24 px-4 pb-28 sm:px-6">
       <div className="mx-auto max-w-7xl">
@@ -108,14 +53,13 @@ export function Pricing({
             <div className="text-center">
               <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-surface/70 px-4 py-1.5 text-xs font-medium text-muted-foreground">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
-                Tarifs simples
+                {t("intro.badge")}
               </span>
               <h2 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                5 paliers, une seule règle : tu paies pour ce dont tu as besoin
+                {t("intro.title")}
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
-                Aucune carte demandée pour le plan {TIER_LABELS.free}. Change de palier à tout
-                moment, sans engagement.
+                {t("intro.subtitle", { freeLabel: TIER_LABELS.free })}
               </p>
             </div>
           </Reveal>
@@ -139,7 +83,7 @@ export function Pricing({
                 )}
                 {plan.highlighted && (
                   <span className="mb-5 w-fit rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
-                    Recommandé
+                    {t("recommended")}
                   </span>
                 )}
                 <h3 className="font-display text-lg font-bold">{plan.name}</h3>
@@ -162,14 +106,20 @@ export function Pricing({
 
                 {plan.tier === "free" ? (
                   <Button asChild size="lg" variant="outline" className="mt-8 w-full">
-                    <Link to="/auth">{plan.cta}</Link>
+                    <Link to="/$locale/auth" params={{ locale }}>
+                      {plan.cta}
+                    </Link>
                   </Button>
                 ) : checkout ? (
                   <PlanCta tier={plan.tier as PaidPlanTier} />
                 ) : (
                   <Button asChild size="lg" className="mt-8 w-full">
-                    <Link to="/tarifs" hash={tierPricingHash(plan.tier)}>
-                      Voir l’offre {plan.name}
+                    <Link
+                      to="/$locale/tarifs"
+                      params={{ locale }}
+                      hash={tierPricingHash(plan.tier)}
+                    >
+                      {t("view_offer", { name: plan.name })}
                     </Link>
                   </Button>
                 )}

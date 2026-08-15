@@ -2,16 +2,18 @@ import { useEffect, useRef } from "react";
 import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { getLoginSessionState } from "@/lib/two-factor.functions";
+import { useLocale } from "@/i18n/use-locale";
 
-export const Route = createFileRoute("/_authenticated")({
+export const Route = createFileRoute("/$locale/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ params }) => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
+    if (error || !data.user)
+      throw redirect({ to: "/$locale/auth", params: { locale: params.locale } });
     const state = await getLoginSessionState().catch(() => ({ active: false as const }));
     if (!state.active) {
       await supabase.auth.signOut({ scope: "local" });
-      throw redirect({ to: "/auth" });
+      throw redirect({ to: "/$locale/auth", params: { locale: params.locale } });
     }
     return { user: data.user };
   },
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthenticatedLayout() {
+  const locale = useLocale();
   const navigate = useNavigate();
   const lastCheck = useRef(Date.now());
 
@@ -33,13 +36,13 @@ function AuthenticatedLayout() {
         // Une session expirée ou révoquée suit le même chemin de déconnexion.
       }
       await supabase.auth.signOut({ scope: "local" });
-      navigate({ to: "/auth", replace: true });
+      navigate({ to: "/$locale/auth", params: { locale }, replace: true });
     };
 
     const events: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "focus"];
     events.forEach((event) => window.addEventListener(event, checkActivity, { passive: true }));
     return () => events.forEach((event) => window.removeEventListener(event, checkActivity));
-  }, [navigate]);
+  }, [navigate, locale]);
 
   return <Outlet />;
 }

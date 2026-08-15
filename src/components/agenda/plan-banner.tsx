@@ -2,6 +2,7 @@ import { Crown, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { nextTier, TIER_LIMITS, usePlanUsage, type PlanUsage } from "@/lib/plan";
+import { useLocale } from "@/i18n/use-locale";
 
 function Meter({ label, value, max }: { label: string; value: number; max: number }) {
   const pct = Math.min(100, Math.round((value / max) * 100));
@@ -27,6 +28,7 @@ function Meter({ label, value, max }: { label: string; value: number; max: numbe
 }
 
 export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
+  const locale = useLocale();
   const query = usePlanUsage();
   const data = usage ?? query.data;
   if (!data) return null;
@@ -42,7 +44,7 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
           <span className="text-muted-foreground">— contacts et rendez-vous illimités.</span>
         </p>
         <Button variant="outline" size="sm" className="shrink-0" asChild>
-          <Link to="/settings" hash="abonnement">
+          <Link to="/$locale/settings" params={{ locale }} hash="abonnement">
             Gérer l'abonnement
           </Link>
         </Button>
@@ -66,7 +68,7 @@ export function PlanBanner({ usage }: { usage?: PlanUsage | undefined }) {
         </div>
         {upsell && (
           <Button asChild size="sm" className="shrink-0 gap-2">
-            <Link to="/tarifs">
+            <Link to="/$locale/tarifs" params={{ locale }}>
               <Zap className="h-3.5 w-3.5" />
               Passer en version supérieure
             </Link>

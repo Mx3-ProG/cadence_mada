@@ -28,7 +28,7 @@ import { hasTierAtLeast, TIER_LABELS } from "@/lib/plan";
 import { AdminSkeleton } from "@/components/loading/page-skeletons";
 import { CalendarLoader } from "@/components/loading/calendar-loader";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/$locale/_authenticated/admin")({
   pendingComponent: AdminSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,

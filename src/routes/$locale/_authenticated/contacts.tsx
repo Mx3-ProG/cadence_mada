@@ -33,6 +33,7 @@ import { ContactSearchDialog } from "@/components/agenda/contact-search-dialog";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
+import { useLocale } from "@/i18n/use-locale";
 import {
   hasFeatureAccess,
   isContactLimitReached,
@@ -63,7 +64,7 @@ function formatBirthday(value: string) {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
-export const Route = createFileRoute("/_authenticated/contacts")({
+export const Route = createFileRoute("/$locale/_authenticated/contacts")({
   pendingComponent: ContactsSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,
@@ -85,6 +86,7 @@ export const Route = createFileRoute("/_authenticated/contacts")({
 });
 
 function BookingLinkCard() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const isPro = hasFeatureAccess(planQuery.data, "standard");
@@ -170,7 +172,7 @@ function BookingLinkCard() {
             contacts réservent eux-mêmes un créneau libre dans ton agenda.
           </p>
           <Button asChild size="sm" className="shrink-0 gap-2">
-            <Link to="/tarifs" hash={tierPricingHash("standard")}>
+            <Link to="/$locale/tarifs" params={{ locale }} hash={tierPricingHash("standard")}>
               <Link2 className="h-4 w-4" />
               Voir l’offre Standard
             </Link>
@@ -207,7 +209,7 @@ function BookingLinkCard() {
               {copied ? "Copié" : "Copier"}
             </Button>
             <Button asChild size="sm" variant="ghost" className="gap-2">
-              <Link to="/settings">
+              <Link to="/$locale/settings" params={{ locale }}>
                 <Settings className="h-4 w-4" />
                 Horaires
               </Link>

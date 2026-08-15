@@ -1,11 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { BrandLogo } from "@/components/brand-logo";
 import { Pricing } from "@/components/pricing";
 import { LandingCtaDock } from "@/components/landing-cta-dock";
+import { useLocale } from "@/i18n/use-locale";
 
-export const Route = createFileRoute("/tarifs")({
+export const Route = createFileRoute("/$locale/tarifs")({
+  // SEO meta stays French-only for now — per-locale <head> translation is
+  // follow-up work (needs hreflang/canonical wiring alongside it).
   head: () => ({
     meta: [
       { title: "Tarifs — Cadence" },
@@ -28,17 +33,23 @@ export const Route = createFileRoute("/tarifs")({
 });
 
 function TarifsPage() {
+  const locale = useLocale();
+  const { t } = useTranslation("pricing");
+  const { t: tCommon } = useTranslation("common");
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex items-center gap-2.5">
+          <Link to="/$locale" params={{ locale }} className="flex items-center gap-2.5">
             <BrandLogo />
           </Link>
           <div className="flex shrink-0 items-center gap-2">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Button asChild size="sm">
-              <Link to="/auth">Commencer</Link>
+              <Link to="/$locale/auth" params={{ locale }}>
+                {tCommon("nav.start")}
+              </Link>
             </Button>
           </div>
         </div>
@@ -48,19 +59,18 @@ function TarifsPage() {
         <div className="aurora pointer-events-none absolute inset-x-0 top-0 -z-10 h-[42rem] opacity-55" />
         <section className="px-4 pb-2 pt-16 text-center sm:px-6 sm:pt-24">
           <span className="inline-flex rounded-full border border-border/70 bg-background/70 px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-xl">
-            Sans engagement · Changement à tout moment
+            {t("page.badge")}
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl font-display text-4xl font-black tracking-[-0.04em] sm:text-6xl">
-            Choisis simplement le rythme qui te ressemble.
+            {t("page.title")}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Commence gratuitement, puis évolue quand ton agenda se remplit. Chaque formule garde
-            Cadence simple, rapide et agréable à utiliser.
+            {t("page.subtitle")}
           </p>
           <div className="mx-auto mt-8 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground sm:text-sm">
-            <span>✓ Paiement sécurisé par Stripe</span>
-            <span>✓ Résiliation à tout moment</span>
-            <span>✓ Activation immédiate</span>
+            <span>{t("page.trust.stripe")}</span>
+            <span>{t("page.trust.cancel")}</span>
+            <span>{t("page.trust.instant")}</span>
           </div>
         </section>
 

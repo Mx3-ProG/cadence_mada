@@ -1,0 +1,114 @@
+{
+  "nav.pricing": "Pricing",
+  "hero.badge": "Calendar + real-time confirmations",
+  "hero.title_prefix": "Your whole appointment week,",
+  "hero.title_highlight": "confirmed without a single follow-up",
+  "hero.subtitle": "Create a slot, send a link, watch the response land on your dashboard. Contact records and prep notes live right alongside it.",
+  "hero.cta_primary": "Create my calendar",
+  "hero.cta_secondary": "View my dashboard",
+  "preview.status.accepted": "Accepted",
+  "preview.status.pending": "Pending",
+  "preview.items": [
+    { "day": "Monday", "time": "9:30 AM", "title": "Nova kickoff", "status": "accepted" },
+    { "day": "Wednesday", "time": "3:00 PM", "title": "Investor check-in", "status": "pending" },
+    { "day": "Friday", "time": "11:00 AM", "title": "Coffee with Camille", "status": "accepted" }
+  ],
+  "how.badge": "How it works",
+  "how.title": "From first slot to confirmation, in three steps",
+  "how.subtitle": "No complicated setup: Cadence takes over as soon as you propose an appointment.",
+  "how.steps": [
+    {
+      "title": "Create your calendar",
+      "text": "Add your contacts and set up a first slot in seconds, no configuration needed."
+    },
+    {
+      "title": "Share your link",
+      "text": "Send an invite by email or share your public booking link so contacts can pick their own slot."
+    },
+    {
+      "title": "Watch responses come in",
+      "text": "Every confirmation or decline shows up live on your dashboard, in week or month view."
+    }
+  ],
+  "audiences.badge": "Who it's for",
+  "audiences.title": "Built for people who live by appointments",
+  "audiences.subtitle": "If your business runs on client appointments, Cadence is made for you.",
+  "audiences.items": [
+    {
+      "title": "Freelancers & solo pros",
+      "text": "Manage client appointments without losing a day to back-and-forth."
+    },
+    {
+      "title": "Coaches & consultants",
+      "text": "Organize sessions and keep track of every client."
+    },
+    {
+      "title": "Therapists & practitioners",
+      "text": "Fill your consultation calendar without phone follow-ups."
+    },
+    {
+      "title": "Real estate agents",
+      "text": "Schedule viewings and client meetings without double bookings."
+    },
+    {
+      "title": "Lawyers & legal professionals",
+      "text": "Organized client appointments with tracked confirmations."
+    },
+    {
+      "title": "Tradespeople & home service providers",
+      "text": "Plan jobs and avoid missed time slots."
+    },
+    {
+      "title": "Trainers & education professionals",
+      "text": "Organize one-on-one sessions and follow-up appointments."
+    },
+    {
+      "title": "Small teams & businesses",
+      "text": "Multiple contacts, multiple appointments, one single view."
+    },
+    {
+      "title": "Any appointment-based business",
+      "text": "Whenever no-shows cost you time, Cadence prevents them."
+    }
+  ],
+  "features.title": "Everything you need, nothing you don't",
+  "features.items": [
+    {
+      "title": "Your week on one screen",
+      "text": "Seven columns, zero friction. Create a slot in one click and instantly see where you stand."
+    },
+    {
+      "title": "Full week & month calendar",
+      "text": "Switch between week and month view, navigate in one click, and open the full record for any appointment."
+    },
+    {
+      "title": "Self-service booking",
+      "text": "Share your public link: contacts pick an open slot themselves, you just confirm."
+    },
+    {
+      "title": "Confirmation by link",
+      "text": "Every appointment generates a unique link. Your guest accepts or declines, and you see it live."
+    },
+    {
+      "title": "Email invitations",
+      "text": "Send the invite to your contact in one click, with all the details and the response link."
+    },
+    {
+      "title": "Contact records",
+      "text": "Company, role, phone, history: the context is there before you even say hello."
+    },
+    {
+      "title": "Prep notes",
+      "text": "Jot down what you want to cover. Private, always at hand right before the appointment."
+    },
+    {
+      "title": "Light & dark",
+      "text": "An ink-and-emerald theme designed for both modes, smooth on mobile and desktop alike."
+    }
+  ],
+  "final.title": "Ready to take control of your week?",
+  "final.subtitle": "A few seconds to create your account, and your first appointment goes out with its confirmation link.",
+  "final.cta": "Start for free",
+  "footer.tagline": "Cadence — the appointment calendar that confirms itself.",
+  "footer.cookie_prefs": "Cookie preferences"
+}

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LegalPage } from "@/components/legal/legal-page";
 import { openCookieSettings } from "@/components/legal/cookie-consent";
 
-export const Route = createFileRoute("/cookies")({
+export const Route = createFileRoute("/$locale/cookies")({
   head: () => ({
     meta: [
       { title: "Politique cookies — Cadence" },

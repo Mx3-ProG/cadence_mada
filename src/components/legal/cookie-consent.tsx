@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Cookie, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useLocale } from "@/i18n/use-locale";
 
 const STORAGE_KEY = "cadence.cookie-consent.v1";
 
@@ -35,6 +36,7 @@ export function openCookieSettings() {
 }
 
 export function CookieConsent() {
+  const locale = useLocale();
   const [visible, setVisible] = useState(false);
   const [details, setDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -100,7 +102,8 @@ export function CookieConsent() {
                   sécurité). Les cookies de mesure d'audience et marketing ne sont déposés qu'avec
                   ton accord, conformément au RGPD.{" "}
                   <Link
-                    to="/cookies"
+                    to="/$locale/cookies"
+                    params={{ locale }}
                     className="underline underline-offset-2 hover:text-foreground"
                   >
                     En savoir plus

@@ -7,25 +7,26 @@ import { AccountSettings } from "@/components/agenda/account-settings";
 import { ReferralSection } from "@/components/agenda/referral-section";
 import { SubscriptionSection } from "@/components/agenda/subscription-section";
 import { BookingSettingsSection } from "@/components/agenda/booking-settings-section";
+import { useLocale } from "@/i18n/use-locale";
 
 const DOC_LINKS = [
   {
-    to: "/documentation",
+    to: "/$locale/documentation",
     label: "Documentation complète",
     description: "Emails, statuts, flux serveur et autorisations.",
   },
   {
-    to: "/cgu",
+    to: "/$locale/cgu",
     label: "Conditions d'utilisation",
     description: "Formules, limites et règles du service.",
   },
   {
-    to: "/confidentialite",
+    to: "/$locale/confidentialite",
     label: "Confidentialité (RGPD)",
     description: "Données collectées et tes droits.",
   },
   {
-    to: "/cookies",
+    to: "/$locale/cookies",
     label: "Cookies",
     description: "Traceurs utilisés et gestion du consentement.",
   },
@@ -50,7 +51,7 @@ import {
 } from "@/lib/plan";
 import { SettingsSkeleton } from "@/components/loading/page-skeletons";
 
-export const Route = createFileRoute("/_authenticated/settings")({
+export const Route = createFileRoute("/$locale/_authenticated/settings")({
   pendingComponent: SettingsSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,
@@ -98,6 +99,7 @@ const empty: Branding = {
 const BRANDING_MIN_TIER = "business" as const;
 
 function SettingsPage() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const isBusiness = hasFeatureAccess(planQuery.data, BRANDING_MIN_TIER);
@@ -218,7 +220,11 @@ function SettingsPage() {
               </span>
             </p>
             <Button asChild className="gap-2 sm:shrink-0">
-              <Link to="/tarifs" hash={tierPricingHash(BRANDING_MIN_TIER)}>
+              <Link
+                to="/$locale/tarifs"
+                params={{ locale }}
+                hash={tierPricingHash(BRANDING_MIN_TIER)}
+              >
                 <Sparkles className="h-4 w-4" />
                 Voir l’offre {TIER_LABELS[BRANDING_MIN_TIER]}
               </Link>
@@ -373,7 +379,7 @@ function SettingsPage() {
               </div>
             </div>
             <Button asChild variant="outline" className="shrink-0 rounded-xl">
-              <Link to="/contact">
+              <Link to="/$locale/contact" params={{ locale }}>
                 Nous contacter
                 <ExternalLink className="h-4 w-4" />
               </Link>
@@ -394,6 +400,7 @@ function SettingsPage() {
                 <Link
                   key={link.to}
                   to={link.to}
+                  params={{ locale }}
                   className="group flex items-start justify-between gap-3 rounded-xl border border-border/70 px-4 py-3 transition hover:border-primary/50 hover:bg-primary/5"
                 >
                   <span>

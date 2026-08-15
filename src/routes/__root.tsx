@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -16,6 +17,16 @@ import { ThemeProvider, themeInitScript } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/legal/cookie-consent";
 import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_LOCALE, isSupportedLocale, localeDirection, type Locale } from "@/i18n/config";
+
+function useResolvedLocale(): Locale {
+  const matches = useRouterState({ select: (state) => state.matches });
+  for (const routeMatch of matches) {
+    const value = (routeMatch.params as Record<string, unknown> | undefined)?.["locale"];
+    if (typeof value === "string" && isSupportedLocale(value)) return value;
+  }
+  return DEFAULT_LOCALE;
+}
 
 // Entrance animations server-render at opacity 0 and rely on the client to
 // reveal them, so any hydration failure leaves a blank page with the content
@@ -36,6 +47,7 @@ function useHydrationSignal() {
 }
 
 function NotFoundComponent() {
+  const locale = useResolvedLocale();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -46,7 +58,8 @@ function NotFoundComponent() {
         </p>
         <div className="mt-6">
           <Link
-            to="/"
+            to="/$locale"
+            params={{ locale }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Retour à l'accueil
@@ -141,8 +154,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const locale = useResolvedLocale();
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang={locale} dir={localeDirection(locale)} suppressHydrationWarning>
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

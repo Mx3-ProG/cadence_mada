@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, MailCheck } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { BrandMark } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
@@ -14,8 +16,9 @@ import {
   startAuthenticatedLoginChallenge,
   verifyLoginCode,
 } from "@/lib/two-factor.functions";
+import { useLocale } from "@/i18n/use-locale";
 
-export const Route = createFileRoute("/verification")({
+export const Route = createFileRoute("/$locale/verification")({
   ssr: false,
   pendingComponent: SimpleSkeleton,
   pendingMs: 0,
@@ -33,6 +36,8 @@ export const Route = createFileRoute("/verification")({
 });
 
 function VerificationPage() {
+  const locale = useLocale();
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const initializationStarted = useRef(false);
   const [challengeId, setChallengeId] = useState<string | null>(null);
@@ -59,7 +64,7 @@ function VerificationPage() {
       // Retour OAuth Google : le premier facteur est valide, on envoie le code email.
       const { data } = await supabase.auth.getSession();
       if (!data.session) {
-        navigate({ to: "/auth", replace: true });
+        navigate({ to: "/$locale/auth", params: { locale }, replace: true });
         return;
       }
 
@@ -73,15 +78,15 @@ function VerificationPage() {
         await supabase.auth.signOut({ scope: "local" });
       } catch {
         await supabase.auth.signOut({ scope: "local" });
-        toast.error("Le code de vérification n’a pas pu être envoyé.");
-        navigate({ to: "/auth", replace: true });
+        toast.error(t("errors.verification_email_failed"));
+        navigate({ to: "/$locale/auth", params: { locale }, replace: true });
       } finally {
         setLoading(false);
       }
     };
 
     void initialize();
-  }, [navigate]);
+  }, [navigate, locale, t]);
 
   const verify = async (submittedCode = code) => {
     if (!challengeId || submittedCode.length !== 6) return;
@@ -89,7 +94,7 @@ function VerificationPage() {
     try {
       const result = await verifyLoginCode({ data: { challengeId, code: submittedCode } });
       if (!result.ok) {
-        toast.error("Code incorrect ou expiré.");
+        toast.error(t("verification.errors.invalid_code"));
         setCode("");
         return;
       }
@@ -114,11 +119,11 @@ function VerificationPage() {
       sessionStorage.removeItem("cadence:login-challenge");
       sessionStorage.removeItem("cadence:login-email");
       sessionStorage.removeItem("cadence:referral-code");
-      toast.success("Connexion vérifiée.");
-      navigate({ to: "/dashboard", replace: true });
+      toast.success(t("verification.success.verified"));
+      navigate({ to: "/$locale/dashboard", params: { locale }, replace: true });
     } catch {
       await supabase.auth.signOut({ scope: "local" });
-      toast.error("La connexion n’a pas pu être finalisée. Demandez un nouveau code.");
+      toast.error(t("verification.errors.finalize_failed"));
     } finally {
       setVerifying(false);
     }
@@ -130,11 +135,11 @@ function VerificationPage() {
     try {
       const result = await resendLoginChallenge({ data: { challengeId } });
       if (result.ok) {
-        toast.success("Un nouveau code vient d’être envoyé.");
+        toast.success(t("verification.success.resent"));
       } else if (result.reason === "TOO_SOON") {
-        toast.error("Patientez une minute avant de demander un autre code.");
+        toast.error(t("verification.errors.too_soon"));
       } else {
-        toast.error("Impossible de renvoyer le code. Recommencez la connexion.");
+        toast.error(t("verification.errors.resend_failed"));
       }
     } finally {
       setResending(false);
@@ -147,12 +152,17 @@ function VerificationPage() {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <div className="aurora pointer-events-none absolute inset-0 -z-10" />
       <div className="grid-lines pointer-events-none absolute inset-0 -z-10 opacity-30" />
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 flex items-center gap-2">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
 
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2.5">
+        <Link
+          to="/$locale"
+          params={{ locale }}
+          className="mb-8 flex items-center justify-center gap-2.5"
+        >
           <BrandMark className="h-10 w-10" />
           <span className="font-display text-2xl font-bold tracking-tight">Cadence</span>
         </Link>
@@ -162,19 +172,18 @@ function VerificationPage() {
             <MailCheck className="h-6 w-6" />
           </div>
           <h1 className="font-display text-2xl font-bold tracking-tight">
-            Vérifiez votre connexion
+            {t("verification.title")}
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Nous avons envoyé un code à six chiffres
+            {t("verification.body_prefix")}
             {maskedEmail ? (
               <>
-                {" "}
-                à <strong className="text-foreground">{maskedEmail}</strong>
+                {t("verification.sent_to_prefix")}
+                <strong className="text-foreground">{maskedEmail}</strong>.
               </>
             ) : (
-              " par email"
+              t("verification.sent_generic")
             )}
-            .
           </p>
 
           <div className="mt-7 flex justify-center">
@@ -187,7 +196,7 @@ function VerificationPage() {
               onChange={setCode}
               onComplete={(completedCode) => void verify(completedCode)}
               disabled={verifying}
-              aria-label="Code de vérification à six chiffres"
+              aria-label={t("verification.otp_label")}
             >
               <InputOTPGroup>
                 {Array.from({ length: 6 }, (_, index) => (
@@ -202,7 +211,7 @@ function VerificationPage() {
             onClick={() => void verify()}
             disabled={verifying || code.length !== 6}
           >
-            {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Accéder à mon compte"}
+            {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : t("verification.submit")}
           </Button>
 
           <button
@@ -211,10 +220,10 @@ function VerificationPage() {
             disabled={resending}
             className="mt-5 text-sm font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
           >
-            {resending ? "Envoi en cours…" : "Renvoyer le code"}
+            {resending ? t("verification.resending") : t("verification.resend")}
           </button>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
-            Le code expire après 30 minutes. Ne le communiquez à personne.
+            {t("verification.expiry_note")}
           </p>
         </div>
       </div>

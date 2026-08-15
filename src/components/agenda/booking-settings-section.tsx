@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { BookingHourPickerDialog } from "@/components/agenda/booking-hour-picker-dialog";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, slugify } from "@/lib/agenda";
+import { useLocale } from "@/i18n/use-locale";
 import {
   hasFeatureAccess,
   tierPricingHash,
@@ -47,6 +48,7 @@ const emptyForm: BookingSettingsForm = {
 };
 
 export function BookingSettingsSection() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const planQuery = usePlanUsage();
   const hasBooking = hasFeatureAccess(planQuery.data, BOOKING_MIN_TIER);
@@ -223,7 +225,7 @@ export function BookingSettingsSection() {
             </span>
           </p>
           <Button asChild className="gap-2 sm:shrink-0">
-            <Link to="/tarifs" hash={tierPricingHash(BOOKING_MIN_TIER)}>
+            <Link to="/$locale/tarifs" params={{ locale }} hash={tierPricingHash(BOOKING_MIN_TIER)}>
               <Sparkles className="h-4 w-4" />
               Voir l’offre {TIER_LABELS[BOOKING_MIN_TIER]}
             </Link>

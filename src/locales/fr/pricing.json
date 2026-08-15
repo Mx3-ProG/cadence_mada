@@ -1,0 +1,78 @@
+{
+  "seo.title": "Tarifs — Cadence",
+  "seo.description": "5 paliers, de Free-mium (0 €) à Business (199,99 €/mois) : contacts et rendez-vous, agenda complet, réservation en libre-service, branding personnalisé. Programme de parrainage inclus dès le plan Free-mium.",
+  "page.badge": "Sans engagement · Changement à tout moment",
+  "page.title": "Choisis simplement le rythme qui te ressemble.",
+  "page.subtitle": "Commence gratuitement, puis évolue quand ton agenda se remplit. Chaque formule garde Cadence simple, rapide et agréable à utiliser.",
+  "page.trust.stripe": "✓ Paiement sécurisé par Stripe",
+  "page.trust.cancel": "✓ Résiliation à tout moment",
+  "page.trust.instant": "✓ Activation immédiate",
+  "intro.badge": "Tarifs simples",
+  "intro.title": "5 paliers, une seule règle : tu paies pour ce dont tu as besoin",
+  "intro.subtitle": "Aucune carte demandée pour le plan {{freeLabel}}. Change de palier à tout moment, sans engagement.",
+  "period.monthly": "par mois",
+  "period.forever": "pour toujours",
+  "recommended": "Recommandé",
+  "view_offer": "Voir l'offre {{name}}",
+  "plans": {
+    "free": {
+      "tagline": "Parfait pour organiser ta semaine et tester les confirmations par lien.",
+      "cta": "Commencer gratuitement",
+      "features": [
+        "Jusqu'à {{contacts}} contacts",
+        "{{appointments}} rendez-vous envoyés par mois",
+        "Liens de confirmation illimités",
+        "Agenda simple (vue semaine)",
+        "Programme de parrainage (30% à vie)",
+        "Mode jour / nuit"
+      ]
+    },
+    "basic": {
+      "tagline": "Un peu plus de marge pour un agenda qui commence à se remplir.",
+      "cta": "Passer en {{label}}",
+      "features": [
+        "Jusqu'à {{contacts}} contacts",
+        "{{appointments}} rendez-vous par mois",
+        "Liens de confirmation illimités",
+        "Agenda simple (vue semaine)",
+        "Programme de parrainage (30% à vie)",
+        "Mode jour / nuit"
+      ]
+    },
+    "standard": {
+      "tagline": "Pour celles et ceux qui enchaînent les rendez-vous chaque semaine.",
+      "cta": "Passer en Standard",
+      "features": [
+        "Jusqu'à {{contacts}} contacts",
+        "{{appointments}} rendez-vous par mois",
+        "Agenda complet : vue semaine & mois, création en un clic",
+        "Statistiques de la semaine",
+        "Réservation en libre-service via ton lien public",
+        "Programme de parrainage (30% à vie)"
+      ]
+    },
+    "economic": {
+      "tagline": "Pour une activité qui tourne à plein régime toute l'année.",
+      "cta": "Passer en {{label}}",
+      "features": [
+        "Jusqu'à {{contacts}} contacts",
+        "{{appointments}} rendez-vous par mois",
+        "Tout Standard : agenda complet, réservation",
+        "Tendance du mois",
+        "Programme de parrainage (30% à vie)"
+      ]
+    },
+    "business": {
+      "tagline": "Pour les équipes et les marques qui veulent tout, sans limite.",
+      "cta": "Passer en Business",
+      "features": [
+        "Contacts et rendez-vous illimités",
+        "Tout {{economicLabel}} : agenda complet, réservation, tendance du mois",
+        "Lien d'invitation personnalisé (branding + message)",
+        "Avis Google : note, lien Google My Business et Maps",
+        "Lien site internet sur tes invitations",
+        "Support prioritaire"
+      ]
+    }
+  }
+}

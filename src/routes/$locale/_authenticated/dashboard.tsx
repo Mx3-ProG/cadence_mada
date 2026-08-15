@@ -18,6 +18,7 @@ import { TodayPanel } from "@/components/agenda/today-panel";
 import { MonthTrend } from "@/components/agenda/month-trend";
 import { CheckoutReturn } from "@/components/billing/checkout-return";
 import { PlanBanner } from "@/components/agenda/plan-banner";
+import { useLocale } from "@/i18n/use-locale";
 import { LockedFeatureCard } from "@/components/agenda/locked-feature-card";
 import { Reveal } from "@/components/reveal";
 import { useAppointmentActions } from "@/lib/use-appointment-actions";
@@ -41,7 +42,7 @@ import {
   type AppointmentStatus,
 } from "@/lib/agenda";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
+export const Route = createFileRoute("/$locale/_authenticated/dashboard")({
   pendingComponent: DashboardSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,
@@ -64,6 +65,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const [anchor, setAnchor] = useState(() => new Date());
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -221,7 +223,8 @@ function Dashboard() {
         <PlanBanner usage={planQuery.data} />
 
         <Link
-          to="/agenda"
+          to="/$locale/agenda"
+          params={{ locale }}
           className="mt-6 flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-surface/60 px-4 py-3 transition-colors hover:border-primary/50 hover:bg-primary/5"
         >
           <span className="flex items-center gap-2 text-sm font-medium">
