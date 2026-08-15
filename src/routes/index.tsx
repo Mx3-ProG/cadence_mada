@@ -181,6 +181,16 @@ function Landing() {
             >
               Tarifs
             </Link>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="rounded-full border border-border/60"
+            >
+              <Link to="/contact" aria-label="Contacter Cadence">
+                <MessageCircle className="h-4 w-4" />
+              </Link>
+            </Button>
             <ThemeToggle />
             <Button asChild size="sm">
               <Link to="/auth">Commencer</Link>

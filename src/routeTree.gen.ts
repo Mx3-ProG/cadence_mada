@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CguRouteImport } from './routes/cgu'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DocumentationRouteImport } from './routes/documentation'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
@@ -22,7 +23,6 @@ import { Route as TarifsRouteImport } from './routes/tarifs'
 import { Route as VerificationRouteImport } from './routes/verification'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAgendaRouteImport } from './routes/_authenticated/agenda'
-import { Route as AuthenticatedContactRouteImport } from './routes/_authenticated/contact'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -52,6 +52,11 @@ const CguRoute = CguRouteImport.update({
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
   id: '/confidentialite',
   path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiesRoute = CookiesRouteImport.update({
@@ -94,11 +99,6 @@ const AuthenticatedAgendaRoute = AuthenticatedAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedContactRoute = AuthenticatedContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
@@ -135,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -143,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/agenda': typeof AuthenticatedAgendaRoute
-  '/contact': typeof AuthenticatedContactRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -156,6 +156,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -164,7 +165,6 @@ export interface FileRoutesByTo {
   '/verification': typeof VerificationRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/agenda': typeof AuthenticatedAgendaRoute
-  '/contact': typeof AuthenticatedContactRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -179,6 +179,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/cgu': typeof CguRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/documentation': typeof DocumentationRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -187,7 +188,6 @@ export interface FileRoutesById {
   '/verification': typeof VerificationRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/agenda': typeof AuthenticatedAgendaRoute
-  '/_authenticated/contact': typeof AuthenticatedContactRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -202,6 +202,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cgu'
     | '/confidentialite'
+    | '/contact'
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
@@ -210,7 +211,6 @@ export interface FileRouteTypes {
     | '/verification'
     | '/admin'
     | '/agenda'
-    | '/contact'
     | '/contacts'
     | '/dashboard'
     | '/settings'
@@ -223,6 +223,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cgu'
     | '/confidentialite'
+    | '/contact'
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
@@ -231,7 +232,6 @@ export interface FileRouteTypes {
     | '/verification'
     | '/admin'
     | '/agenda'
-    | '/contact'
     | '/contacts'
     | '/dashboard'
     | '/settings'
@@ -245,6 +245,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cgu'
     | '/confidentialite'
+    | '/contact'
     | '/cookies'
     | '/documentation'
     | '/mentions-legales'
@@ -253,7 +254,6 @@ export interface FileRouteTypes {
     | '/verification'
     | '/_authenticated/admin'
     | '/_authenticated/agenda'
-    | '/_authenticated/contact'
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
@@ -268,6 +268,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CguRoute: typeof CguRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
+  ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DocumentationRoute: typeof DocumentationRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -314,6 +315,13 @@ declare module '@tanstack/react-router' {
       path: '/confidentialite'
       fullPath: '/confidentialite'
       preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookies': {
@@ -372,13 +380,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgendaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/contact': {
-      id: '/_authenticated/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof AuthenticatedContactRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/contacts': {
       id: '/_authenticated/contacts'
       path: '/contacts'
@@ -427,7 +428,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAgendaRoute: typeof AuthenticatedAgendaRoute
-  AuthenticatedContactRoute: typeof AuthenticatedContactRoute
   AuthenticatedContactsRoute: typeof AuthenticatedContactsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -436,7 +436,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAgendaRoute: AuthenticatedAgendaRoute,
-  AuthenticatedContactRoute: AuthenticatedContactRoute,
   AuthenticatedContactsRoute: AuthenticatedContactsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -451,6 +450,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CguRoute: CguRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
+  ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DocumentationRoute: DocumentationRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,

@@ -1,17 +1,19 @@
 import { useState, type FormEvent } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Copy, Mail, MessageCircle, Send } from "lucide-react";
 import { toast } from "sonner";
-import { AppHeader } from "@/components/agenda/app-header";
+import { BrandLogo } from "@/components/brand-logo";
 import { Reveal } from "@/components/reveal";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-const CONTACT_EMAIL = "contact@cadence.app";
+const CONTACT_EMAIL = "contact@flux-wayne.com";
+const DISPLAY_EMAIL = "rdv@cadencemada.com";
 
-export const Route = createFileRoute("/_authenticated/contact")({
+export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Nous contacter — Cadence" },
@@ -49,7 +51,19 @@ function ContactPage() {
 
   return (
     <div className="min-h-screen overflow-hidden">
-      <AppHeader />
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <Link to="/" aria-label="Retour à l'accueil">
+            <BrandLogo />
+          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
+            <Button asChild size="sm">
+              <Link to="/auth">Commencer</Link>
+            </Button>
+          </div>
+        </div>
+      </header>
 
       <main className="relative mx-auto w-full max-w-5xl px-4 pb-24 pt-10 sm:px-6 sm:pt-16">
         <div className="aurora pointer-events-none absolute inset-x-0 -top-20 -z-10 h-[34rem] opacity-80" />
@@ -90,7 +104,7 @@ function ContactPage() {
               >
                 <span className="min-w-0">
                   <span className="block text-xs text-muted-foreground">Adresse email</span>
-                  <span className="block truncate font-semibold">{CONTACT_EMAIL}</span>
+                  <span className="block truncate font-semibold">{DISPLAY_EMAIL}</span>
                 </span>
                 <ArrowRight className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
               </a>
