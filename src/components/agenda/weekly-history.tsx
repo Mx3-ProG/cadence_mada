@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, History, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { formatDayMonth } from "@/lib/format";
+import { useLocale } from "@/i18n/use-locale";
 
 type WeekRow = {
   week_start: string;
@@ -23,15 +25,14 @@ async function fetchWeekly(): Promise<WeekRow[]> {
   return ((data ?? []) as WeekRow[]).slice().sort((a, b) => (a.week_start < b.week_start ? 1 : -1));
 }
 
-function formatWeek(iso: string) {
-  const start = new Date(`${iso}T00:00:00`);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 6);
-  const f = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
-  return `${f.format(start)} → ${f.format(end)}`;
-}
-
 export function WeeklyHistory() {
+  const locale = useLocale();
+  const formatWeek = (iso: string) => {
+    const start = new Date(`${iso}T00:00:00`);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    return `${formatDayMonth(start, locale)} → ${formatDayMonth(end, locale)}`;
+  };
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: weeklyKey, queryFn: fetchWeekly });
 

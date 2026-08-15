@@ -16,20 +16,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatDateTime as formatDateTimeLocalized } from "@/lib/format";
+import { useLocale } from "@/i18n/use-locale";
 
 const CANCEL_PHRASE = "je me désabonne";
 
-const dateTimeFormatter = new Intl.DateTimeFormat("fr-FR", {
-  dateStyle: "long",
-  timeStyle: "short",
-});
-
-function formatDateTime(iso: string | null) {
-  if (!iso) return null;
-  return dateTimeFormatter.format(new Date(iso));
-}
-
 export function SubscriptionSection() {
+  const locale = useLocale();
+  const formatDateTime = (iso: string | null) => formatDateTimeLocalized(iso, locale);
   const planQuery = usePlanUsage();
   const cancel = useCancelSubscription();
   const reactivate = useReactivateSubscription();

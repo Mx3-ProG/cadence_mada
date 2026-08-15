@@ -27,7 +27,6 @@ import {
   useSendReferralInvite,
   referralPayoutErrorMessage,
   referralLink,
-  formatCents,
   REFERRAL_COUNT_BOUNDARIES,
   REFERRAL_COUNT_LABELS,
   REFERRAL_MONEY_BOUNDARIES_CENTS,
@@ -35,6 +34,8 @@ import {
   REFERRAL_PAYOUT_MIN_CENTS,
 } from "@/lib/referral";
 import { hasTierAtLeast, TIER_LABELS } from "@/lib/plan";
+import { formatCentsLocalized } from "@/lib/format";
+import { useLocale } from "@/i18n/use-locale";
 
 function DiscordIcon({ className }: { className?: string }) {
   return (
@@ -45,6 +46,8 @@ function DiscordIcon({ className }: { className?: string }) {
 }
 
 export function ReferralSection() {
+  const locale = useLocale();
+  const formatCents = (cents: number) => formatCentsLocalized(cents, locale);
   const summaryQuery = useReferralSummary();
   const referralsQuery = useMyReferrals();
   const requestPayout = useRequestPayout();

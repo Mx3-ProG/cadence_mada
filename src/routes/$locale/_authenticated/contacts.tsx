@@ -19,6 +19,7 @@ import {
   Search,
   Settings,
   Trash2,
+  Upload,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -30,10 +31,13 @@ import { AppHeader } from "@/components/agenda/app-header";
 import { ContactDialog } from "@/components/agenda/contact-dialog";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { ContactSearchDialog } from "@/components/agenda/contact-search-dialog";
+import { ContactImportDialog } from "@/components/agenda/contact-import-dialog";
 import { Reveal } from "@/components/reveal";
 import { bookingUrl, defaultBookingHours, generateBookingSlug, type Contact } from "@/lib/agenda";
 import { PlanBanner } from "@/components/agenda/plan-banner";
 import { useLocale } from "@/i18n/use-locale";
+import { formatLongDate } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
 import {
   hasFeatureAccess,
   isContactLimitReached,
@@ -58,10 +62,10 @@ const GENDER_LABEL: Record<string, string> = {
   other: "Autre",
 };
 
-function formatBirthday(value: string) {
+function formatBirthday(value: string, locale: Locale) {
   const d = new Date(`${value}T00:00:00`);
   if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  return formatLongDate(d, locale);
 }
 
 export const Route = createFileRoute("/$locale/_authenticated/contacts")({
@@ -222,12 +226,14 @@ function BookingLinkCard() {
 }
 
 function ContactsPage() {
+  const locale = useLocale();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Contact | null>(null);
   const [apptOpen, setApptOpen] = useState(false);
   const [apptContactId, setApptContactId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [searchFilters, setSearchFilters] = useState({ ...EMPTY_CONTACT_SEARCH_FILTERS });
 
   const contactsQuery = useQuery({
@@ -342,6 +348,14 @@ function ContactsPage() {
                   {activeFilters}
                 </span>
               )}
+            </Button>
+            <Button
+              variant="outline"
+              className="shrink-0 gap-2"
+              onClick={() => setImportOpen(true)}
+            >
+              <Upload className="h-4 w-4" />
+              <span className="hidden sm:inline">Importer</span>
             </Button>
             <Button
               className="shrink-0 gap-2"
@@ -466,7 +480,7 @@ function ContactsPage() {
                       <p className="flex min-w-0 items-center gap-2">
                         <Cake className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">
-                          {formatBirthday(c.birthday)}
+                          {formatBirthday(c.birthday, locale)}
                           {c.gender && GENDER_LABEL[c.gender] ? ` · ${GENDER_LABEL[c.gender]}` : ""}
                         </span>
                       </p>
@@ -536,6 +550,13 @@ function ContactsPage() {
         filters={searchFilters}
         onFiltersChange={setSearchFilters}
         resultsCount={visibleContacts.length}
+      />
+      <ContactImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        existingContacts={contacts}
+        usage={planQuery.data}
+        onImported={refresh}
       />
       <ContactDialog open={open} onOpenChange={setOpen} contact={editing} onSaved={refresh} />
       <AppointmentDialog

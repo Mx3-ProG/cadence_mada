@@ -15,7 +15,9 @@ export const Route = createFileRoute("/$locale")({
   beforeLoad: async ({ params, location }) => {
     if (!isSupportedLocale(params.locale)) {
       const detected = await detectLocaleFromCurrentRequest();
-      throw redirect({ href: `/${detected}${location.pathname}`, replace: true });
+      // location.href already includes pathname + search + hash (no origin),
+      // so prefixing it with the locale preserves query params like ?ref=.
+      throw redirect({ href: `/${detected}${location.href}`, replace: true });
     }
     return { locale: params.locale };
   },
