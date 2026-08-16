@@ -5,6 +5,7 @@ import { buildBookingNewRequestEmail } from "../../supabase/emails/booking-new-r
 import { buildBookingRequestReceivedEmail } from "../../supabase/emails/booking-request-received";
 import { buildBookingConfirmedEmail } from "../../supabase/emails/booking-confirmed";
 import { buildBookingDeclinedEmail } from "../../supabase/emails/booking-declined";
+import { isSupportedLocale, DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/i18n/config";
 
 const proposeBookingSchema = z.object({
   slug: z.string().min(1).max(200),
@@ -16,6 +17,7 @@ const proposeBookingSchema = z.object({
   startsAt: z.string().datetime(),
   endsAt: z.string().datetime(),
   origin: z.string().url().max(300),
+  locale: z.enum(SUPPORTED_LOCALES).optional(),
 });
 
 /**
@@ -146,26 +148,30 @@ export const proposeBooking = createServerFn({ method: "POST" })
 
     const { data: owner } = await supabaseAdmin
       .from("profiles")
-      .select("full_name, email")
+      .select("full_name, email, locale")
       .eq("id", settings.owner_id)
       .maybeSingle();
     const hostName = owner?.full_name ?? owner?.email ?? "votre hôte";
+    const ownerLocale = isSupportedLocale(owner?.locale) ? owner.locale : DEFAULT_LOCALE;
+    const guestLocale = isSupportedLocale(data.locale) ? data.locale : DEFAULT_LOCALE;
 
     const { sendEmail } = await import("@/lib/resend.server");
 
-    const { subject: guestSubject, html: guestHtml } = buildBookingRequestReceivedEmail({
+    const { subject: guestSubject, html: guestHtml } = await buildBookingRequestReceivedEmail({
       guestName: data.guestName,
       hostName,
+      locale: guestLocale,
       appointment: { title, startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString() },
     });
     await sendEmail({ to: data.guestEmail, subject: guestSubject, html: guestHtml });
 
     if (owner?.email) {
-      const { subject: ownerSubject, html: ownerHtml } = buildBookingNewRequestEmail({
+      const { subject: ownerSubject, html: ownerHtml } = await buildBookingNewRequestEmail({
         guestName: data.guestName,
         guestEmail: data.guestEmail,
         guestPhone: data.guestPhone ?? null,
         message: data.message ?? null,
+        locale: ownerLocale,
         appointment: { title, startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString() },
         dashboardLink: `${data.origin.replace(/\/$/, "")}/dashboard`,
       });
@@ -213,10 +219,11 @@ export const notifyBookingDecision = createServerFn({ method: "POST" })
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, email, avatar_url")
+      .select("full_name, email, avatar_url, locale")
       .eq("id", userId)
       .maybeSingle();
     const hostName = profile?.full_name ?? profile?.email ?? "votre hôte";
+    const hostLocale = isSupportedLocale(profile?.locale) ? profile.locale : DEFAULT_LOCALE;
 
     const { data: settings } = await supabase
       .from("booking_settings")
@@ -229,10 +236,11 @@ export const notifyBookingDecision = createServerFn({ method: "POST" })
 
     const build =
       appointment.status === "accepted" ? buildBookingConfirmedEmail : buildBookingDeclinedEmail;
-    const { subject, html } = build({
+    const { subject, html } = await build({
       guestName: contact.name || "",
       hostName,
       hostAvatarUrl: profile?.avatar_url,
+      locale: hostLocale,
       appointment: {
         title: appointment.title,
         location: appointment.location,

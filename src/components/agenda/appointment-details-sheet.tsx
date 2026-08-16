@@ -56,7 +56,7 @@ export function AppointmentDetailsSheet({
         {a && (
           <>
             <SheetHeader>
-              <div className="flex items-start justify-between gap-2 pr-6">
+              <div className="flex items-start justify-between gap-2 pe-6">
                 <SheetTitle className="text-left">{a.title}</SheetTitle>
                 <StatusBadge status={a.status} />
               </div>

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildReferralInviteEmail } from "../../supabase/emails/referral-invite";
+import { isSupportedLocale, DEFAULT_LOCALE } from "@/i18n/config";
 
 const sendReferralInviteSchema = z.object({
   email: z.string().email().max(300),
@@ -21,7 +22,7 @@ export const sendReferralInviteEmail = createServerFn({ method: "POST" })
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("referral_code, business_name, full_name, avatar_url")
+      .select("referral_code, business_name, full_name, avatar_url, locale")
       .eq("id", userId)
       .maybeSingle();
 
@@ -41,9 +42,11 @@ export const sendReferralInviteEmail = createServerFn({ method: "POST" })
     const referrerName = profile.business_name || profile.full_name || "Un utilisateur de Cadence";
     const link = `${data.origin.replace(/\/$/, "")}/${data.locale}/auth?ref=${profile.referral_code}`;
 
-    const { subject, html } = buildReferralInviteEmail({
+    const referrerLocale = isSupportedLocale(profile.locale) ? profile.locale : DEFAULT_LOCALE;
+    const { subject, html } = await buildReferralInviteEmail({
       referrerName,
       referrerAvatarUrl: profile.avatar_url,
+      locale: referrerLocale,
       link,
     });
 

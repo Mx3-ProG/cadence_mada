@@ -76,7 +76,7 @@ export function ContactSearchDialog({
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="contact-search"
-                className="h-11 rounded-xl pl-10"
+                className="h-11 rounded-xl ps-10"
                 value={filters.query}
                 onChange={(event) => set("query", event.target.value)}
                 placeholder="Nom, email, téléphone, note…"

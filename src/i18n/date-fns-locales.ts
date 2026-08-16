@@ -33,3 +33,9 @@ export function useDateFnsLocale(): DateFnsLocale {
   const locale = useLocale();
   return DATE_FNS_LOCALES[locale];
 }
+
+/** Pour les pages hors de /$locale/* (invité/client sans compte) où la langue vient
+ * d'une détection serveur (cookie/Accept-Language) plutôt que de l'URL. */
+export function dateFnsLocale(locale: Locale): DateFnsLocale {
+  return DATE_FNS_LOCALES[locale];
+}

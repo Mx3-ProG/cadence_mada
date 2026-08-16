@@ -71,7 +71,7 @@ export function PlanCta({ tier }: { tier: PaidPlanTier }) {
           : navigate({ to: "/$locale/auth", params: { locale } })
       }
     >
-      {changePlan.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {changePlan.isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
       {buttonLabel}
     </Button>
   );

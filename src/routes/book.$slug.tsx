@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation, I18nextProvider } from "react-i18next";
 import { format, isSameDay } from "date-fns";
-import { fr } from "date-fns/locale";
-import { CalendarCheck, Clock, ArrowLeft } from "lucide-react";
+import { Clock, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { proposeBooking } from "@/lib/booking.functions";
@@ -16,23 +16,47 @@ import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SimpleSkeleton } from "@/components/loading/page-skeletons";
 import { BrandMark } from "@/components/brand-logo";
+import { GuestLanguageSwitcher } from "@/components/guest-language-switcher";
+import { GuestCompletionRedirect } from "@/components/guest-completion-redirect";
+import { detectLocaleFromCurrentRequest } from "@/i18n/detect-locale";
+import { loadNamespacesWithFallback } from "@/i18n/resources";
+import { createI18nInstance } from "@/i18n/i18n-instance";
+import { dateFnsLocale } from "@/i18n/date-fns-locales";
 import { cn } from "@/lib/utils";
+
+const BOOKING_NS = ["booking"] as const;
 
 export const Route = createFileRoute("/book/$slug")({
   pendingComponent: SimpleSkeleton,
   pendingMs: 0,
   pendingMinMs: 400,
-  head: () => ({
-    meta: [
-      { title: "Réserver un rendez-vous — Cadence" },
-      {
-        name: "description",
-        content: "Choisis une date libre dans l'agenda et propose un rendez-vous en un clic.",
-      },
-    ],
-  }),
-  component: BookingPage,
+  loader: async () => {
+    const locale = await detectLocaleFromCurrentRequest();
+    const i18nResources = await loadNamespacesWithFallback(locale, BOOKING_NS);
+    return { locale, i18nResources };
+  },
+  head: ({ loaderData }) => {
+    const booking = loaderData?.i18nResources[loaderData.locale]?.["booking"] ?? {};
+    return {
+      meta: [
+        { title: booking["seo.title"] ?? "Réserver un rendez-vous — Cadence" },
+        { name: "description", content: booking["seo.description"] ?? "" },
+      ],
+    };
+  },
+  component: BookingRoot,
 });
+
+function BookingRoot() {
+  const { locale, i18nResources } = Route.useLoaderData();
+  const i18n = useMemo(() => createI18nInstance(locale, i18nResources), [locale, i18nResources]);
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <BookingPage />
+    </I18nextProvider>
+  );
+}
 
 type BookingPageRow = {
   owner_id: string;
@@ -50,6 +74,8 @@ type Step = "date" | "time" | "details";
 
 function BookingPage() {
   const { slug } = Route.useParams();
+  const { t, i18n } = useTranslation("booking");
+  const fnsLocale = dateFnsLocale(i18n.language as Parameters<typeof dateFnsLocale>[0]);
   const [step, setStep] = useState<Step>("date");
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);
@@ -133,26 +159,27 @@ function BookingPage() {
           startsAt: selectedSlot.toISOString(),
           endsAt: endsAt.toISOString(),
           origin: window.location.origin,
+          locale: i18n.language as Parameters<typeof dateFnsLocale>[0],
         },
       });
       if (!result.success) {
         if (result.reason === "slot_taken") {
-          toast.error("Ce créneau vient d'être pris, choisis-en un autre.");
+          toast.error(t("errors.slot_taken"));
           void intervalsQuery.refetch();
           setSelectedSlot(null);
           setStep("time");
         } else if (result.reason === "plan_limit") {
-          toast.error("Cet agenda a atteint sa limite de rendez-vous pour le moment.");
+          toast.error(t("errors.plan_limit"));
         } else if (result.reason === "disabled") {
-          toast.error("Ce lien de réservation n'est plus actif.");
+          toast.error(t("errors.disabled"));
         } else {
-          toast.error("Ce créneau n'est plus disponible.");
+          toast.error(t("errors.slot_unavailable"));
         }
         return;
       }
       setSent(true);
     } catch {
-      toast.error("Impossible d'envoyer la demande, réessaie dans un instant.");
+      toast.error(t("errors.generic"));
     } finally {
       setBusy(false);
     }
@@ -162,7 +189,8 @@ function BookingPage() {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <div className="aurora pointer-events-none absolute inset-0 -z-10" />
       <div className="grid-lines pointer-events-none absolute inset-0 -z-10 opacity-30" />
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 flex items-center gap-2">
+        <GuestLanguageSwitcher ariaLabel={t("language_aria")} />
         <ThemeToggle />
       </div>
 
@@ -174,26 +202,22 @@ function BookingPage() {
 
         <div className="glass-panel rounded-[2rem] p-6 sm:p-10">
           {pageQuery.isLoading && (
-            <p className="py-10 text-center text-sm text-muted-foreground">Chargement…</p>
+            <p className="py-10 text-center text-sm text-muted-foreground">{t("loading")}</p>
           )}
 
           {!pageQuery.isLoading && (!page || !page.enabled) && (
-            <p className="py-10 text-center text-sm text-muted-foreground">
-              Ce lien de réservation n'est pas actif.
-            </p>
+            <p className="py-10 text-center text-sm text-muted-foreground">{t("disabled")}</p>
           )}
 
           {page?.enabled && sent && (
-            <div className="py-10 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                <CalendarCheck className="h-7 w-7 text-primary" />
-              </div>
-              <h1 className="font-display text-xl font-bold">Demande envoyée</h1>
-              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                Tu recevras un email dès que {page.business_name ?? page.host_name ?? "ton hôte"}{" "}
-                confirme le rendez-vous.
-              </p>
-            </div>
+            <GuestCompletionRedirect
+              title={t("sent.title")}
+              body={t("sent.body", {
+                host: page.business_name ?? page.host_name ?? t("default_host"),
+              })}
+              redirectLabel={t("sent.redirect")}
+              locale={i18n.language}
+            />
           )}
 
           {page?.enabled && !sent && (
@@ -201,12 +225,14 @@ function BookingPage() {
               <div className="mb-6 flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Réserver avec {page.business_name ?? page.host_name ?? "votre hôte"}
+                    {t("book_with", {
+                      host: page.business_name ?? page.host_name ?? t("default_host"),
+                    })}
                   </p>
                   <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">
-                    {step === "date" && "Choisis une date"}
-                    {step === "time" && "Choisis un horaire"}
-                    {step === "details" && "Tes coordonnées"}
+                    {step === "date" && t("step.date")}
+                    {step === "time" && t("step.time")}
+                    {step === "details" && t("step.details")}
                   </h1>
                 </div>
                 {step !== "date" && (
@@ -225,7 +251,7 @@ function BookingPage() {
                     }}
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    Retour
+                    {t("back")}
                   </Button>
                 )}
               </div>
@@ -234,18 +260,16 @@ function BookingPage() {
                 <div className="flex flex-col items-center">
                   {intervalsQuery.isLoading && (
                     <p className="py-8 text-sm text-muted-foreground">
-                      Chargement des disponibilités…
+                      {t("availability.loading")}
                     </p>
                   )}
                   {!intervalsQuery.isLoading && availableDays.length === 0 && (
-                    <p className="py-8 text-sm text-muted-foreground">
-                      Aucun créneau disponible pour le moment.
-                    </p>
+                    <p className="py-8 text-sm text-muted-foreground">{t("availability.empty")}</p>
                   )}
                   {!intervalsQuery.isLoading && availableDays.length > 0 && (
                     <Calendar
                       mode="single"
-                      locale={fr}
+                      locale={fnsLocale}
                       selected={selectedDay ?? undefined}
                       onSelect={(day) => {
                         if (!day) return;
@@ -264,7 +288,7 @@ function BookingPage() {
               {step === "time" && selectedDay && (
                 <div className="space-y-5">
                   <p className="text-sm font-semibold capitalize text-foreground">
-                    {format(selectedDay, "EEEE d MMMM", { locale: fr })}
+                    {format(selectedDay, "EEEE d MMMM", { locale: fnsLocale })}
                   </p>
                   <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                     {slotsForSelectedDay.map((slot) => (
@@ -291,12 +315,14 @@ function BookingPage() {
                 <div className="space-y-5">
                   <div className="flex items-center gap-2 rounded-2xl bg-surface/70 p-4 text-sm">
                     <Clock className="h-4 w-4 shrink-0 text-primary" />
-                    <span>{format(selectedSlot, "EEEE d MMMM 'à' HH:mm", { locale: fr })}</span>
+                    <span>
+                      {format(selectedSlot, "EEEE d MMMM 'à' HH:mm", { locale: fnsLocale })}
+                    </span>
                   </div>
 
                   <div className="grid gap-3">
                     <div>
-                      <Label htmlFor="guest-name">Nom</Label>
+                      <Label htmlFor="guest-name">{t("form.name")}</Label>
                       <Input
                         id="guest-name"
                         value={name}
@@ -304,7 +330,7 @@ function BookingPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="guest-email">Email</Label>
+                      <Label htmlFor="guest-email">{t("form.email")}</Label>
                       <Input
                         id="guest-email"
                         type="email"
@@ -313,7 +339,7 @@ function BookingPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="guest-phone">Téléphone (optionnel)</Label>
+                      <Label htmlFor="guest-phone">{t("form.phone")}</Label>
                       <Input
                         id="guest-phone"
                         value={phone}
@@ -321,7 +347,7 @@ function BookingPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="guest-message">Message (optionnel)</Label>
+                      <Label htmlFor="guest-message">{t("form.message")}</Label>
                       <Textarea
                         id="guest-message"
                         rows={3}
@@ -336,7 +362,7 @@ function BookingPage() {
                     disabled={busy || !name.trim() || !email.trim()}
                     onClick={submit}
                   >
-                    Envoyer la demande
+                    {t("submit")}
                   </Button>
                 </div>
               )}

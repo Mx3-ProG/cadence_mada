@@ -136,7 +136,7 @@ export function AgendaWeekGrid({
           {hours.map((h) => (
             <div
               key={h}
-              className="border-t border-border/50 pr-2 text-right text-[11px] text-muted-foreground first:border-t-0"
+              className="border-t border-border/50 pe-2 text-right text-[11px] text-muted-foreground first:border-t-0"
               style={{ height: ROW_HEIGHT * 2 }}
             >
               {String(h).padStart(2, "0")}:00

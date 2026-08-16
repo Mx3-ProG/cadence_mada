@@ -231,7 +231,7 @@ export function WeekStats({
                 <tbody>
                   {stats.perDay.map((d) => (
                     <tr key={d.day.toISOString()} className="border-t border-border/60">
-                      <td className="py-2 pr-2">
+                      <td className="py-2 pe-2">
                         <span className="capitalize">
                           {format(d.day, "EEE d", { locale: dateFnsLocale })}
                         </span>
@@ -302,7 +302,7 @@ export function WeekStats({
                   <tbody>
                     {stats.perContact.slice(0, 6).map((c) => (
                       <tr key={c.id} className="border-t border-border/60">
-                        <td className="py-2 pr-2">
+                        <td className="py-2 pe-2">
                           <p className="truncate font-medium">{c.name}</p>
                           {c.company && (
                             <p className="truncate text-xs text-muted-foreground">{c.company}</p>
@@ -394,7 +394,7 @@ export function WeekStats({
                     },
                   ].map((row) => (
                     <tr key={row.label} className="border-t border-border/60 first:border-t-0">
-                      <td className="py-2 pr-2 text-muted-foreground">{row.label}</td>
+                      <td className="py-2 pe-2 text-muted-foreground">{row.label}</td>
                       <td className="py-2 text-right font-semibold tabular-nums">{row.value}</td>
                       <td className="w-24 py-2 text-right text-xs text-muted-foreground">
                         {row.detail}

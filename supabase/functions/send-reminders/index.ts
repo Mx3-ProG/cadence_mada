@@ -3,12 +3,55 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildInviteReminderEmail } from "../../emails/invite-reminder.ts";
 import { buildAppointmentReminderEmail } from "../../emails/appointment-reminder.ts";
 import { buildOwnerDailySummaryEmail } from "../../emails/owner-daily-summary.ts";
+import type { EmailT } from "../../emails/shared.ts";
+import { isSupportedLocale, DEFAULT_LOCALE } from "../../../src/i18n/config.ts";
 import {
   antananarivoClock,
   isPendingInviteDue,
   isUpcomingAppointmentDue,
   reminderDedupeKey,
 } from "./scheduling.ts";
+
+// Runtime Deno séparé du bundler Vite de l'app principale (pas d'import.meta.glob
+// disponible) : on importe les 10 fichiers de traduction "emails" statiquement plutôt
+// que de réutiliser supabase/emails/i18n.ts (qui dépend de @/i18n/resources, Vite-only).
+import emailsFr from "../../../src/locales/fr/emails.json" with { type: "json" };
+import emailsEn from "../../../src/locales/en/emails.json" with { type: "json" };
+import emailsDe from "../../../src/locales/de/emails.json" with { type: "json" };
+import emailsRu from "../../../src/locales/ru/emails.json" with { type: "json" };
+import emailsAr from "../../../src/locales/ar/emails.json" with { type: "json" };
+import emailsEs from "../../../src/locales/es/emails.json" with { type: "json" };
+import emailsIt from "../../../src/locales/it/emails.json" with { type: "json" };
+import emailsPt from "../../../src/locales/pt/emails.json" with { type: "json" };
+import emailsZh from "../../../src/locales/zh/emails.json" with { type: "json" };
+import emailsHi from "../../../src/locales/hi/emails.json" with { type: "json" };
+
+const EMAIL_STRINGS: Record<string, Record<string, string>> = {
+  fr: emailsFr,
+  en: emailsEn,
+  de: emailsDe,
+  ru: emailsRu,
+  ar: emailsAr,
+  es: emailsEs,
+  it: emailsIt,
+  pt: emailsPt,
+  zh: emailsZh,
+  hi: emailsHi,
+};
+
+function translatorFor(locale: string): EmailT {
+  const primary = EMAIL_STRINGS[locale] ?? EMAIL_STRINGS["fr"]!;
+  const fallback = EMAIL_STRINGS["fr"]!;
+  return (key, vars) => {
+    let template = primary[key] ?? fallback[key] ?? key;
+    if (vars) {
+      for (const [k, v] of Object.entries(vars)) {
+        template = template.replaceAll(`{{${k}}}`, String(v));
+      }
+    }
+    return template;
+  };
+}
 
 type Appointment = {
   id: string;
@@ -32,7 +75,7 @@ type Invitation = {
 };
 
 type Contact = { id: string; name: string; email: string | null };
-type Owner = { id: string; full_name: string | null; email: string | null };
+type Owner = { id: string; full_name: string | null; email: string | null; locale: string | null };
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -147,7 +190,7 @@ Deno.serve(async (request) => {
   const now = new Date();
   const { data: ownersData, error: ownersError } = await db
     .from("profiles")
-    .select("id, full_name, email")
+    .select("id, full_name, email, locale")
     .eq("automatic_reminders_enabled", true);
   if (ownersError) return Response.json({ error: ownersError.message }, { status: 500 });
   const owners = (ownersData ?? []) as Owner[];
@@ -224,9 +267,12 @@ Deno.serve(async (request) => {
         ).toISOString(),
       });
       if (delivery) {
+        const ownerLocale = isSupportedLocale(owner.locale) ? owner.locale : DEFAULT_LOCALE;
         const email = buildInviteReminderEmail({
           guestName: contact.name,
           hostName: owner.full_name ?? "votre hôte",
+          locale: ownerLocale,
+          t: translatorFor(ownerLocale),
           appointment: appointmentInput,
           link,
         });
@@ -256,9 +302,12 @@ Deno.serve(async (request) => {
         ).toISOString(),
       });
       if (delivery) {
+        const ownerLocale = isSupportedLocale(owner.locale) ? owner.locale : DEFAULT_LOCALE;
         const email = buildAppointmentReminderEmail({
           guestName: contact.name,
           hostName: owner.full_name ?? "votre hôte",
+          locale: ownerLocale,
+          t: translatorFor(ownerLocale),
           appointment: appointmentInput,
           link,
         });
@@ -336,11 +385,14 @@ Deno.serve(async (request) => {
         scheduledFor: now.toISOString(),
       });
       if (!delivery) continue;
+      const ownerLocale = isSupportedLocale(owner.locale) ? owner.locale : DEFAULT_LOCALE;
       const email = buildOwnerDailySummaryEmail({
         ownerName: owner.full_name ?? "",
+        locale: ownerLocale,
+        t: translatorFor(ownerLocale),
         pending,
         upcoming,
-        dashboardLink: `${appUrl}/fr/dashboard`,
+        dashboardLink: `${appUrl}/${ownerLocale}/dashboard`,
       });
       if (
         await sendTrackedEmail({

@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildInviteRequestEmail } from "../../supabase/emails/invite-request";
 import { buildInviteAcceptedEmail } from "../../supabase/emails/invite-accepted";
 import { buildInviteDeclinedEmail } from "../../supabase/emails/invite-declined";
+import { isSupportedLocale, DEFAULT_LOCALE } from "@/i18n/config";
 
 const sendInviteSchema = z.object({
   appointmentId: z.string().uuid(),
@@ -33,12 +34,13 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
     const { data: profile } = await supabase
       .from("profiles")
       .select(
-        "plan, full_name, email, avatar_url, business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, website_url, review_prompt_enabled",
+        "plan, full_name, email, avatar_url, locale, business_name, invite_message, google_review_url, google_maps_url, google_rating, google_reviews_count, website_url, review_prompt_enabled",
       )
       .eq("id", userId)
       .maybeSingle();
     const hasBranding = profile?.plan === "business";
     const hostName = profile?.business_name || profile?.full_name || profile?.email || "votre hôte";
+    const locale = isSupportedLocale(profile?.locale) ? profile.locale : DEFAULT_LOCALE;
 
     const { data: invitations, error: invitationsError } = await supabase
       .from("appointment_invites")
@@ -90,10 +92,11 @@ export const sendInviteEmail = createServerFn({ method: "POST" })
 
     for (const recipient of recipients) {
       const link = `${data.origin.replace(/\/$/, "")}/invite/${recipient.token}`;
-      const { subject, html } = buildInviteRequestEmail({
+      const { subject, html } = await buildInviteRequestEmail({
         guestName: recipient.name,
         hostName,
         hostAvatarUrl: profile?.avatar_url,
+        locale,
         appointment: {
           title: appointment.title,
           description: appointment.description,
@@ -202,10 +205,11 @@ export const notifyInviteResponse = createServerFn({ method: "POST" })
 
     const { data: owner } = await supabaseAdmin
       .from("profiles")
-      .select("email")
+      .select("email, locale")
       .eq("id", appointment.owner_id)
       .maybeSingle();
     if (!owner?.email) return { notified: false as const };
+    const ownerLocale = isSupportedLocale(owner.locale) ? owner.locale : DEFAULT_LOCALE;
 
     let guestName = "";
     const contactId = invitation?.contact_id ?? appointment.contact_id;
@@ -221,8 +225,9 @@ export const notifyInviteResponse = createServerFn({ method: "POST" })
     const dashboardLink = `${data.origin.replace(/\/$/, "")}/dashboard`;
     const build =
       responseStatus === "accepted" ? buildInviteAcceptedEmail : buildInviteDeclinedEmail;
-    const { subject, html } = build({
+    const { subject, html } = await build({
       guestName,
+      locale: ownerLocale,
       appointment: {
         title: appointment.title,
         location: appointment.location,

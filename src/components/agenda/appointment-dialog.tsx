@@ -390,7 +390,7 @@ export function AppointmentDialog({
             </div>
 
             <div className="grid min-w-0 grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
-              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
+              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 ps-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
                 <Label htmlFor="a-start" className="text-muted-foreground sm:text-foreground">
                   {t("dialog.start_label")}
                 </Label>
@@ -402,7 +402,7 @@ export function AppointmentDialog({
                   onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                 />
               </div>
-              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 pl-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
+              <div className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-2 rounded-2xl bg-background/70 p-1.5 ps-3 sm:grid-cols-1 sm:items-stretch sm:gap-2 sm:bg-transparent sm:p-0">
                 <Label htmlFor="a-end" className="text-muted-foreground sm:text-foreground">
                   {t("dialog.end_label")}
                 </Label>

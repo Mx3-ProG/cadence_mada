@@ -20,7 +20,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
           id={id}
           type={visible ? "text" : "password"}
           disabled={disabled}
-          className={cn("pr-11", className)}
+          className={cn("pe-11", className)}
         />
         <button
           type="button"

@@ -220,7 +220,7 @@ export function AppointmentCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="ml-auto h-7 w-7"
+                  className="ms-auto h-7 w-7"
                   aria-label={t("card.edit_aria")}
                   onClick={(e) => {
                     stop(e);

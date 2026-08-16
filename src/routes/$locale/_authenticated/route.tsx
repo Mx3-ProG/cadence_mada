@@ -25,6 +25,18 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const lastCheck = useRef(Date.now());
 
+  // Langue du compte du pro : détermine la langue des emails envoyés depuis ce compte
+  // (le contact/invité n'a pas de compte). Se synchronise avec la langue actuellement
+  // parcourue, capturée dès la première connexion et mise à jour si elle change.
+  useEffect(() => {
+    void (async () => {
+      const { data } = await supabase.auth.getUser();
+      const uid = data.user?.id;
+      if (!uid) return;
+      await supabase.from("profiles").update({ locale }).eq("id", uid);
+    })();
+  }, [locale]);
+
   useEffect(() => {
     const checkActivity = async () => {
       if (Date.now() - lastCheck.current < 5 * 60 * 1000) return;

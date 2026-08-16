@@ -412,6 +412,7 @@ export type Database = {
           google_reviews_count: number | null;
           id: string;
           invite_message: string | null;
+          locale: string;
           onboarding_completed_at: string | null;
           plan: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at: string | null;
@@ -438,6 +439,7 @@ export type Database = {
           google_reviews_count?: number | null;
           id: string;
           invite_message?: string | null;
+          locale?: string;
           onboarding_completed_at?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;
@@ -464,6 +466,7 @@ export type Database = {
           google_reviews_count?: number | null;
           id?: string;
           invite_message?: string | null;
+          locale?: string;
           onboarding_completed_at?: string | null;
           plan?: Database["public"]["Enums"]["plan_tier"];
           plan_renews_at?: string | null;

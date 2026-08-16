@@ -159,7 +159,7 @@ export function QuickAppointmentFlow({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="-ml-2 h-7 w-7 shrink-0"
+                    className="-ms-2 h-7 w-7 shrink-0"
                     aria-label={t("quick.back_aria")}
                     onClick={() => setStep("choose")}
                   >

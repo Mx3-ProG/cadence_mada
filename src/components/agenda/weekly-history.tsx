@@ -105,28 +105,28 @@ export function WeeklyHistory() {
             <table className="w-full min-w-[620px] text-sm">
               <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  <th className="py-2 pr-3">{t("history.table.week")}</th>
-                  <th className="py-2 pr-3">{t("history.table.appointments")}</th>
-                  <th className="py-2 pr-3">{t("history.table.accepted")}</th>
-                  <th className="py-2 pr-3">{t("history.table.declined")}</th>
-                  <th className="py-2 pr-3">{t("history.table.pending")}</th>
-                  <th className="py-2 pr-3">{t("history.table.cancelled")}</th>
-                  <th className="py-2 pr-3">{t("history.table.invites")}</th>
-                  <th className="py-2 pr-3">{t("history.table.contacts")}</th>
+                  <th className="py-2 pe-3">{t("history.table.week")}</th>
+                  <th className="py-2 pe-3">{t("history.table.appointments")}</th>
+                  <th className="py-2 pe-3">{t("history.table.accepted")}</th>
+                  <th className="py-2 pe-3">{t("history.table.declined")}</th>
+                  <th className="py-2 pe-3">{t("history.table.pending")}</th>
+                  <th className="py-2 pe-3">{t("history.table.cancelled")}</th>
+                  <th className="py-2 pe-3">{t("history.table.invites")}</th>
+                  <th className="py-2 pe-3">{t("history.table.contacts")}</th>
                   <th className="py-2">{t("history.table.rate")}</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.week_start} className="border-t border-border/60">
-                    <td className="py-2 pr-3 font-medium">{formatWeek(r.week_start)}</td>
-                    <td className="py-2 pr-3">{r.appointments_total}</td>
-                    <td className="py-2 pr-3 text-primary">{r.accepted_count}</td>
-                    <td className="py-2 pr-3 text-destructive">{r.declined_count}</td>
-                    <td className="py-2 pr-3">{r.pending_count}</td>
-                    <td className="py-2 pr-3">{r.cancelled_count}</td>
-                    <td className="py-2 pr-3">{r.invites_sent}</td>
-                    <td className="py-2 pr-3">{r.contacts_created}</td>
+                    <td className="py-2 pe-3 font-medium">{formatWeek(r.week_start)}</td>
+                    <td className="py-2 pe-3">{r.appointments_total}</td>
+                    <td className="py-2 pe-3 text-primary">{r.accepted_count}</td>
+                    <td className="py-2 pe-3 text-destructive">{r.declined_count}</td>
+                    <td className="py-2 pe-3">{r.pending_count}</td>
+                    <td className="py-2 pe-3">{r.cancelled_count}</td>
+                    <td className="py-2 pe-3">{r.invites_sent}</td>
+                    <td className="py-2 pe-3">{r.contacts_created}</td>
                     <td className="py-2">{Number(r.acceptance_rate)} %</td>
                   </tr>
                 ))}

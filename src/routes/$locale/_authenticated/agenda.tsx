@@ -242,7 +242,7 @@ function AgendaPage() {
           <Button variant="outline" size="icon" aria-label={t("nav.next_aria")} onClick={goNext}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <p className="basis-full font-display text-lg font-semibold capitalize sm:ml-2 sm:basis-auto">
+          <p className="basis-full font-display text-lg font-semibold capitalize sm:ms-2 sm:basis-auto">
             {view === "week" ? (
               <>
                 <span className="sm:hidden">

@@ -17,6 +17,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { BookingLinkQuickAccess } from "@/components/agenda/booking-link-quick-access";
 import { SettingsQuickNav } from "@/components/agenda/settings-quick-nav";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useIsAdmin } from "@/lib/admin";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/brand-logo";
@@ -202,6 +203,7 @@ export function AppHeader() {
             </Button>
             <BookingLinkQuickAccess />
             {pathname === `/${locale}/settings` && <SettingsQuickNav />}
+            <LanguageSwitcher />
             <ThemeToggle />
 
             <Button

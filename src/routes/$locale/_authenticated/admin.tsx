@@ -83,7 +83,7 @@ function UserPanel({ row }: { row: AdminUserRow }) {
               {r}
             </Badge>
           ))}
-          <span className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="ms-auto flex items-center gap-3 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <Users className="h-3.5 w-3.5" /> {row.contacts.length}
             </span>
@@ -395,7 +395,7 @@ function AdminPage() {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Rechercher un utilisateur, contact ou rendez-vous…"
-                  className="pl-9"
+                  className="ps-9"
                 />
               </div>
             </Reveal>

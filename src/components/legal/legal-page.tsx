@@ -71,7 +71,7 @@ export function LegalPage({
           </div>
         )}
 
-        <div className="prose-legal mt-8 space-y-8 text-sm leading-relaxed text-muted-foreground [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mt-1 [&_p]:mt-2 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:pl-5">
+        <div className="prose-legal mt-8 space-y-8 text-sm leading-relaxed text-muted-foreground [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mt-1 [&_p]:mt-2 [&_strong]:text-foreground [&_ul]:list-disc [&_ul]:ps-5">
           {children}
         </div>
 

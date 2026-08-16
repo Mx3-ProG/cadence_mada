@@ -1,5 +1,6 @@
 import { buildLoginCodeEmail } from "../../supabase/emails/login-code";
 import { buildWelcomeCodeEmail } from "../../supabase/emails/welcome-code";
+import { isSupportedLocale, DEFAULT_LOCALE } from "@/i18n/config";
 
 export const CHALLENGE_DURATION_MS = 30 * 60 * 1000;
 const SIGNUP_WELCOME_WINDOW_MS = 5 * 60 * 1000;
@@ -35,16 +36,17 @@ export async function sendChallengeEmail(
 ) {
   const { data: profile } = await supabaseAdmin
     .from("profiles")
-    .select("full_name, created_at")
+    .select("full_name, created_at, locale")
     .eq("id", userId)
     .maybeSingle();
 
+  const locale = isSupportedLocale(profile?.locale) ? profile.locale : DEFAULT_LOCALE;
   const isFreshSignup =
     !!profile?.created_at &&
     Date.now() - new Date(profile.created_at).getTime() < SIGNUP_WELCOME_WINDOW_MS;
   const { subject, html } = isFreshSignup
-    ? buildWelcomeCodeEmail(code, profile?.full_name)
-    : buildLoginCodeEmail(code);
+    ? await buildWelcomeCodeEmail(code, locale, profile?.full_name)
+    : await buildLoginCodeEmail(code, locale);
 
   const { sendEmail } = await import("@/lib/resend.server");
   return sendEmail({ to: email, subject, html });
