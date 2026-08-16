@@ -28,7 +28,6 @@ export const Route = createFileRoute("/$locale/tarifs")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/tarifs" },
     ],
-    links: [{ rel: "canonical", href: "/tarifs" }],
   }),
   component: TarifsPage,
 });

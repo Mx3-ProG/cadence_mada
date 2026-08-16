@@ -23,7 +23,6 @@ export const Route = createFileRoute("/$locale/documentation")({
       { property: "og:url", content: "/documentation" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/documentation" }],
   }),
   component: Documentation,
 });

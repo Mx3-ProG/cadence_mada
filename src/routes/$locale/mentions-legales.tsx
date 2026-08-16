@@ -22,7 +22,6 @@ export const Route = createFileRoute("/$locale/mentions-legales")({
       { property: "og:url", content: "/mentions-legales" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/mentions-legales" }],
   }),
   component: MentionsLegales,
 });

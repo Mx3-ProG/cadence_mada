@@ -24,7 +24,6 @@ export const Route = createFileRoute("/$locale/cookies")({
       { property: "og:url", content: "/cookies" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/cookies" }],
   }),
   component: Cookies,
 });

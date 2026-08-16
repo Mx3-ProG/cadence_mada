@@ -22,7 +22,6 @@ export const Route = createFileRoute("/$locale/confidentialite")({
       { property: "og:url", content: "/confidentialite" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/confidentialite" }],
   }),
   component: Confidentialite,
 });

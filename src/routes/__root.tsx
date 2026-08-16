@@ -17,7 +17,15 @@ import { ThemeProvider, themeInitScript } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/legal/cookie-consent";
 import { supabase } from "@/integrations/supabase/client";
-import { DEFAULT_LOCALE, isSupportedLocale, localeDirection, type Locale } from "@/i18n/config";
+import {
+  DEFAULT_LOCALE,
+  isSupportedLocale,
+  localeDirection,
+  SUPPORTED_LOCALES,
+  type Locale,
+} from "@/i18n/config";
+
+const SITE_URL = "https://www.cadencemada.com";
 
 function useResolvedLocale(): Locale {
   const matches = useRouterState({ select: (state) => state.matches });
@@ -26,6 +34,52 @@ function useResolvedLocale(): Locale {
     if (typeof value === "string" && isSupportedLocale(value)) return value;
   }
   return DEFAULT_LOCALE;
+}
+
+/**
+ * Canonical + hreflang <link> tags pour la page actuellement matchée.
+ * Sur une route `/$locale/...`, génère une alternative par langue supportée
+ * (même chemin, préfixe de langue différent) + un x-default vers le français.
+ * Sur une route sans préfixe de langue (ex: /invite/:token), se limite à un
+ * canonical simple, sans alternates.
+ */
+function seoLinkTags(matches: ReadonlyArray<{ pathname: string; params?: unknown }>) {
+  const leaf = matches[matches.length - 1];
+  const rawPathname = leaf?.pathname ?? "/";
+  // Normalise le slash final : les redirections de l'app (ex: "/" -> "/fr") et les
+  // <Link> internes pointent vers des chemins sans slash final, donc le canonical doit
+  // matcher exactement pour éviter un canonical qui pointe vers une URL jamais servie telle quelle.
+  const pathname = rawPathname.length > 1 ? rawPathname.replace(/\/+$/, "") : rawPathname;
+
+  let locale: Locale | null = null;
+  for (const match of matches) {
+    const value = (match.params as Record<string, unknown> | undefined)?.["locale"];
+    if (typeof value === "string" && isSupportedLocale(value)) {
+      locale = value;
+      break;
+    }
+  }
+
+  const links: { rel: string; href: string; hreflang?: string }[] = [];
+
+  if (locale) {
+    const suffix = pathname.slice(pathname.indexOf(locale) + locale.length);
+    for (const altLocale of SUPPORTED_LOCALES) {
+      links.push({
+        rel: "alternate",
+        hreflang: altLocale,
+        href: `${SITE_URL}/${altLocale}${suffix}`,
+      });
+    }
+    links.push({
+      rel: "alternate",
+      hreflang: "x-default",
+      href: `${SITE_URL}/${DEFAULT_LOCALE}${suffix}`,
+    });
+  }
+
+  links.push({ rel: "canonical", href: `${SITE_URL}${pathname}` });
+  return links;
 }
 
 // Entrance animations server-render at opacity 0 and rely on the client to
@@ -109,7 +163,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  head: ({ matches }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -145,6 +199,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       { rel: "manifest", href: "/site.webmanifest" },
+      ...seoLinkTags(matches),
     ],
   }),
   shellComponent: RootShell,

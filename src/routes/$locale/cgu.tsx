@@ -23,7 +23,6 @@ export const Route = createFileRoute("/$locale/cgu")({
       { property: "og:url", content: "/cgu" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/cgu" }],
   }),
   component: Cgu,
 });
