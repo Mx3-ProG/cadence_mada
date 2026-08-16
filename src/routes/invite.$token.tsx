@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Check, Clock, MapPin, X } from "lucide-react";
+import { AlertCircle, Check, Clock, MapPin, RefreshCw, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyInviteResponse } from "@/lib/invites.functions";
@@ -107,7 +107,26 @@ function InvitePage() {
             <p className="py-10 text-center text-sm text-muted-foreground">Chargement…</p>
           )}
 
-          {!inviteQuery.isLoading && !invite && (
+          {!inviteQuery.isLoading && inviteQuery.isError && (
+            <div className="flex flex-col items-center py-8 text-center">
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-destructive/10 text-destructive">
+                <AlertCircle className="h-5 w-5" />
+              </span>
+              <p className="mt-4 font-medium">Impossible de vérifier cette invitation.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Vérifiez votre connexion, puis réessayez. Le lien n'est pas forcément expiré.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-5 min-h-11 gap-2 rounded-full"
+                onClick={() => void inviteQuery.refetch()}
+              >
+                <RefreshCw className="h-4 w-4" /> Réessayer
+              </Button>
+            </div>
+          )}
+
+          {!inviteQuery.isLoading && !inviteQuery.isError && !invite && (
             <p className="py-10 text-center text-sm text-muted-foreground">
               Ce lien d'invitation est invalide ou a expiré.
             </p>
