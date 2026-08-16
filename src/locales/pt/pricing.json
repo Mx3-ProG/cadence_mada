@@ -1,77 +1,73 @@
 {
-  "seo.title": "Preços — Cadence",
-  "seo.description": "5 níveis, de Free-mium (0 €) a Business (199,99 €/mês): contactos e compromissos, calendário completo, marcação em autoatendimento, marca personalizada. Programa de referência incluído desde o plano Free-mium.",
-  "page.badge": "Sem compromisso · Muda quando quiseres",
-  "page.title": "Escolhe simplesmente o ritmo que combina contigo.",
-  "page.subtitle": "Começa gratuitamente e evolui à medida que o teu calendário se enche. Cada plano mantém a Cadence simples, rápida e agradável de usar.",
-  "page.trust.stripe": "✓ Pagamento seguro com Stripe",
-  "page.trust.cancel": "✓ Cancela quando quiseres",
-  "page.trust.instant": "✓ Ativação imediata",
-  "intro.badge": "Preços simples",
-  "intro.title": "5 níveis, uma só regra: pagas apenas pelo que precisas",
-  "intro.subtitle": "Nenhum cartão pedido para o plano {{freeLabel}}. Muda de nível quando quiseres, sem compromisso.",
-  "period.monthly": "por mês",
-  "period.forever": "para sempre",
-  "recommended": "Recomendado",
-  "view_offer": "Ver a oferta {{name}}",
+  "seo.title": "Pricing — Cadence",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
+  "page.badge": "No commitment · Change anytime",
+  "page.title": "Pick the pace that fits you, simply.",
+  "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
+  "page.trust.stripe": "✓ Secure payment by Stripe",
+  "page.trust.cancel": "✓ Cancel anytime",
+  "page.trust.instant": "✓ Instant activation",
+  "intro.badge": "Simple pricing",
+  "intro.title": "5 tiers, one rule: you pay for what you need",
+  "intro.subtitle": "No card required for the {{freeLabel}} plan. Switch tiers anytime, with no commitment.",
+  "period.monthly": "per month",
+  "period.forever": "forever",
+  "recommended": "Recommended",
+  "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "Perfeito para organizar a tua semana e experimentar as confirmações por link.",
-      "cta": "Começar gratuitamente",
+      "tagline": "Discover Cadence, no commitment and no card required.",
+      "cta": "Start for free",
       "features": [
-        "Até {{contacts}} contactos",
-        "{{appointments}} compromissos enviados por mês",
-        "Links de confirmação ilimitados",
-        "Calendário simples (vista semanal)",
-        "Programa de referência (30% vitalício)",
-        "Modo dia / noite"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments sent per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "Um pouco mais de margem para um calendário que começa a encher.",
-      "cta": "Passar para {{label}}",
+      "tagline": "Structure the first appointments of your activity.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "Até {{contacts}} contactos",
-        "{{appointments}} compromissos por mês",
-        "Links de confirmação ilimitados",
-        "Calendário simples (vista semanal)",
-        "Programa de referência (30% vitalício)",
-        "Modo dia / noite"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "Para quem encadeia compromissos todas as semanas.",
-      "cta": "Passar para Standard",
+      "tagline": "Run a week where the calendar is part of the job.",
+      "cta": "Upgrade to Standard",
       "features": [
-        "Até {{contacts}} contactos",
-        "{{appointments}} compromissos por mês",
-        "Calendário completo: vista semanal e mensal, criação num clique",
-        "Estatísticas da semana",
-        "Marcação em autoatendimento através do teu link público",
-        "Programa de referência (30% vitalício)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Full calendar: week & month view, one-click creation",
+        "Weekly stats",
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "Para uma atividade a funcionar a todo o vapor durante o ano inteiro.",
-      "cta": "Passar para {{label}}",
+      "tagline": "Run at volume for a business that isn't slowing down.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "Até {{contacts}} contactos",
-        "{{appointments}} compromissos por mês",
-        "Tudo do Standard: calendário completo, marcação",
-        "Tendência do mês",
-        "Programa de referência (30% vitalício)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Everything in Standard: full calendar, booking",
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "Para equipas e marcas que querem tudo, sem limites.",
-      "cta": "Passar para Business",
+      "tagline": "No limits, built to grow with your business.",
+      "cta": "Upgrade to Business",
       "features": [
-        "Contactos e compromissos ilimitados",
-        "Tudo do {{economicLabel}}: calendário completo, marcação, tendência do mês",
-        "Link de convite personalizado (marca + mensagem)",
-        "Avaliações Google: classificação, link Google My Business e Maps",
-        "Link do site nos teus convites",
-        "Suporte prioritário"
+        "Unlimited contacts and appointments",
+        "Everything in {{economicLabel}}: full calendar, booking, monthly trend",
+        "Custom invite link (branding + message)",
+        "Google reviews: rating, Google My Business and Maps link",
+        "Website link on your invitations",
+        "Priority support"
       ]
     }
   }

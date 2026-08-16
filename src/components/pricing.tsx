@@ -1,10 +1,13 @@
+import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { useInView } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/reveal";
 import { PlanCta } from "@/components/billing/plan-cta";
 import { useLocale } from "@/i18n/use-locale";
+import { trackEvent, type LandingEvent } from "@/lib/analytics";
 import {
   tierPricingHash,
   TIER_LABELS,
@@ -17,6 +20,14 @@ import {
 
 const highlightedTier: PlanTier = "standard";
 
+const planClickEvents: Record<PlanTier, LandingEvent> = {
+  free: "plan_free_click",
+  basic: "plan_basic_click",
+  standard: "plan_standard_click",
+  economic: "plan_economic_click",
+  business: "plan_business_click",
+};
+
 export function Pricing({
   checkout = false,
   showIntro = true,
@@ -26,6 +37,12 @@ export function Pricing({
 }) {
   const locale = useLocale();
   const { t } = useTranslation("pricing");
+  const sectionRef = useRef<HTMLElement>(null);
+  const sectionInView = useInView(sectionRef, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (sectionInView) trackEvent("pricing_view");
+  }, [sectionInView]);
 
   const plans = TIER_ORDER.map((tier) => {
     const limits = TIER_LIMITS[tier];
@@ -46,7 +63,7 @@ export function Pricing({
   });
 
   return (
-    <section id="pricing" className="scroll-mt-24 px-4 pb-28 sm:px-6">
+    <section ref={sectionRef} id="pricing" className="scroll-mt-24 px-4 pb-28 sm:px-6">
       <div className="mx-auto max-w-7xl">
         {showIntro && (
           <Reveal>
@@ -107,15 +124,29 @@ export function Pricing({
                 </ul>
 
                 {plan.tier === "free" ? (
-                  <Button asChild size="lg" variant="outline" className="mt-8 w-full">
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="mt-8 w-full"
+                    onClick={() => trackEvent(planClickEvents[plan.tier])}
+                  >
                     <Link to="/$locale/auth" params={{ locale }}>
                       {plan.cta}
                     </Link>
                   </Button>
                 ) : checkout ? (
-                  <PlanCta tier={plan.tier as PaidPlanTier} />
+                  <PlanCta
+                    tier={plan.tier as PaidPlanTier}
+                    onBeforeCheckout={() => trackEvent(planClickEvents[plan.tier])}
+                  />
                 ) : (
-                  <Button asChild size="lg" className="mt-8 w-full">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="mt-8 w-full"
+                    onClick={() => trackEvent(planClickEvents[plan.tier])}
+                  >
                     <Link
                       to="/$locale/tarifs"
                       params={{ locale }}

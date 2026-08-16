@@ -1,77 +1,73 @@
 {
-  "seo.title": "Тарифы — Cadence",
-  "seo.description": "5 уровней, от Free-mium (0 €) до Business (199,99 €/мес): контакты и встречи, полный календарь, самостоятельная запись, персональный брендинг. Реферальная программа доступна уже на плане Free-mium.",
-  "page.badge": "Без обязательств · Меняйте план в любой момент",
-  "page.title": "Просто выберите подходящий вам ритм.",
-  "page.subtitle": "Начните бесплатно, затем переходите на новый уровень по мере заполнения календаря. Каждый план сохраняет Cadence простым, быстрым и приятным в использовании.",
-  "page.trust.stripe": "✓ Безопасная оплата через Stripe",
-  "page.trust.cancel": "✓ Отмена в любой момент",
-  "page.trust.instant": "✓ Мгновенная активация",
-  "intro.badge": "Простые тарифы",
-  "intro.title": "5 уровней, одно правило: вы платите только за то, что вам нужно",
-  "intro.subtitle": "Карта не требуется для плана {{freeLabel}}. Меняйте уровень в любой момент, без обязательств.",
-  "period.monthly": "в месяц",
-  "period.forever": "навсегда",
-  "recommended": "Рекомендуем",
-  "view_offer": "Смотреть план {{name}}",
+  "seo.title": "Pricing — Cadence",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
+  "page.badge": "No commitment · Change anytime",
+  "page.title": "Pick the pace that fits you, simply.",
+  "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
+  "page.trust.stripe": "✓ Secure payment by Stripe",
+  "page.trust.cancel": "✓ Cancel anytime",
+  "page.trust.instant": "✓ Instant activation",
+  "intro.badge": "Simple pricing",
+  "intro.title": "5 tiers, one rule: you pay for what you need",
+  "intro.subtitle": "No card required for the {{freeLabel}} plan. Switch tiers anytime, with no commitment.",
+  "period.monthly": "per month",
+  "period.forever": "forever",
+  "recommended": "Recommended",
+  "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "Идеально, чтобы организовать неделю и попробовать подтверждения по ссылке.",
-      "cta": "Начать бесплатно",
+      "tagline": "Discover Cadence, no commitment and no card required.",
+      "cta": "Start for free",
       "features": [
-        "До {{contacts}} контактов",
-        "{{appointments}} отправленных встреч в месяц",
-        "Неограниченные ссылки подтверждения",
-        "Простой календарь (вид недели)",
-        "Реферальная программа (30% пожизненно)",
-        "Дневной / ночной режим"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments sent per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "Чуть больше пространства для календаря, который начинает заполняться.",
-      "cta": "Перейти на {{label}}",
+      "tagline": "Structure the first appointments of your activity.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "До {{contacts}} контактов",
-        "{{appointments}} встреч в месяц",
-        "Неограниченные ссылки подтверждения",
-        "Простой календарь (вид недели)",
-        "Реферальная программа (30% пожизненно)",
-        "Дневной / ночной режим"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "Для тех, у кого встречи следуют одна за другой каждую неделю.",
-      "cta": "Перейти на Standard",
+      "tagline": "Run a week where the calendar is part of the job.",
+      "cta": "Upgrade to Standard",
       "features": [
-        "До {{contacts}} контактов",
-        "{{appointments}} встреч в месяц",
-        "Полный календарь: вид недели и месяца, создание в один клик",
-        "Статистика недели",
-        "Самостоятельная запись через вашу публичную ссылку",
-        "Реферальная программа (30% пожизненно)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Full calendar: week & month view, one-click creation",
+        "Weekly stats",
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "Для деятельности, которая работает на полную мощность круглый год.",
-      "cta": "Перейти на {{label}}",
+      "tagline": "Run at volume for a business that isn't slowing down.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "До {{contacts}} контактов",
-        "{{appointments}} встреч в месяц",
-        "Всё из Standard: полный календарь, запись",
-        "Тренд месяца",
-        "Реферальная программа (30% пожизненно)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Everything in Standard: full calendar, booking",
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "Для команд и брендов, которым нужно всё, без ограничений.",
-      "cta": "Перейти на Business",
+      "tagline": "No limits, built to grow with your business.",
+      "cta": "Upgrade to Business",
       "features": [
-        "Неограниченные контакты и встречи",
-        "Всё из {{economicLabel}}: полный календарь, запись, тренд месяца",
-        "Персонализированная ссылка приглашения (брендинг + сообщение)",
-        "Отзывы Google: рейтинг, ссылка Google My Business и Maps",
-        "Ссылка на сайт в приглашениях",
-        "Приоритетная поддержка"
+        "Unlimited contacts and appointments",
+        "Everything in {{economicLabel}}: full calendar, booking, monthly trend",
+        "Custom invite link (branding + message)",
+        "Google reviews: rating, Google My Business and Maps link",
+        "Website link on your invitations",
+        "Priority support"
       ]
     }
   }

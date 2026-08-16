@@ -1,77 +1,73 @@
 {
-  "seo.title": "मूल्य — Cadence",
-  "seo.description": "5 स्तर, Free-mium (0 €) से Business (199.99 €/माह) तक: संपर्क और अपॉइंटमेंट, पूर्ण कैलेंडर, सेल्फ-सर्विस बुकिंग, कस्टम ब्रांडिंग। Free-mium प्लान से ही रेफरल प्रोग्राम शामिल है।",
-  "page.badge": "कोई प्रतिबद्धता नहीं · कभी भी बदलें",
-  "page.title": "बस वह गति चुनें जो आपको सूट करे।",
-  "page.subtitle": "मुफ्त में शुरू करें, फिर जैसे-जैसे आपका कैलेंडर भरता जाए, अपग्रेड करें। हर प्लान Cadence को सरल, तेज़ और उपयोग में सुखद बनाए रखता है।",
-  "page.trust.stripe": "✓ Stripe से सुरक्षित भुगतान",
-  "page.trust.cancel": "✓ कभी भी रद्द करें",
-  "page.trust.instant": "✓ तुरंत सक्रियण",
-  "intro.badge": "सरल मूल्य निर्धारण",
-  "intro.title": "5 स्तर, एक नियम: आप केवल उतना ही भुगतान करें जितनी आपको ज़रूरत है",
-  "intro.subtitle": "{{freeLabel}} प्लान के लिए कोई कार्ड आवश्यक नहीं। बिना किसी प्रतिबद्धता के, कभी भी स्तर बदलें।",
-  "period.monthly": "प्रति माह",
-  "period.forever": "हमेशा के लिए",
-  "recommended": "अनुशंसित",
-  "view_offer": "{{name}} ऑफ़र देखें",
+  "seo.title": "Pricing — Cadence",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
+  "page.badge": "No commitment · Change anytime",
+  "page.title": "Pick the pace that fits you, simply.",
+  "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
+  "page.trust.stripe": "✓ Secure payment by Stripe",
+  "page.trust.cancel": "✓ Cancel anytime",
+  "page.trust.instant": "✓ Instant activation",
+  "intro.badge": "Simple pricing",
+  "intro.title": "5 tiers, one rule: you pay for what you need",
+  "intro.subtitle": "No card required for the {{freeLabel}} plan. Switch tiers anytime, with no commitment.",
+  "period.monthly": "per month",
+  "period.forever": "forever",
+  "recommended": "Recommended",
+  "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "अपने सप्ताह को व्यवस्थित करने और लिंक पुष्टियों को आज़माने के लिए एकदम सही।",
-      "cta": "मुफ्त में शुरू करें",
+      "tagline": "Discover Cadence, no commitment and no card required.",
+      "cta": "Start for free",
       "features": [
-        "{{contacts}} तक संपर्क",
-        "प्रति माह {{appointments}} भेजे गए अपॉइंटमेंट",
-        "असीमित पुष्टि लिंक",
-        "सरल कैलेंडर (सप्ताह दृश्य)",
-        "रेफरल प्रोग्राम (आजीवन 30%)",
-        "दिन / रात मोड"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments sent per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "भरते जा रहे कैलेंडर के लिए थोड़ी और गुंजाइश।",
-      "cta": "{{label}} में अपग्रेड करें",
+      "tagline": "Structure the first appointments of your activity.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "{{contacts}} तक संपर्क",
-        "प्रति माह {{appointments}} अपॉइंटमेंट",
-        "असीमित पुष्टि लिंक",
-        "सरल कैलेंडर (सप्ताह दृश्य)",
-        "रेफरल प्रोग्राम (आजीवन 30%)",
-        "दिन / रात मोड"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "हर सप्ताह लगातार अपॉइंटमेंट लेने वालों के लिए।",
-      "cta": "Standard में अपग्रेड करें",
+      "tagline": "Run a week where the calendar is part of the job.",
+      "cta": "Upgrade to Standard",
       "features": [
-        "{{contacts}} तक संपर्क",
-        "प्रति माह {{appointments}} अपॉइंटमेंट",
-        "पूर्ण कैलेंडर: सप्ताह और माह दृश्य, एक क्लिक में निर्माण",
-        "साप्ताहिक आंकड़े",
-        "अपने पब्लिक लिंक के ज़रिए सेल्फ-सर्विस बुकिंग",
-        "रेफरल प्रोग्राम (आजीवन 30%)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Full calendar: week & month view, one-click creation",
+        "Weekly stats",
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "साल भर पूरी क्षमता से चलने वाले व्यवसाय के लिए।",
-      "cta": "{{label}} में अपग्रेड करें",
+      "tagline": "Run at volume for a business that isn't slowing down.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "{{contacts}} तक संपर्क",
-        "प्रति माह {{appointments}} अपॉइंटमेंट",
-        "Standard की सभी सुविधाएं: पूर्ण कैलेंडर, बुकिंग",
-        "मासिक रुझान",
-        "रेफरल प्रोग्राम (आजीवन 30%)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Everything in Standard: full calendar, booking",
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "उन टीमों और ब्रांडों के लिए जिन्हें बिना किसी सीमा के सब कुछ चाहिए।",
-      "cta": "Business में अपग्रेड करें",
+      "tagline": "No limits, built to grow with your business.",
+      "cta": "Upgrade to Business",
       "features": [
-        "असीमित संपर्क और अपॉइंटमेंट",
-        "{{economicLabel}} की सभी सुविधाएं: पूर्ण कैलेंडर, बुकिंग, मासिक रुझान",
-        "कस्टम आमंत्रण लिंक (ब्रांडिंग + संदेश)",
-        "Google समीक्षाएं: रेटिंग, Google My Business और Maps लिंक",
-        "आपके आमंत्रणों पर वेबसाइट लिंक",
-        "प्राथमिकता सहायता"
+        "Unlimited contacts and appointments",
+        "Everything in {{economicLabel}}: full calendar, booking, monthly trend",
+        "Custom invite link (branding + message)",
+        "Google reviews: rating, Google My Business and Maps link",
+        "Website link on your invitations",
+        "Priority support"
       ]
     }
   }

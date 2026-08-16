@@ -1,77 +1,73 @@
 {
-  "seo.title": "الأسعار — Cadence",
-  "seo.description": "5 مستويات، من Free-mium (0 €) إلى Business (199.99 €/شهريًا): جهات الاتصال والمواعيد، تقويم كامل، حجز ذاتي الخدمة، علامة تجارية مخصصة. برنامج الإحالة متاح ابتداءً من خطة Free-mium.",
-  "page.badge": "بدون التزام · غيّر في أي وقت",
-  "page.title": "اختر ببساطة الإيقاع الذي يناسبك.",
-  "page.subtitle": "ابدأ مجانًا، ثم قم بالترقية مع امتلاء تقويمك. كل خطة تحافظ على بساطة Cadence وسرعتها وسهولة استخدامها.",
-  "page.trust.stripe": "✓ دفع آمن عبر Stripe",
-  "page.trust.cancel": "✓ الإلغاء في أي وقت",
-  "page.trust.instant": "✓ تفعيل فوري",
-  "intro.badge": "أسعار بسيطة",
-  "intro.title": "5 مستويات، قاعدة واحدة: تدفع فقط مقابل ما تحتاجه",
-  "intro.subtitle": "لا حاجة لبطاقة ائتمان لخطة {{freeLabel}}. غيّر المستوى في أي وقت، بدون التزام.",
-  "period.monthly": "شهريًا",
-  "period.forever": "إلى الأبد",
-  "recommended": "موصى به",
-  "view_offer": "عرض خطة {{name}}",
+  "seo.title": "Pricing — Cadence",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
+  "page.badge": "No commitment · Change anytime",
+  "page.title": "Pick the pace that fits you, simply.",
+  "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
+  "page.trust.stripe": "✓ Secure payment by Stripe",
+  "page.trust.cancel": "✓ Cancel anytime",
+  "page.trust.instant": "✓ Instant activation",
+  "intro.badge": "Simple pricing",
+  "intro.title": "5 tiers, one rule: you pay for what you need",
+  "intro.subtitle": "No card required for the {{freeLabel}} plan. Switch tiers anytime, with no commitment.",
+  "period.monthly": "per month",
+  "period.forever": "forever",
+  "recommended": "Recommended",
+  "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "مثالية لتنظيم أسبوعك وتجربة التأكيدات عبر الرابط.",
-      "cta": "ابدأ مجانًا",
+      "tagline": "Discover Cadence, no commitment and no card required.",
+      "cta": "Start for free",
       "features": [
-        "حتى {{contacts}} جهة اتصال",
-        "{{appointments}} موعدًا مُرسلًا شهريًا",
-        "روابط تأكيد غير محدودة",
-        "تقويم بسيط (عرض أسبوعي)",
-        "برنامج الإحالة (30% مدى الحياة)",
-        "وضع نهاري / ليلي"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments sent per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "مساحة إضافية قليلًا لتقويم بدأ يمتلئ.",
-      "cta": "الترقية إلى {{label}}",
+      "tagline": "Structure the first appointments of your activity.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "حتى {{contacts}} جهة اتصال",
-        "{{appointments}} موعدًا شهريًا",
-        "روابط تأكيد غير محدودة",
-        "تقويم بسيط (عرض أسبوعي)",
-        "برنامج الإحالة (30% مدى الحياة)",
-        "وضع نهاري / ليلي"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "لمن لديهم مواعيد متتالية كل أسبوع.",
-      "cta": "الترقية إلى Standard",
+      "tagline": "Run a week where the calendar is part of the job.",
+      "cta": "Upgrade to Standard",
       "features": [
-        "حتى {{contacts}} جهة اتصال",
-        "{{appointments}} موعدًا شهريًا",
-        "تقويم كامل: عرض أسبوعي وشهري، إنشاء بنقرة واحدة",
-        "إحصاءات الأسبوع",
-        "حجز ذاتي الخدمة عبر رابطك العام",
-        "برنامج الإحالة (30% مدى الحياة)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Full calendar: week & month view, one-click creation",
+        "Weekly stats",
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "لنشاط يعمل بكامل طاقته على مدار العام.",
-      "cta": "الترقية إلى {{label}}",
+      "tagline": "Run at volume for a business that isn't slowing down.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "حتى {{contacts}} جهة اتصال",
-        "{{appointments}} موعدًا شهريًا",
-        "كل مزايا Standard: تقويم كامل، حجز",
-        "اتجاه الشهر",
-        "برنامج الإحالة (30% مدى الحياة)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Everything in Standard: full calendar, booking",
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "للفرق والعلامات التجارية التي تريد كل شيء، بلا حدود.",
-      "cta": "الترقية إلى Business",
+      "tagline": "No limits, built to grow with your business.",
+      "cta": "Upgrade to Business",
       "features": [
-        "جهات اتصال ومواعيد غير محدودة",
-        "كل مزايا {{economicLabel}}: تقويم كامل، حجز، اتجاه الشهر",
-        "رابط دعوة مخصص (علامة تجارية + رسالة)",
-        "تقييمات Google: التقييم، رابط Google My Business وMaps",
-        "رابط الموقع الإلكتروني على دعواتك",
-        "دعم ذو أولوية"
+        "Unlimited contacts and appointments",
+        "Everything in {{economicLabel}}: full calendar, booking, monthly trend",
+        "Custom invite link (branding + message)",
+        "Google reviews: rating, Google My Business and Maps link",
+        "Website link on your invitations",
+        "Priority support"
       ]
     }
   }

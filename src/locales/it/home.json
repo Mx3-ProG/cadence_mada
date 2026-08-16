@@ -1,114 +1,192 @@
 {
-  "nav.pricing": "Prezzi",
-  "hero.badge": "Calendario + conferme in tempo reale",
-  "hero.title_prefix": "Tutta la tua settimana di appuntamenti,",
-  "hero.title_highlight": "confermata senza un solo sollecito",
-  "hero.subtitle": "Crea uno slot, invia un link, guarda la risposta arrivare sulla tua dashboard. Con le schede contatto e le tue note di preparazione nello stesso posto.",
-  "hero.cta_primary": "Crea il mio calendario",
-  "hero.cta_secondary": "Vedi la mia dashboard",
-  "preview.status.accepted": "Accettato",
-  "preview.status.pending": "In attesa",
+  "nav.pricing": "Pricing",
+  "hero.badge": "Every appointment, under control",
+  "hero.title_prefix": "Your calendar, without the gaps",
+  "hero.title_highlight": "or the follow-ups.",
+  "hero.subtitle": "Cadence turns every appointment proposal into a clear confirmation, and keeps each client's context at hand — so you spend less time managing your calendar, and more time doing the work that pays.",
+  "hero.cta_primary": "Start free",
+  "hero.cta_secondary": "See how it works",
+  "hero.microcopy": "Free forever · No card required · Contact import included",
+  "hero.audience_label": "Built for independent professionals:",
+  "hero.audience_items": ["Consultants", "Coaches", "Therapists", "Freelancers"],
+  "hero.audience_suffix": "and anyone whose time is their business.",
+  "preview.status.accepted": "Confirmed",
+  "preview.status.pending": "Awaiting response",
+  "preview.confirmed_toast": "{{name}} confirmed their appointment.",
   "preview.items": [
-    { "day": "Lunedì", "time": "09:30", "title": "Kickoff Nova", "status": "accepted" },
-    { "day": "Mercoledì", "time": "15:00", "title": "Punto investitori", "status": "pending" },
-    { "day": "Venerdì", "time": "11:00", "title": "Caffè con Camille", "status": "accepted" }
+    { "day": "Monday", "time": "9:30 AM", "title": "Nova kickoff", "status": "accepted" },
+    { "day": "Wednesday", "time": "3:00 PM", "title": "Investor check-in", "status": "pending" },
+    { "day": "Friday", "time": "11:00 AM", "title": "Coffee with Camille", "status": "accepted" }
   ],
-  "how.badge": "Come funziona",
-  "how.title": "Dal primo slot alla conferma, in tre passaggi",
-  "how.subtitle": "Nessuna configurazione complicata: Cadence subentra non appena proponi un appuntamento.",
+  "pain.badge": "The cost of uncertainty",
+  "pain.title": "An empty slot isn't always just an empty slot.",
+  "pain.subtitle": "For an independent professional, the calendar is the business. Every uncertain appointment adds uncertainty to the whole week.",
+  "pain.cards": [
+    { "value": "25 appointments", "label": "a week, on average for an active independent professional" },
+    { "value": "€50 to €200", "label": "the estimated value of an appointment, depending on the business" },
+    { "value": "€1,250 to €5,000", "label": "of professional time scheduled every week" }
+  ],
+  "pain.note": "Cadence doesn't guarantee that revenue — it gives you visibility, confirmation and control over that time.",
+  "pain.disclaimer": "Illustrative example based on a typical practice. Not a measurement of your own calendar.",
+  "how.badge": "How it works",
+  "how.title": "From uncertainty to being prepared, in three steps.",
+  "how.subtitle": "A few simple actions replace scattered messages with an organization that keeps moving without you.",
   "how.steps": [
     {
-      "title": "Crea il tuo calendario",
-      "text": "Aggiungi i tuoi contatti e imposta un primo slot in pochi secondi, senza configurazione."
+      "title": "You propose a slot",
+      "text": "Create an appointment or share your booking link — your contact picks a free moment themselves."
     },
     {
-      "title": "Condividi il tuo link",
-      "text": "Invia un invito via email o diffondi il tuo link di prenotazione pubblico per lasciare che i tuoi contatti scelgano uno slot."
+      "title": "Cadence tracks the response",
+      "text": "Confirmation or decline, the answer shows up in your calendar as soon as it arrives."
     },
     {
-      "title": "Guarda le risposte arrivare",
-      "text": "Ogni conferma o rifiuto appare in diretta sulla tua dashboard, in vista settimanale o mensile."
+      "title": "You arrive prepared",
+      "text": "Contact record, history and notes are waiting for you before you even say hello."
     }
   ],
-  "audiences.badge": "Per chi",
-  "audiences.title": "Pensato per chi vive al ritmo degli appuntamenti",
-  "audiences.subtitle": "Se la tua attività ruota attorno agli appuntamenti con i clienti, Cadence è fatto per te.",
-  "audiences.items": [
+  "contact_context.badge": "Context, not just a name",
+  "contact_context.title": "A name in your calendar isn't a relationship yet.",
+  "contact_context.subtitle": "Contact details, company, notes and appointment history — everything you need to arrive prepared, in one place.",
+  "contact_context.cta_note": "Know who you're meeting before you say hello.",
+  "contact_context.person_role": "Art Director · Studio Nova",
+  "contact_context.fields": [
+    { "label": "Company", "value": "Studio Nova" },
+    { "label": "Role", "value": "Art Director" },
+    { "label": "Phone", "value": "+33 6 12 34 56 78" },
+    { "label": "Last appointment", "value": "3 weeks ago" },
+    { "label": "Notes", "value": "Prefers morning slots. Follow up on the visual identity project." }
+  ],
+  "roi.badge": "Calculate your time",
+  "roi.title": "How much professional time moves through your calendar every month?",
+  "roi.subtitle": "Adjust the sliders to see the scale of your own activity.",
+  "roi.input_appointments_label": "Appointments per week",
+  "roi.input_value_label": "Average value of an appointment ($)",
+  "roi.result_weekly_label": "of professional time scheduled every week",
+  "roi.result_monthly_label": "per month",
+  "roi.disclaimer": "Illustrative estimate based on the values entered. Not a revenue guarantee, and not a calculation performed by Cadence.",
+  "roi.plan_hint": "Cadence Standard: {{price}} per month — if your calendar coordinates that much value, dedicated infrastructure isn't a luxury.",
+  "roi.cta": "Start free",
+  "proof.badge": "A mechanism, not a promise",
+  "proof.title": "Track your response rate, week after week.",
+  "proof.subtitle": "Your dashboard calculates in real time how many appointments were sent and how many got a response — a number that belongs to you, not a marketing figure.",
+  "proof.example_label": "Illustrative example",
+  "proof.example_sent": "Sent",
+  "proof.example_answered": "Answered",
+  "proof.pillars": [
     {
-      "title": "Freelance e liberi professionisti",
-      "text": "Gestisci gli appuntamenti con i clienti senza perdere una giornata in andirivieni."
+      "title": "One-click confirmation",
+      "text": "Your guest responds from a unique link, no account required."
     },
     {
-      "title": "Coach e consulenti",
-      "text": "Organizza le sessioni e tieni traccia di ogni cliente."
+      "title": "History kept",
+      "text": "Every exchange stays attached to the right contact, viewable anytime."
     },
     {
-      "title": "Terapeuti e professionisti sanitari",
-      "text": "Riempi il calendario delle consultazioni senza solleciti telefonici."
-    },
-    {
-      "title": "Agenti immobiliari",
-      "text": "Pianifica visite e appuntamenti con i clienti senza doppie prenotazioni."
-    },
-    {
-      "title": "Avvocati e professioni legali",
-      "text": "Appuntamenti con i clienti organizzati e conferme tracciate."
-    },
-    {
-      "title": "Artigiani e prestatori di servizi a domicilio",
-      "text": "Pianifica gli interventi ed evita gli slot mancati."
-    },
-    {
-      "title": "Formatori e professionisti della formazione",
-      "text": "Organizza sessioni individuali e appuntamenti di follow-up."
-    },
-    {
-      "title": "Piccoli team e PMI",
-      "text": "Più contatti, più appuntamenti, un'unica visione d'insieme."
-    },
-    {
-      "title": "Qualsiasi attività su appuntamento",
-      "text": "Non appena i no-show costano tempo, Cadence li evita."
+      "title": "Automatic reminder",
+      "text": "A reminder email goes out automatically if the response is taking a while."
     }
   ],
-  "features.title": "Tutto ciò che serve, niente di superfluo",
+  "security.badge": "Built for trust",
+  "security.title": "Your client relationships deserve more than a convenient calendar.",
+  "security.subtitle": "We built Cadence with the protections you'd expect from professional infrastructure.",
+  "security.items": [
+    {
+      "title": "Data kept separate",
+      "text": "Every account is strictly isolated at the database level itself, not only by the application."
+    },
+    {
+      "title": "Login code protected",
+      "text": "Your 6-digit verification code is never stored in plain text — only its cryptographic signature is."
+    },
+    {
+      "title": "Restricted public access",
+      "text": "Booking and confirmation pages never get direct database access: only tightly scoped functions."
+    },
+    {
+      "title": "Verified payments",
+      "text": "Every Stripe transaction is validated by signature verification before being trusted."
+    }
+  ],
+  "import.badge": "No starting from scratch",
+  "import.title": "Already have your contacts elsewhere? Bring them with you.",
+  "import.subtitle": "Import your existing address book in seconds, without retyping every record by hand.",
+  "import.bullets": [
+    "CSV and vCard (.vcf) files",
+    "Automatic duplicate detection by email or phone",
+    "Everything stays editable after import"
+  ],
+  "import.cta_note": "No need to rebuild your business from scratch.",
+  "features.title": "Everything that used to live in your head, back where it belongs.",
   "features.items": [
     {
-      "title": "La tua settimana in un'unica schermata",
-      "text": "Sette colonne, zero attrito. Crea uno slot con un clic e vedi subito a che punto sei."
+      "title": "Your week on one screen",
+      "text": "Seven columns, zero friction. Create a slot in one click and instantly see where you stand."
     },
     {
-      "title": "Calendario completo settimanale e mensile",
-      "text": "Passa dalla vista settimanale a quella mensile, naviga con un clic e apri la scheda completa di ogni appuntamento."
+      "title": "Full week & month calendar",
+      "text": "Switch between week and month view, navigate in one click, and open the full record for any appointment."
     },
     {
-      "title": "Prenotazione self-service",
-      "text": "Condividi il tuo link pubblico: i tuoi contatti scelgono da soli uno slot libero, tu devi solo confermare."
+      "title": "Self-service booking",
+      "text": "Share your public link: contacts pick an open slot themselves, you just confirm."
     },
     {
-      "title": "Conferma tramite link",
-      "text": "Ogni appuntamento genera un link unico. Il tuo invitato accetta o rifiuta, tu lo vedi in diretta."
+      "title": "Confirmation by link",
+      "text": "Every appointment generates a unique link. Your guest accepts or declines, and you see it live."
     },
     {
-      "title": "Inviti via email",
-      "text": "Invia l'invito al tuo contatto con un pulsante, con tutti i dettagli e il link di risposta."
+      "title": "Email invitations",
+      "text": "Send the invite to your contact in one click, with all the details and the response link."
     },
     {
-      "title": "Schede contatto",
-      "text": "Azienda, ruolo, telefono, storico: il contesto è lì ancora prima di dire ciao."
+      "title": "Contact records",
+      "text": "Company, role, phone, history: the context is there before you even say hello."
     },
     {
-      "title": "Note di preparazione",
-      "text": "Annota di cosa vuoi parlare. Privato, sempre a portata di mano appena prima dell'appuntamento."
+      "title": "Prep notes",
+      "text": "Jot down what you want to cover. Private, always at hand right before the appointment."
     },
     {
-      "title": "Giorno e notte",
-      "text": "Un tema inchiostro e smeraldo pensato per entrambe le modalità, fluido su mobile come su desktop."
+      "title": "Light & dark",
+      "text": "An ink-and-emerald theme designed for both modes, smooth on mobile and desktop alike."
     }
   ],
-  "final.title": "Pronto a riprendere il controllo della tua settimana?",
-  "final.subtitle": "Pochi secondi per creare il tuo account, e il tuo primo appuntamento parte con il suo link di conferma.",
-  "final.cta": "Inizia gratis",
-  "footer.tagline": "Cadence — il calendario appuntamenti che si conferma da solo.",
-  "footer.cookie_prefs": "Preferenze cookie"
+  "faq.badge": "Frequently asked questions",
+  "faq.title": "Still have a question?",
+  "faq.items": [
+    {
+      "q": "Do I need a credit card to start?",
+      "a": "No. The Free-mium plan is free and never asks for a card."
+    },
+    {
+      "q": "Can I import my existing contacts?",
+      "a": "Yes, via CSV or vCard (.vcf) files, with automatic duplicate detection."
+    },
+    {
+      "q": "Do I have to replace my current calendar?",
+      "a": "No. Cadence can work alongside your current habits — it's not all-or-nothing."
+    },
+    {
+      "q": "What happens when someone declines an appointment?",
+      "a": "You're notified immediately in your dashboard, along with their response message if they left one."
+    },
+    {
+      "q": "Is my client data secure?",
+      "a": "Yes: strictly account-scoped access, login codes are never stored in plain text, and payments are verified by signature. See the Security section above."
+    },
+    {
+      "q": "What happens if I reach my plan limit?",
+      "a": "You're warned and invited to upgrade — nothing gets deleted or abruptly blocked."
+    },
+    {
+      "q": "Can I change plans later?",
+      "a": "Yes, anytime, up or down."
+    }
+  ],
+  "final.title": "Your week is already valuable. Make it predictable.",
+  "final.subtitle": "Import your contacts, send your first appointment, and upgrade only when Cadence becomes part of how you run your business.",
+  "final.cta": "Start free",
+  "footer.tagline": "Cadence — the calm layer between you and your appointments.",
+  "footer.cookie_prefs": "Cookie preferences"
 }

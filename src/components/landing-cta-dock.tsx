@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/i18n/use-locale";
+import { trackEvent } from "@/lib/analytics";
 
 export function LandingCtaDock() {
   const locale = useLocale();
+  const { t } = useTranslation("common");
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -30,9 +33,10 @@ export function LandingCtaDock() {
         asChild
         size="lg"
         className="pointer-events-auto relative gap-2 rounded-full border border-border/60 bg-foreground/90 px-7 text-background shadow-[0_8px_30px_-8px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-transform hover:scale-[1.03] hover:bg-foreground active:scale-[0.98]"
+        onClick={() => trackEvent(signedIn ? "secondary_cta_click" : "signup_started")}
       >
         <Link to={signedIn ? "/$locale/dashboard" : "/$locale/auth"} params={{ locale }}>
-          {signedIn ? "Accès dashboard" : "Commencer"}
+          {signedIn ? t("nav.dashboard") : t("nav.start")}
           <ArrowRight className="h-4 w-4" />
         </Link>
       </Button>

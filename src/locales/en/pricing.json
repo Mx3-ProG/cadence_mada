@@ -1,6 +1,6 @@
 {
   "seo.title": "Pricing — Cadence",
-  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding. Referral program included from the Free-mium plan.",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
   "page.badge": "No commitment · Change anytime",
   "page.title": "Pick the pace that fits you, simply.",
   "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
@@ -16,54 +16,50 @@
   "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "Perfect to organize your week and try link confirmations.",
+      "tagline": "Discover Cadence, no commitment and no card required.",
       "cta": "Start for free",
       "features": [
         "Up to {{contacts}} contacts",
         "{{appointments}} appointments sent per month",
         "Unlimited confirmation links",
         "Simple calendar (week view)",
-        "Referral program (30% for life)",
         "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "A bit more room for a calendar that's starting to fill up.",
+      "tagline": "Structure the first appointments of your activity.",
       "cta": "Upgrade to {{label}}",
       "features": [
         "Up to {{contacts}} contacts",
         "{{appointments}} appointments per month",
         "Unlimited confirmation links",
         "Simple calendar (week view)",
-        "Referral program (30% for life)",
         "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "For those booking appointments every single week.",
+      "tagline": "Run a week where the calendar is part of the job.",
       "cta": "Upgrade to Standard",
       "features": [
         "Up to {{contacts}} contacts",
         "{{appointments}} appointments per month",
         "Full calendar: week & month view, one-click creation",
         "Weekly stats",
-        "Self-service booking via your public link",
-        "Referral program (30% for life)"
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "For a business running at full speed all year round.",
+      "tagline": "Run at volume for a business that isn't slowing down.",
       "cta": "Upgrade to {{label}}",
       "features": [
         "Up to {{contacts}} contacts",
         "{{appointments}} appointments per month",
         "Everything in Standard: full calendar, booking",
-        "Monthly trend",
-        "Referral program (30% for life)"
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "For teams and brands who want it all, with no limits.",
+      "tagline": "No limits, built to grow with your business.",
       "cta": "Upgrade to Business",
       "features": [
         "Unlimited contacts and appointments",

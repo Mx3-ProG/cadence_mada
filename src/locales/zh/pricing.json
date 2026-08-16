@@ -1,77 +1,73 @@
 {
-  "seo.title": "价格 — Cadence",
-  "seo.description": "5 个套餐,从 Free-mium(0 欧元)到 Business(199.99 欧元/月):联系人与预约管理、完整日历、自助预约、自定义品牌。Free-mium 套餐即可享受推荐计划。",
-  "page.badge": "无需承诺 · 随时更改",
-  "page.title": "选择最适合您节奏的套餐,就是这么简单。",
-  "page.subtitle": "免费开始,随着日历日渐充实再升级。每个套餐都让 Cadence 保持简单、快速、使用愉快。",
-  "page.trust.stripe": "✓ 通过 Stripe 安全支付",
-  "page.trust.cancel": "✓ 随时可取消",
-  "page.trust.instant": "✓ 即时激活",
-  "intro.badge": "价格简单透明",
-  "intro.title": "5 个套餐,只有一条规则:按需付费",
-  "intro.subtitle": "{{freeLabel}} 套餐无需信用卡。随时更换套餐,无需承诺。",
-  "period.monthly": "每月",
-  "period.forever": "永久免费",
-  "recommended": "推荐",
-  "view_offer": "查看 {{name}} 套餐",
+  "seo.title": "Pricing — Cadence",
+  "seo.description": "5 tiers, from Free-mium ($0) to Business ($199.99/mo): contacts and appointments, full calendar, self-service booking, custom branding.",
+  "page.badge": "No commitment · Change anytime",
+  "page.title": "Pick the pace that fits you, simply.",
+  "page.subtitle": "Start free, then upgrade as your calendar fills up. Every plan keeps Cadence simple, fast, and pleasant to use.",
+  "page.trust.stripe": "✓ Secure payment by Stripe",
+  "page.trust.cancel": "✓ Cancel anytime",
+  "page.trust.instant": "✓ Instant activation",
+  "intro.badge": "Simple pricing",
+  "intro.title": "5 tiers, one rule: you pay for what you need",
+  "intro.subtitle": "No card required for the {{freeLabel}} plan. Switch tiers anytime, with no commitment.",
+  "period.monthly": "per month",
+  "period.forever": "forever",
+  "recommended": "Recommended",
+  "view_offer": "See the {{name}} plan",
   "plans": {
     "free": {
-      "tagline": "非常适合安排每周日程并试用链接确认功能。",
-      "cta": "免费开始",
+      "tagline": "Discover Cadence, no commitment and no card required.",
+      "cta": "Start for free",
       "features": [
-        "最多 {{contacts}} 个联系人",
-        "每月发送 {{appointments}} 次预约",
-        "无限确认链接",
-        "简易日历(周视图)",
-        "推荐计划(终身 30%)",
-        "日间/夜间模式"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments sent per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "basic": {
-      "tagline": "为日渐充实的日历提供更多空间。",
-      "cta": "升级到 {{label}}",
+      "tagline": "Structure the first appointments of your activity.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "最多 {{contacts}} 个联系人",
-        "每月 {{appointments}} 次预约",
-        "无限确认链接",
-        "简易日历(周视图)",
-        "推荐计划(终身 30%)",
-        "日间/夜间模式"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Unlimited confirmation links",
+        "Simple calendar (week view)",
+        "Light / dark mode"
       ]
     },
     "standard": {
-      "tagline": "适合每周预约不断的用户。",
-      "cta": "升级到 Standard",
+      "tagline": "Run a week where the calendar is part of the job.",
+      "cta": "Upgrade to Standard",
       "features": [
-        "最多 {{contacts}} 个联系人",
-        "每月 {{appointments}} 次预约",
-        "完整日历:周视图与月视图,一键创建",
-        "每周统计数据",
-        "通过您的公开链接自助预约",
-        "推荐计划(终身 30%)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Full calendar: week & month view, one-click creation",
+        "Weekly stats",
+        "Self-service booking via your public link"
       ]
     },
     "economic": {
-      "tagline": "适合全年高强度运营的业务。",
-      "cta": "升级到 {{label}}",
+      "tagline": "Run at volume for a business that isn't slowing down.",
+      "cta": "Upgrade to {{label}}",
       "features": [
-        "最多 {{contacts}} 个联系人",
-        "每月 {{appointments}} 次预约",
-        "包含 Standard 所有功能:完整日历、预约功能",
-        "月度趋势分析",
-        "推荐计划(终身 30%)"
+        "Up to {{contacts}} contacts",
+        "{{appointments}} appointments per month",
+        "Everything in Standard: full calendar, booking",
+        "Monthly trend"
       ]
     },
     "business": {
-      "tagline": "适合追求全部功能、不设限制的团队和品牌。",
-      "cta": "升级到 Business",
+      "tagline": "No limits, built to grow with your business.",
+      "cta": "Upgrade to Business",
       "features": [
-        "无限联系人与预约",
-        "包含 {{economicLabel}} 所有功能:完整日历、预约、月度趋势分析",
-        "个性化邀请链接(品牌 + 自定义信息)",
-        "Google 评价:评分、Google 商家和地图链接",
-        "邀请中附带网站链接",
-        "优先支持"
+        "Unlimited contacts and appointments",
+        "Everything in {{economicLabel}}: full calendar, booking, monthly trend",
+        "Custom invite link (branding + message)",
+        "Google reviews: rating, Google My Business and Maps link",
+        "Website link on your invitations",
+        "Priority support"
       ]
     }
   }

@@ -18,7 +18,13 @@ import {
  * Bouton de choix de palier sur la grille tarifaire : redirige vers l'inscription
  * si l'utilisateur n'est pas connecté, sinon lance/modifie l'abonnement Stripe.
  */
-export function PlanCta({ tier }: { tier: PaidPlanTier }) {
+export function PlanCta({
+  tier,
+  onBeforeCheckout,
+}: {
+  tier: PaidPlanTier;
+  onBeforeCheckout?: () => void;
+}) {
   const locale = useLocale();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const changePlan = useChangePlan();
@@ -65,11 +71,14 @@ export function PlanCta({ tier }: { tier: PaidPlanTier }) {
       variant={isDowngrade ? "outline" : "default"}
       className="mt-8 w-full"
       disabled={changePlan.isPending}
-      onClick={() =>
-        signedIn
-          ? changePlan.mutate({ tier, hasActivePaidPlan: !!currentPlan && currentPlan !== "free" })
-          : navigate({ to: "/$locale/auth", params: { locale } })
-      }
+      onClick={() => {
+        onBeforeCheckout?.();
+        if (signedIn) {
+          changePlan.mutate({ tier, hasActivePaidPlan: !!currentPlan && currentPlan !== "free" });
+        } else {
+          navigate({ to: "/$locale/auth", params: { locale } });
+        }
+      }}
     >
       {changePlan.isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
       {buttonLabel}

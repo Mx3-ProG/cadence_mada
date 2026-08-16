@@ -16,54 +16,50 @@
   "view_offer": "Voir l'offre {{name}}",
   "plans": {
     "free": {
-      "tagline": "Retrouve une semaine claire, sans changer tes habitudes.",
+      "tagline": "Découvre Cadence, sans engagement ni carte bancaire.",
       "cta": "Commencer gratuitement",
       "features": [
         "Tes {{contacts}} contacts essentiels toujours à portée de main",
         "{{appointments}} rendez-vous par mois, sans message oublié",
         "Chaque invité confirme sa présence en un clic",
         "Toute ta semaine visible d’un seul regard",
-        "30 % à vie sur chaque personne que tu parraines",
         "Un confort parfait, de jour comme de nuit"
       ]
     },
     "basic": {
-      "tagline": "Ton activité accélère. Ton agenda reste léger.",
+      "tagline": "Structure les premiers rendez-vous de ton activité.",
       "cta": "Passer en {{label}}",
       "features": [
         "Garde jusqu’à {{contacts}} relations importantes bien organisées",
         "Planifie {{appointments}} rendez-vous par mois sans te sentir débordé",
         "Tes invités confirment simplement, sans échange interminable",
         "Visualise ta semaine et protège ton temps",
-        "Transforme chaque recommandation en revenu avec 30 % à vie",
         "Travaille confortablement à toute heure"
       ]
     },
     "standard": {
-      "tagline": "Pendant que tu travailles, ton agenda continue de se remplir.",
+      "tagline": "Pilote une semaine où l’agenda fait partie du métier.",
       "cta": "Passer en Standard",
       "features": [
         "Retrouve instantanément le contexte de {{contacts}} contacts",
         "Accompagne jusqu’à {{appointments}} rendez-vous chaque mois",
         "Passe de ta semaine à ton mois et crée un rendez-vous en un clic",
         "Sache chaque semaine où part vraiment ton temps",
-        "Tes clients réservent seuls depuis ton lien public",
-        "Gagne 30 % à vie sur chaque personne parrainée"
+        "Tes clients réservent seuls depuis ton lien public"
       ]
     },
     "economic": {
-      "tagline": "Prends de la hauteur sur une activité qui ne ralentit plus.",
+      "tagline": "Absorbe le volume d’une activité qui ne ralentit plus.",
       "cta": "Passer en {{label}}",
       "features": [
         "Entretiens jusqu’à {{contacts}} relations sans perdre le fil",
         "Absorbe jusqu’à {{appointments}} rendez-vous par mois avec sérénité",
         "Profite de tout Standard : agenda complet et réservation autonome",
-        "Vois la dynamique de ton mois avant de prendre tes décisions",
-        "Crée un revenu durable avec 30 % à vie sur tes filleuls"
+        "Vois la dynamique de ton mois avant de prendre tes décisions"
       ]
     },
     "business": {
-      "tagline": "Chaque invitation porte ta marque. Aucune limite ne freine ton équipe.",
+      "tagline": "Aucune limite pour une activité qui continue de grandir.",
       "cta": "Passer en Business",
       "features": [
         "Accueille autant de contacts et de rendez-vous que nécessaire",

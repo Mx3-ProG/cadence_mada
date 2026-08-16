@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import { ContactRound, FileUp, Loader2, Smartphone, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import {
   type ImportedContact,
 } from "@/lib/contact-import";
 import { planErrorMessage, TIER_LIMITS, type PlanUsage } from "@/lib/plan";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -76,6 +77,10 @@ export function ContactImportDialog({
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const pickerAvailable = supportsContactPicker();
+
+  useEffect(() => {
+    if (open) trackEvent("contact_import_started");
+  }, [open]);
 
   const save = async (rawContacts: ImportedContact[]) => {
     const { contacts, duplicates } = removeDuplicateContacts(rawContacts, existingContacts);
