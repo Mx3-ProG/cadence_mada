@@ -13,6 +13,7 @@ import { AppHeader } from "@/components/agenda/app-header";
 import { AppointmentCard } from "@/components/agenda/appointment-card";
 import { AppointmentDialog } from "@/components/agenda/appointment-dialog";
 import { ContactImportDialog } from "@/components/agenda/contact-import-dialog";
+import { ReferralWelcomeDialog } from "@/components/agenda/referral-welcome-dialog";
 import { QuickAppointmentFlow } from "@/components/agenda/quick-appointment";
 import { WeekStats } from "@/components/agenda/week-stats";
 import { TodayPanel } from "@/components/agenda/today-panel";
@@ -28,6 +29,10 @@ import {
   contactImportReminderKey,
   shouldShowContactImportReminder,
 } from "@/lib/contact-import-reminder";
+import {
+  referralWelcomeReminderKey,
+  shouldShowReferralWelcome,
+} from "@/lib/referral-welcome-reminder";
 
 import {
   hasFeatureAccess,
@@ -80,6 +85,7 @@ function Dashboard() {
   const [quickOpen, setQuickOpen] = useState(false);
   const [quickDefaultDate, setQuickDefaultDate] = useState<Date | null>(null);
   const [contactImportOpen, setContactImportOpen] = useState(false);
+  const [referralWelcomeOpen, setReferralWelcomeOpen] = useState(false);
   const reminderChecked = useRef(false);
 
   const days = useMemo(() => weekDays(anchor), [anchor]);
@@ -165,6 +171,18 @@ function Dashboard() {
     void supabase.auth.getUser().then(({ data }) => {
       const userId = data.user?.id;
       if (!active || !userId) return;
+
+      const referralKey = referralWelcomeReminderKey(userId);
+      try {
+        if (shouldShowReferralWelcome(window.localStorage.getItem(referralKey))) {
+          window.localStorage.setItem(referralKey, String(Date.now()));
+          setReferralWelcomeOpen(true);
+          return;
+        }
+      } catch {
+        // Le pop-up reste utilisable lorsque le stockage local est bloqué par le navigateur.
+      }
+
       const key = contactImportReminderKey(userId);
       try {
         if (!shouldShowContactImportReminder(window.localStorage.getItem(key))) return;
@@ -390,6 +408,8 @@ function Dashboard() {
         usage={planQuery.data}
         onImported={refresh}
       />
+
+      <ReferralWelcomeDialog open={referralWelcomeOpen} onOpenChange={setReferralWelcomeOpen} />
     </div>
   );
 }

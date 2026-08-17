@@ -15,5 +15,12 @@
   "plan_limit_upsell": " Passe au plan {{plan}} pour continuer.",
   "checkout.cancelled": "Paiement annulé — tu restes sur le plan {{plan}}.",
   "checkout.success": "Bienvenue en {{plan}} !",
-  "checkout.pending": "Paiement reçu, activation en cours. Recharge la page dans un instant."
+  "checkout.pending": "Paiement reçu, activation en cours. Recharge la page dans un instant.",
+  "referral_welcome.title": "Avant d'inviter tes clients…",
+  "referral_welcome.description": "Plutôt qu'un simple lien d'invitation, partage ton lien de parrainage : tu touches 30 % de ce que paie chaque client que tu amènes, chaque mois, tant qu'il reste abonné. Même montant pour lui, juste plus rentable pour toi.",
+  "referral_welcome.copy": "Copier",
+  "referral_welcome.copied": "Copié",
+  "referral_welcome.copied_toast": "Lien de parrainage copié",
+  "referral_welcome.cta": "Voir mon espace parrainage",
+  "referral_welcome.later": "Plus tard"
 }
