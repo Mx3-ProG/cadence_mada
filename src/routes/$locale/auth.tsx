@@ -154,16 +154,6 @@ function AuthPage() {
     setForgotEmail("");
   };
 
-  const google = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/${locale}/verification` },
-    });
-    if (error) {
-      toast.error(t("errors.google_failed"));
-    }
-  };
-
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <div className="aurora pointer-events-none absolute inset-0 -z-10" />
@@ -292,16 +282,6 @@ function AuthPage() {
               </Button>
             </TabsContent>
           </Tabs>
-
-          <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            {t("divider.or")}
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <Button variant="outline" className="w-full" onClick={google}>
-            {t("google.continue")}
-          </Button>
         </div>
       </div>
     </main>

@@ -26,6 +26,43 @@ import {
 } from "@/i18n/config";
 
 const SITE_URL = "https://www.cadencemada.com";
+const GOOGLE_ADS_TAG_ID = "AW-18354292670";
+
+// Google Consent Mode keeps the tag detectable on every route while respecting
+// the analytics/marketing choices managed by <CookieConsent />. The listener
+// applies preference changes immediately, without requiring a page reload.
+const googleAdsInitScript = `(function(){
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+
+  var analyticsStorage = 'denied';
+  var adStorage = 'denied';
+  try {
+    var preferences = JSON.parse(localStorage.getItem('cadence.cookie-consent.v1'));
+    analyticsStorage = preferences && preferences.analytics ? 'granted' : 'denied';
+    adStorage = preferences && preferences.marketing ? 'granted' : 'denied';
+  } catch (e) {}
+
+  window.gtag('consent', 'default', {
+    analytics_storage: analyticsStorage,
+    ad_storage: adStorage,
+    ad_user_data: adStorage,
+    ad_personalization: adStorage
+  });
+  window.gtag('js', new Date());
+  window.gtag('config', '${GOOGLE_ADS_TAG_ID}', { send_page_view: false });
+
+  window.addEventListener('cadence:cookie-consent', function(event) {
+    var preferences = event.detail || {};
+    var nextAdStorage = preferences.marketing ? 'granted' : 'denied';
+    window.gtag('consent', 'update', {
+      analytics_storage: preferences.analytics ? 'granted' : 'denied',
+      ad_storage: nextAdStorage,
+      ad_user_data: nextAdStorage,
+      ad_personalization: nextAdStorage
+    });
+  });
+})();`;
 
 function useResolvedLocale(): Locale {
   const matches = useRouterState({ select: (state) => state.matches });
@@ -98,6 +135,19 @@ function useHydrationSignal() {
     root.setAttribute("data-hydrated", "");
     root.removeAttribute("data-hydration-failed");
   }, []);
+}
+
+function useGoogleAdsPageViews() {
+  const locationHref = useRouterState({ select: (state) => state.location.href });
+
+  useEffect(() => {
+    const googleTag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+    googleTag?.("config", GOOGLE_ADS_TAG_ID, {
+      page_location: window.location.href,
+      page_path: `${window.location.pathname}${window.location.search}`,
+      page_title: document.title,
+    });
+  }, [locationHref]);
 }
 
 function NotFoundComponent() {
@@ -216,6 +266,9 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: hydrationWatchdogScript }} />
+        {/* Google tag (gtag.js) — shared by the landing, auth and dashboard routes. */}
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`} />
+        <script dangerouslySetInnerHTML={{ __html: googleAdsInitScript }} />
         {/* The watchdog above is itself JS, so it cannot cover JS being off
             entirely — this does. */}
         <noscript>
@@ -235,6 +288,7 @@ function RootComponent() {
   const { queryClient } = router.options.context;
 
   useHydrationSignal();
+  useGoogleAdsPageViews();
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
